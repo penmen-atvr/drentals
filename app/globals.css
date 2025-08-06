@@ -1,0 +1,291 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 72.2% 50.6%;
+    --primary-foreground: 0 85.7% 97.3%;
+    --secondary: 0 0% 9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 72.2% 50.6%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 72.2% 50.6%;
+    --primary-foreground: 0 85.7% 97.3%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 72.2% 50.6%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .font-heading {
+    font-family: var(--font-heading);
+  }
+  .font-body {
+    font-family: var(--font-body);
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+/* RED.com inspired styles */
+.red-gradient {
+  background: linear-gradient(90deg, #e31b23 0%, #b5151c 100%);
+}
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Military style additions */
+.military-border {
+  border: 2px solid rgba(227, 27, 35, 0.7);
+  position: relative;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.military-border::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border: 1px dashed rgba(227, 27, 35, 0.5);
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .military-border::before {
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+  }
+}
+
+.stencil-text {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tech-specs {
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+}
+
+/* Mobile menu animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.mobile-menu-enter {
+  animation: fadeIn 0.3s ease-in-out, slideIn 0.3s ease-in-out;
+}
+
+.mobile-menu-exit {
+  animation: fadeOut 0.3s ease-in-out, slideOut 0.3s ease-in-out;
+}
+
+/* Mobile dropdown styles */
+.mobile-dropdown-enter {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.mobile-dropdown-exit {
+  animation: fadeOut 0.2s ease-in-out;
+}
+
+/* Ensure dropdown menus are above other content */
+.dropdown-menu {
+  z-index: 50;
+}
+
+/* Improve mobile dropdown scrolling */
+.mobile-dropdown-content {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(227, 27, 35, 0.5) rgba(24, 24, 27, 0.5);
+}
+
+.mobile-dropdown-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mobile-dropdown-content::-webkit-scrollbar-track {
+  background: rgba(24, 24, 27, 0.5);
+}
+
+.mobile-dropdown-content::-webkit-scrollbar-thumb {
+  background-color: rgba(227, 27, 35, 0.5);
+  border-radius: 3px;
+}
+
+/* Fix for mobile dropdowns */
+.mobile-category-dropdown {
+  position: relative;
+  z-index: 40;
+}
+
+.mobile-category-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  max-height: 60vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Page transitions */
+.page-transition-enter {
+  opacity: 0;
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in-out;
+}
+
+.page-transition-exit {
+  opacity: 1;
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading-pulse {
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Add the subtle pulse animation to the CSS file
+// Add this to the @layer components section or at the end of the file */
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Enhanced box shadow for floating elements */
+.shadow-float {
+  box-shadow: 0 10px 25px -5px rgba(227, 27, 35, 0.4), 0 8px 10px -6px rgba(227, 27, 35, 0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+.shadow-float:hover {
+  box-shadow: 0 20px 25px -5px rgba(227, 27, 35, 0.5), 0 10px 10px -5px rgba(227, 27, 35, 0.4);
+}
