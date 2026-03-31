@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import {
   View, Text, FlatList, TouchableOpacity, Animated,
-  StyleSheet, Modal, ScrollView, Platform, TextInput
+  StyleSheet, Modal, ScrollView, Platform, TextInput, Pressable
 } from 'react-native';
 import { Image } from 'expo-image';
 import { CompositeScreenProps } from '@react-navigation/native';
@@ -212,8 +212,9 @@ export default function CatalogScreen({ route, navigation }: Props) {
 
       {/* Filter Modal */}
       <Modal animationType="slide" transparent visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-        <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={() => setModalVisible(false)}>
-          <TouchableOpacity activeOpacity={1} style={[styles.sheet, { paddingBottom: insets.bottom + 16 }]} onPress={() => {}}>
+        <View style={styles.overlay}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => setModalVisible(false)} />
+          <View style={[styles.sheet, { paddingBottom: insets.bottom + 16 }]}>
             {/* Handle bar */}
             <View style={styles.sheetHandle} />
 
@@ -231,7 +232,7 @@ export default function CatalogScreen({ route, navigation }: Props) {
             <ScrollView 
               showsVerticalScrollIndicator={false} 
               style={{ flexShrink: 1, width: '100%' }}
-              contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 10, paddingBottom: 40 }}
+              contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 10, paddingBottom: 40 }}
             >
               {/* Sort */}
               <Text style={styles.sheetSectionLabel}>Sort By</Text>
@@ -289,8 +290,8 @@ export default function CatalogScreen({ route, navigation }: Props) {
                 <Text style={styles.sheetCtaText}>Show {processedEquipment.length} Results</Text>
               </TouchableOpacity>
             </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
+          </View>
+        </View>
       </Modal>
     </View>
   );
