@@ -42,6 +42,12 @@
     },
     "plugins": [
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/fc19d652-0de3-4bc7-9ba0-9af730749801"
+    }
   }
 }
