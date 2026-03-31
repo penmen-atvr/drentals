@@ -212,8 +212,8 @@ export default function CatalogScreen({ route, navigation }: Props) {
 
       {/* Filter Modal */}
       <Modal animationType="slide" transparent visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.overlay}>
-          <View style={[styles.sheet, { paddingBottom: insets.bottom + 16 }]}>
+        <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={() => setModalVisible(false)}>
+          <TouchableOpacity activeOpacity={1} style={[styles.sheet, { paddingBottom: insets.bottom + 16 }]} onPress={() => {}}>
             {/* Handle bar */}
             <View style={styles.sheetHandle} />
 
@@ -228,7 +228,11 @@ export default function CatalogScreen({ route, navigation }: Props) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} style={{ paddingHorizontal: 24, paddingVertical: 10 }}>
+            <ScrollView 
+              showsVerticalScrollIndicator={false} 
+              style={{ flexShrink: 1, width: '100%' }}
+              contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 10, paddingBottom: 40 }}
+            >
               {/* Sort */}
               <Text style={styles.sheetSectionLabel}>Sort By</Text>
               <View style={styles.chipGrid}>
@@ -254,7 +258,12 @@ export default function CatalogScreen({ route, navigation }: Props) {
                   <View style={styles.chipGrid}>
                     <ChipRow label="All Types" isActive={activeCategoryId === null} onPress={() => setActiveCategoryId(null)} />
                     {categories.map(cat => (
-                      <ChipRow key={cat.id} label={cat.name} isActive={activeCategoryId === cat.id} onPress={() => setActiveCategoryId(cat.id)} />
+                      <ChipRow 
+                        key={cat.id.toString()} 
+                        label={cat.name} 
+                        isActive={activeCategoryId === cat.id} 
+                        onPress={() => setActiveCategoryId(cat.id)} 
+                      />
                     ))}
                   </View>
                 </>
@@ -280,8 +289,8 @@ export default function CatalogScreen({ route, navigation }: Props) {
                 <Text style={styles.sheetCtaText}>Show {processedEquipment.length} Results</Text>
               </TouchableOpacity>
             </View>
-          </View>
-        </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
       </Modal>
     </View>
   );
