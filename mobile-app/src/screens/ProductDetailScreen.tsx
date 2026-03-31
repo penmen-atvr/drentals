@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet,
-  ActivityIndicator, Image, Dimensions, Platform
+  ActivityIndicator, Dimensions, Platform, Animated
 } from 'react-native';
+import { Image } from 'expo-image';
 import { BlurView } from 'expo-blur';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -14,6 +15,7 @@ import { useCartStore } from '../store/cartStore';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Haptics from 'expo-haptics';
 
 const { width: W } = Dimensions.get('window');
 
@@ -39,6 +41,31 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
   const addItem = useCartStore(s => s.addItem);
   const cartCount = useCartStore(s => s.items.length);
 
+  // Animation values
+  const heroOpacity = useRef(new Animated.Value(0)).current;
+  const heroTranslate = useRef(new Animated.Value(-20)).current;
+  const contentOpacity = useRef(new Animated.Value(0)).current;
+  const contentTranslate = useRef(new Animated.Value(30)).current;
+  const barOpacity = useRef(new Animated.Value(0)).current;
+  const barTranslate = useRef(new Animated.Value(30)).current;
+
+  const runEntryAnimations = () => {
+    Animated.stagger(120, [
+      Animated.parallel([
+        Animated.timing(heroOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+        Animated.spring(heroTranslate, { toValue: 0, useNativeDriver: true, tension: 60, friction: 10 }),
+      ]),
+      Animated.parallel([
+        Animated.timing(contentOpacity, { toValue: 1, duration: 450, useNativeDriver: true }),
+        Animated.spring(contentTranslate, { toValue: 0, useNativeDriver: true, tension: 60, friction: 10 }),
+      ]),
+      Animated.parallel([
+        Animated.timing(barOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+        Animated.spring(barTranslate, { toValue: 0, useNativeDriver: true, tension: 70, friction: 10 }),
+      ]),
+    ]).start();
+  };
+
   useEffect(() => {
     if (!initEquip) {
       const load = async () => {
@@ -52,11 +79,21 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
         }
       };
       load();
+    } else {
+      // data already available, run immediately
+      setTimeout(runEntryAnimations, 50);
     }
   }, [slug, initEquip]);
 
+  useEffect(() => {
+    if (!loading && equipment) {
+      runEntryAnimations();
+    }
+  }, [loading, equipment]);
+
   const handleAddToCart = () => {
     if (equipment) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       addItem(equipment, 1, 1);
       navigation.navigate('MainTabs', { screen: 'Cart' } as any);
     }
@@ -77,7 +114,7 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
       <ScrollView showsVerticalScrollIndicator={false} bounces>
 
         {/* ── IMAGE CAROUSEL ── */}
-        <View style={{ height: 480 }}>
+        <Animated.View style={{ height: 480, opacity: heroOpacity, transform: [{ translateY: heroTranslate }] }}>
           <ScrollView
             horizontal
             pagingEnabled
@@ -89,7 +126,7 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
             snapToInterval={W}
           >
             {images.length > 0 ? images.map((url, i) => (
-              <Image key={i} source={{ uri: url }} style={{ width: W, height: 480 }} resizeMode="cover" />
+              <Image key={i} source={{ uri: url }} style={{ width: W, height: 480 }} contentFit="cover" />
             )) : (
               <View style={{ width: W, height: 480, backgroundColor: CARD, justifyContent: 'center', alignItems: 'center' }}>
                 <Ionicons name="camera-outline" size={60} color="#222" />
@@ -116,7 +153,7 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
           {/* Back button */}
           <TouchableOpacity
             style={[styles.backBtn, { top: insets.top + 12 }]}
-            onPress={() => navigation.goBack()}
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.goBack(); }}
           >
             <Ionicons name="arrow-back" size={20} color="#fff" />
           </TouchableOpacity>
@@ -133,10 +170,10 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
               </View>
             )}
           </TouchableOpacity>
-        </View>
+        </Animated.View>
 
         {/* ── CONTENT ── */}
-        <View style={styles.content}>
+        <Animated.View style={[styles.content, { opacity: contentOpacity, transform: [{ translateY: contentTranslate }] }]}>
           {/* Brand + Category */}
           <View style={styles.metaRow}>
             {equipment.brand && (
@@ -199,13 +236,13 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
               <Text style={styles.description}>{equipment.description}</Text>
             </>
           )}
-        </View>
+        </Animated.View>
 
         <View style={{ height: 120 }} />
       </ScrollView>
 
       {/* ── BOTTOM ACTION BAR ── */}
-      <View style={[styles.actionBar, { paddingBottom: insets.bottom + 8 }]}>
+      <Animated.View style={[styles.actionBar, { paddingBottom: insets.bottom + 8 }, { opacity: barOpacity, transform: [{ translateY: barTranslate }] }]}>
         {Platform.OS === 'ios'
           ? <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
           : <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(8,8,8,0.96)' }]} />
@@ -220,7 +257,7 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
             <Text style={styles.addToCartText}>Add to Cart</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
     </View>
   );
 }

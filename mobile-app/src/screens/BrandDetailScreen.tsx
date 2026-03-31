@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
-  ActivityIndicator, Image, Platform, Modal, ScrollView
+  ActivityIndicator, Platform, Modal, ScrollView
 } from 'react-native';
+import { Image } from 'expo-image';
 import { fetchEquipmentByBrand } from '../api';
 import { Equipment } from '../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -63,7 +64,7 @@ export default function BrandDetailScreen({ route, navigation }: Props) {
     >
       <View style={styles.cardImgWrapper}>
         {item.imageUrls && item.imageUrls.length > 0 ? (
-          <Image source={{ uri: item.imageUrls[0] }} style={styles.cardImg} resizeMode="cover" />
+          <Image source={{ uri: item.imageUrls[0] }} style={styles.cardImg} contentFit="cover" />
         ) : (
           <View style={styles.cardImgPlaceholder}>
             <Ionicons name="camera-outline" size={28} color="#2a2a2a" />

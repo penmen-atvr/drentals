@@ -14,6 +14,27 @@ function resolveImageUrl(url: string | null | undefined): string | null {
   return `${SITE_BASE}${url.startsWith('/') ? '' : '/'}${url}`
 }
 
+/**
+ * Build a deduplicated imageUrls array for an equipment item.
+ * Priority: equipment_images relation (ordered by displayOrder) first,
+ * then mainImageUrl as a fallback/supplement so items with only a
+ * mainImageUrl column still return an image instead of an empty array.
+ */
+function buildImageUrls(item: { mainImageUrl?: string | null; images?: { imageUrl: string }[] }): string[] {
+  const fromRelation = (item.images ?? [])
+    .map((img) => resolveImageUrl(img.imageUrl))
+    .filter((u): u is string => Boolean(u))
+
+  const fromMain = resolveImageUrl(item.mainImageUrl)
+
+  // Merge: relation images first, then main image (if not already present)
+  const all = fromMain && !fromRelation.includes(fromMain)
+    ? [...fromRelation, fromMain]
+    : fromRelation
+
+  return all
+}
+
 export const getCategories = cache(async (): Promise<Category[]> => {
   return await db.query.equipmentCategories.findMany({
     orderBy: [equipmentCategories.name]
@@ -34,7 +55,7 @@ export const getFeaturedEquipment = cache(async (): Promise<Equipment[]> => {
   const formattedResult = result.map(item => ({
     ...item,
     categoryName: item.category?.name,
-    imageUrls: item.images?.map((img: any) => resolveImageUrl(img.imageUrl)).filter(Boolean) || []
+    imageUrls: buildImageUrls(item)
   }))
 
   return formattedResult as unknown as Equipment[]
@@ -57,7 +78,7 @@ export const getAllEquipment = cache(async (categoryId?: number, isKit?: boolean
   return result.map(item => ({
     ...item,
     categoryName: item.category?.name,
-    imageUrls: item.images?.map((img: any) => resolveImageUrl(img.imageUrl)).filter(Boolean) || []
+    imageUrls: buildImageUrls(item)
   })) as unknown as Equipment[]
 })
 
@@ -80,7 +101,7 @@ export const getEquipmentById = cache(async (id: number): Promise<Equipment | un
   return {
     ...item,
     categoryName: item.category?.name,
-    imageUrls: item.images?.map((img: any) => resolveImageUrl(img.imageUrl)).filter(Boolean) || []
+    imageUrls: buildImageUrls(item)
   } as unknown as Equipment
 })
 
@@ -98,7 +119,7 @@ export const getEquipmentBySlug = cache(async (slug: string): Promise<Equipment 
   return {
     ...item,
     categoryName: item.category?.name,
-    imageUrls: item.images?.map((img: any) => resolveImageUrl(img.imageUrl)).filter(Boolean) || []
+    imageUrls: buildImageUrls(item)
   } as unknown as Equipment
 })
 
@@ -122,7 +143,7 @@ export const getEquipmentByBrand = cache(async (brand: string): Promise<Equipmen
   return result.map(item => ({
     ...item,
     categoryName: item.category?.name,
-    imageUrls: item.images?.map((img: any) => resolveImageUrl(img.imageUrl)).filter(Boolean) || []
+    imageUrls: buildImageUrls(item)
   })) as unknown as Equipment[]
 })
 
@@ -149,7 +170,7 @@ export const getPopularEquipmentForArea = cache(async (limit = 4): Promise<Equip
   return result.map(item => ({
     ...item,
     categoryName: item.category?.name,
-    imageUrls: item.images?.map((img: any) => resolveImageUrl(img.imageUrl)).filter(Boolean) || []
+    imageUrls: buildImageUrls(item)
   })) as unknown as Equipment[]
 })
 

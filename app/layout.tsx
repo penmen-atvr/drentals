@@ -6,6 +6,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import BackToTop from "@/components/back-to-top"
 import LocationAreas from "@/components/location-areas"
+import WhatsAppFloat from "@/components/whatsapp-float"
 import { ThemeProvider } from "@/components/theme-provider"
 import PageTransition from "@/components/page-transition"
 import { OrganizationSchema, LocalBusinessSchema, WebSiteSchema } from "@/components/structured-data"
@@ -103,6 +104,7 @@ export default function RootLayout({
               <PageTransition>{children}</PageTransition>
             </main>
             <BackToTop />
+            <WhatsAppFloat />
             <LocationAreas />
             <Footer />
           </div>

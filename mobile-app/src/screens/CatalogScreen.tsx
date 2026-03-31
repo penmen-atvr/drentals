@@ -1,14 +1,16 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import {
-  View, Text, FlatList, TouchableOpacity, ActivityIndicator,
-  StyleSheet, Image, Platform, Modal, ScrollView
+  View, Text, FlatList, TouchableOpacity, Animated,
+  StyleSheet, Modal, ScrollView, Platform, TextInput
 } from 'react-native';
+import { Image } from 'expo-image';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, MainTabParamList } from '../../App';
-import { fetchAllEquipment, fetchCategories, fetchBrands } from '../api';
-import { Equipment, Category } from '../types';
+import { useCatalogStore } from '../store/catalogStore';
+import { SkeletonCatalogCard } from '../components/SkeletonCard';
+import { Equipment } from '../types';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -33,45 +35,28 @@ export default function CatalogScreen({ route, navigation }: Props) {
   const insets = useSafeAreaInsets();
   const initialCategoryId = route.params?.categoryId;
 
-  const [equipment, setEquipment]     = useState<Equipment[]>([]);
-  const [categories, setCategories]   = useState<Category[]>([]);
-  const [brands, setBrands]           = useState<string[]>([]);
-  const [loading, setLoading]         = useState(true);
-  const [error, setError]             = useState<string | null>(null);
-
-  const [activeSort, setActiveSort]             = useState<SortOption>('recommended');
-  const [activeCategoryId, setActiveCategoryId] = useState<number | null>(initialCategoryId || null);
-  const [activeBrand, setActiveBrand]           = useState<string | null>(null);
-  const [modalVisible, setModalVisible]         = useState(false);
+  const { equipment, categories, brands, isLoading, error, fetchCatalog } = useCatalogStore();
+  
+  const [activeCategoryId, setActiveCategoryId] = useState<number | null>(initialCategoryId ?? null);
+  const [activeBrand, setActiveBrand] = useState<string | null>(null);
+  const [activeSort, setActiveSort] = useState<SortOption>('recommended');
+  
+  const [modalVisible, setModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    if (initialCategoryId) setActiveCategoryId(initialCategoryId);
+    if (initialCategoryId !== undefined) setActiveCategoryId(initialCategoryId);
   }, [initialCategoryId]);
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const [eq, cats, br] = await Promise.all([fetchAllEquipment(), fetchCategories(), fetchBrands()]);
-        setEquipment(eq);
-        setCategories(cats);
-        setBrands(br);
-      } catch (e) {
-        console.error('Catalog load error', e);
-        setError('Could not load catalog. Please check your connection.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
   }, []);
 
   const processedEquipment = useMemo(() => {
     let arr = equipment.filter(item => {
       const cat  = activeCategoryId ? item.categoryId === activeCategoryId : true;
       const brnd = activeBrand      ? item.brand === activeBrand           : true;
-      return cat && brnd;
+      const srch = searchQuery      ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+      return cat && brnd && srch;
     });
     switch (activeSort) {
       case 'price_asc':  return [...arr].sort((a, b) => Number(a.dailyRate) - Number(b.dailyRate));
@@ -79,7 +64,7 @@ export default function CatalogScreen({ route, navigation }: Props) {
       case 'name_asc':   return [...arr].sort((a, b) => a.name.localeCompare(b.name));
       default:           return arr;
     }
-  }, [equipment, activeCategoryId, activeBrand, activeSort]);
+  }, [equipment, activeCategoryId, activeBrand, activeSort, searchQuery]);
 
   const activeBrands = useMemo(() => {
     if (!activeCategoryId) return brands;
@@ -93,31 +78,47 @@ export default function CatalogScreen({ route, navigation }: Props) {
 
   const activeFilterCount = [activeCategoryId, activeBrand, activeSort !== 'recommended' ? activeSort : null].filter(Boolean).length;
 
-  const renderItem = ({ item }: { item: Equipment }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => navigation.navigate('ProductDetail', { slug: item.slug, equipment: item })}
-      activeOpacity={0.88}
-    >
-      <View style={styles.cardImgWrapper}>
-        {item.imageUrls && item.imageUrls.length > 0 ? (
-          <Image source={{ uri: item.imageUrls[0] }} style={styles.cardImg} resizeMode="cover" />
-        ) : (
-          <View style={styles.cardImgPlaceholder}>
-            <Ionicons name="camera-outline" size={28} color="#2a2a2a" />
+  const AnimatedCard = useCallback(({ item, index }: { item: Equipment; index: number }) => {
+    const opacity = useRef(new Animated.Value(0)).current;
+    const translateY = useRef(new Animated.Value(30)).current;
+    useEffect(() => {
+      Animated.parallel([
+        Animated.timing(opacity, { toValue: 1, duration: 400, delay: index * 70, useNativeDriver: true }),
+        Animated.spring(translateY, { toValue: 0, useNativeDriver: true, tension: 60, friction: 10, delay: index * 70 } as any),
+      ]).start();
+    }, []);
+    return (
+      <Animated.View style={{ opacity, transform: [{ translateY }], width: '48.5%' }}>
+        <TouchableOpacity
+          style={[styles.card, { width: '100%' }]}
+          onPress={() => navigation.navigate('ProductDetail', { slug: item.slug, equipment: item })}
+          activeOpacity={0.88}
+        >
+          <View style={styles.cardImgWrapper}>
+            {item.imageUrls && item.imageUrls.length > 0 ? (
+              <Image source={{ uri: item.imageUrls[0] }} style={styles.cardImg} contentFit="cover" />
+            ) : (
+              <View style={styles.cardImgPlaceholder}>
+                <Ionicons name="camera-outline" size={28} color="#2a2a2a" />
+              </View>
+            )}
+            {item.brand && (
+              <View style={styles.cardBrandBadge}>
+                <Text style={styles.cardBrandBadgeText}>{item.brand}</Text>
+              </View>
+            )}
           </View>
-        )}
-        {item.brand && (
-          <View style={styles.cardBrandBadge}>
-            <Text style={styles.cardBrandBadgeText}>{item.brand}</Text>
+          <View style={styles.cardBody}>
+            <Text style={styles.cardTitle} numberOfLines={2}>{item.name}</Text>
+            <Text style={styles.cardPrice}>₹{item.dailyRate}<Text style={styles.perDay}>/day</Text></Text>
           </View>
-        )}
-      </View>
-      <View style={styles.cardBody}>
-        <Text style={styles.cardTitle} numberOfLines={2}>{item.name}</Text>
-        <Text style={styles.cardPrice}>₹{item.dailyRate}<Text style={styles.perDay}>/day</Text></Text>
-      </View>
-    </TouchableOpacity>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  }, [navigation]);
+
+  const renderItem = ({ item, index }: { item: Equipment; index: number }) => (
+    <AnimatedCard item={item} index={index} />
   );
 
   const ChipRow = ({ label, isActive, onPress }: { label: string; isActive: boolean; onPress: () => void }) => (
@@ -129,21 +130,16 @@ export default function CatalogScreen({ route, navigation }: Props) {
   return (
     <View style={styles.container}>
       {/* Content */}
-      {loading ? (
-        <View style={styles.centered}><ActivityIndicator size="large" color={ACCENT} /></View>
+      {isLoading ? (
+        <View style={{ paddingTop: insets.top + 130, paddingHorizontal: 16, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          {[1,2,3,4,5,6].map(i => <View key={i} style={{ width: '48.5%', marginBottom: 14 }}><SkeletonCatalogCard /></View>)}
+        </View>
       ) : error ? (
         <View style={styles.centered}>
           <Ionicons name="cloud-offline-outline" size={52} color="#2a2a2a" />
           <Text style={{ color: '#555', fontSize: 15, fontWeight: '600', marginTop: 16, textAlign: 'center', paddingHorizontal: 40 }}>{error}</Text>
           <TouchableOpacity
-            onPress={() => {
-              setError(null);
-              setLoading(true);
-              Promise.all([fetchAllEquipment(), fetchCategories(), fetchBrands()])
-                .then(([eq, cats, br]) => { setEquipment(eq); setCategories(cats); setBrands(br); })
-                .catch(e => { console.error(e); setError('Could not load catalog. Please check your connection.'); })
-                .finally(() => setLoading(false));
-            }}
+            onPress={() => fetchCatalog(true)}
             style={{ marginTop: 24, backgroundColor: ACCENT, paddingVertical: 14, paddingHorizontal: 32, borderRadius: 100 }}
           >
             <Text style={{ color: '#fff', fontWeight: '800', fontSize: 15 }}>Try Again</Text>
@@ -155,7 +151,7 @@ export default function CatalogScreen({ route, navigation }: Props) {
           keyExtractor={item => item.id.toString()}
           renderItem={renderItem}
           numColumns={2}
-          contentContainerStyle={[styles.list, { paddingTop: insets.top + 70, paddingBottom: insets.bottom + 130 }]}
+          contentContainerStyle={[styles.list, { paddingTop: insets.top + 130, paddingBottom: insets.bottom + 130 }]}
           columnWrapperStyle={styles.row}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
@@ -178,6 +174,24 @@ export default function CatalogScreen({ route, navigation }: Props) {
           <View style={styles.headerCount}>
             <Text style={styles.headerCountText}>{processedEquipment.length} items</Text>
           </View>
+        </View>
+
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={20} color="#777" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search gear..."
+            placeholderTextColor="#777"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            autoCorrect={false}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.searchClear}>
+              <Ionicons name="close-circle" size={20} color="#555" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
@@ -214,7 +228,7 @@ export default function CatalogScreen({ route, navigation }: Props) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, paddingHorizontal: 24 }}>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ paddingHorizontal: 24, paddingVertical: 10 }}>
               {/* Sort */}
               <Text style={styles.sheetSectionLabel}>Sort By</Text>
               <View style={styles.chipGrid}>
@@ -279,10 +293,16 @@ const styles = StyleSheet.create({
 
   // Header
   header: { position: 'absolute', top: 0, left: 0, right: 0, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: BORDER },
-  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingBottom: 14, paddingTop: 10 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingBottom: 10, paddingTop: 10 },
   headerTitle: { color: TEXT_P, fontSize: 32, fontWeight: '900', letterSpacing: -1 },
   headerCount: { backgroundColor: CARD, borderWidth: 1, borderColor: BORDER, paddingHorizontal: 12, paddingVertical: 5, borderRadius: 20 },
   headerCountText: { color: TEXT_S, fontSize: 13, fontWeight: '700' },
+  
+  // Search
+  searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1a1a1a', marginHorizontal: 20, marginBottom: 14, borderRadius: 100, paddingHorizontal: 16, height: 46, borderWidth: 1, borderColor: BORDER },
+  searchIcon: { marginRight: 8 },
+  searchInput: { flex: 1, color: TEXT_P, fontSize: 15, fontWeight: '600' },
+  searchClear: { paddingLeft: 8 },
 
   // FAB
   fab: { position: 'absolute', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: ACCENT, paddingVertical: 15, paddingHorizontal: 26, borderRadius: 100, shadowColor: ACCENT, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 20, elevation: 12, zIndex: 100 },
@@ -315,8 +335,8 @@ const styles = StyleSheet.create({
   sheetTitle: { color: TEXT_P, fontSize: 22, fontWeight: '900' },
   sheetReset: { color: ACCENT, fontSize: 15, fontWeight: '700' },
   sheetSectionLabel: { color: '#555', fontSize: 11, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 24, marginBottom: 14 },
-  chipGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  chip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 100, backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: BORDER },
+  chipGrid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 },
+  chip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 100, backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: BORDER, marginRight: 10, marginBottom: 10 },
   chipActive: { backgroundColor: ACCENT_DIM, borderColor: ACCENT },
   chipText: { color: TEXT_S, fontSize: 14, fontWeight: '700' },
   chipTextActive: { color: ACCENT, fontWeight: '800' },

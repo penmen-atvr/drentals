@@ -1,15 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   View, Text, FlatList, TouchableOpacity, ActivityIndicator,
-  StyleSheet, Image, ScrollView, RefreshControl, ImageBackground,
+  StyleSheet, ScrollView, RefreshControl, Animated,
   Dimensions, NativeScrollEvent, NativeSyntheticEvent
 } from 'react-native';
+import { Image, ImageBackground } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, MainTabParamList } from '../../App';
-import { fetchCategories, fetchFeaturedEquipment, fetchPopularEquipment } from '../api';
+import { useCatalogStore } from '../store/catalogStore';
+import { SkeletonHorizontalCard, SkeletonPill } from '../components/SkeletonCard';
 import { Category, Equipment } from '../types';
 import { useCartStore } from '../store/cartStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -30,44 +32,94 @@ type Props = CompositeScreenProps<
 
 export default function HomeScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [featured, setFeatured] = useState<Equipment[]>([]);
-  const [popular, setPopular] = useState<Equipment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { categories, featured, popular, isLoading, error, fetchCatalog } = useCatalogStore();
   const [heroIndex, setHeroIndex] = useState(0);
+  const heroScrollRef = useRef<ScrollView>(null);
+  const autoSlideTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const cartItemCount = useCartStore((state) => state.items.length);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [cats, feats, pops] = await Promise.all([
-        fetchCategories(),
-        fetchFeaturedEquipment(),
-        fetchPopularEquipment()
-      ]);
-      setCategories(cats);
-      setFeatured(feats);
-      setPopular(pops);
-    } catch (e) {
-      console.error('Error loading home data', e);
-      setError('Could not load content. Please check your connection.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const startAutoSlide = useCallback(() => {
+    if (autoSlideTimer.current) clearInterval(autoSlideTimer.current);
+    autoSlideTimer.current = setInterval(() => {
+      setHeroIndex(prev => {
+        const next = featured.length > 0 ? (prev + 1) % featured.length : 0;
+        heroScrollRef.current?.scrollTo({ x: next * W, animated: true });
+        return next;
+      });
+    }, 4000);
+  }, [featured.length]);
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => {
+    if (!isLoading && featured.length > 1) startAutoSlide();
+    return () => { if (autoSlideTimer.current) clearInterval(autoSlideTimer.current); };
+  }, [isLoading, featured.length, startAutoSlide]);
+
+  // Animation values
+  const heroOpacity = useRef(new Animated.Value(0)).current;
+  const heroTranslate = useRef(new Animated.Value(-30)).current;
+  const pillsOpacity = useRef(new Animated.Value(0)).current;
+  const pillsTranslate = useRef(new Animated.Value(20)).current;
+  const featuredOpacity = useRef(new Animated.Value(0)).current;
+  const featuredTranslate = useRef(new Animated.Value(40)).current;
+  const trendingOpacity = useRef(new Animated.Value(0)).current;
+  const trendingTranslate = useRef(new Animated.Value(40)).current;
+
+  useEffect(() => {
+    fetchCatalog();
+  }, [fetchCatalog]);
+
+  useEffect(() => {
+    if (!isLoading && (featured.length > 0 || categories.length > 0)) {
+      Animated.stagger(120, [
+        Animated.parallel([
+          Animated.timing(heroOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+          Animated.spring(heroTranslate, { toValue: 0, useNativeDriver: true, tension: 60, friction: 10 }),
+        ]),
+        Animated.parallel([
+          Animated.timing(pillsOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+          Animated.spring(pillsTranslate, { toValue: 0, useNativeDriver: true, tension: 60, friction: 10 }),
+        ]),
+        Animated.parallel([
+          Animated.timing(featuredOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+          Animated.spring(featuredTranslate, { toValue: 0, useNativeDriver: true, tension: 60, friction: 10 }),
+        ]),
+        Animated.parallel([
+          Animated.timing(trendingOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+          Animated.spring(trendingTranslate, { toValue: 0, useNativeDriver: true, tension: 60, friction: 10 }),
+        ]),
+      ]).start();
+    }
+  }, [isLoading, featured.length, categories.length]);
 
   const onHeroScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const idx = Math.round(e.nativeEvent.contentOffset.x / W);
     setHeroIndex(idx);
   };
 
-  if (loading) return (
-    <View style={[styles.container, styles.centered]}>
-      <ActivityIndicator size="large" color={ACCENT} />
+  const onHeroScrollBegin = () => {
+    // Pause auto-slide while user is manually swiping, restart after
+    if (autoSlideTimer.current) clearInterval(autoSlideTimer.current);
+  };
+
+  const onHeroScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const idx = Math.round(e.nativeEvent.contentOffset.x / W);
+    setHeroIndex(idx);
+    if (featured.length > 1) startAutoSlide();
+  };
+
+  if (isLoading) return (
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={{ height: 520, backgroundColor: CARD, marginBottom: 20 }} />
+      <View style={{ padding: 16 }}>
+        <View style={{ height: 20, width: 120, backgroundColor: CARD, marginBottom: 16, borderRadius: 4 }} />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {[1,2,3,4].map(i => <SkeletonPill key={i} />)}
+        </ScrollView>
+        <View style={{ height: 20, width: 140, backgroundColor: CARD, marginTop: 32, marginBottom: 16, borderRadius: 4 }} />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {[1,2].map(i => <SkeletonHorizontalCard key={i} />)}
+        </ScrollView>
+      </View>
     </View>
   );
 
@@ -76,7 +128,7 @@ export default function HomeScreen({ navigation }: Props) {
       <MaterialCommunityIcons name="wifi-off" size={48} color="#333" />
       <Text style={{ color: '#555', fontSize: 16, fontWeight: '600', marginTop: 16, textAlign: 'center', paddingHorizontal: 40 }}>{error}</Text>
       <TouchableOpacity
-        onPress={loadData}
+        onPress={() => fetchCatalog(true)}
         style={{ marginTop: 24, backgroundColor: ACCENT, paddingVertical: 14, paddingHorizontal: 32, borderRadius: 100 }}
       >
         <Text style={{ color: '#fff', fontWeight: '800', fontSize: 15 }}>Try Again</Text>
@@ -92,7 +144,12 @@ export default function HomeScreen({ navigation }: Props) {
       activeOpacity={0.88}
     >
       {item.imageUrls && item.imageUrls.length > 0 ? (
-        <Image source={{ uri: item.imageUrls[0] }} style={styles.hCardImage} resizeMode="cover" />
+        <Image 
+          source={{ uri: item.imageUrls[0] }} 
+          style={styles.hCardImage} 
+          contentFit="cover" 
+          onError={(e) => console.log('Image failed to load:', item.imageUrls?.[0], e.error)}
+        />
       ) : (
         <View style={styles.hCardPlaceholder}>
           <Ionicons name="camera-outline" size={28} color="#333" />
@@ -113,18 +170,20 @@ export default function HomeScreen({ navigation }: Props) {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
-      refreshControl={<RefreshControl refreshing={loading} onRefresh={loadData} tintColor={ACCENT} />}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 100, minHeight: '100%' }}
+      refreshControl={<RefreshControl refreshing={isLoading} onRefresh={() => fetchCatalog(true)} tintColor={ACCENT} />}
       showsVerticalScrollIndicator={false}
     >
       {/* ── HERO CAROUSEL ── */}
       {featured.length > 0 && (
-        <View style={{ height: 520 }}>
+        <Animated.View style={{ height: 520, opacity: heroOpacity, transform: [{ translateY: heroTranslate }] }}>
           <ScrollView
+            ref={heroScrollRef}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={onHeroScroll}
+            onScrollBeginDrag={onHeroScrollBegin}
+            onMomentumScrollEnd={onHeroScrollEnd}
             decelerationRate="fast"
             snapToInterval={W}
           >
@@ -177,11 +236,11 @@ export default function HomeScreen({ navigation }: Props) {
               <View key={i} style={[styles.dot, i === heroIndex && styles.dotActive]} />
             ))}
           </View>
-        </View>
+        </Animated.View>
       )}
 
       {/* ── CATEGORY PILLS ── */}
-      <View style={{ marginTop: -8 }}>
+      <Animated.View style={{ marginTop: -8, opacity: pillsOpacity, transform: [{ translateY: pillsTranslate }] }}>
         <Text style={styles.sectionLabel}>Browse by Type</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.pillRow}>
           <TouchableOpacity
@@ -200,10 +259,10 @@ export default function HomeScreen({ navigation }: Props) {
             </TouchableOpacity>
           ))}
         </ScrollView>
-      </View>
+      </Animated.View>
 
       {/* ── FEATURED GEAR ── */}
-      <View style={styles.section}>
+      <Animated.View style={[styles.section, { opacity: featuredOpacity, transform: [{ translateY: featuredTranslate }] }]}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Featured Gear</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Catalog', {})}>
@@ -219,10 +278,10 @@ export default function HomeScreen({ navigation }: Props) {
         >
           {featured.map(renderHorizontalCard)}
         </ScrollView>
-      </View>
+      </Animated.View>
 
       {/* ── TRENDING NOW ── */}
-      <View style={styles.section}>
+      <Animated.View style={[styles.section, { opacity: trendingOpacity, transform: [{ translateY: trendingTranslate }] }]}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Trending Now</Text>
         </View>
@@ -235,7 +294,7 @@ export default function HomeScreen({ navigation }: Props) {
         >
           {popular.map(renderHorizontalCard)}
         </ScrollView>
-      </View>
+      </Animated.View>
     </ScrollView>
   );
 }

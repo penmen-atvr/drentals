@@ -23,6 +23,7 @@ export interface Equipment {
   specs: unknown | null;
   categoryName?: string;
   imageUrls?: string[];
+  mainImageUrl?: string | null;
 }
 
 export interface EquipmentImage {

@@ -1,10 +1,12 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator, CardStyleInterpolators, TransitionSpecs } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { StyleSheet, Platform, View } from 'react-native';
+import { StyleSheet, Platform, View, Easing } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import HomeScreen from './src/screens/HomeScreen';
 import CatalogScreen from './src/screens/CatalogScreen';
@@ -31,8 +33,44 @@ export type MainTabParamList = {
   Menu: undefined;
 };
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
+
+// Smooth ease-out cubic bezier — no flicker, cinematic feel
+const smoothTransition = {
+  transitionSpec: {
+    open: {
+      animation: 'timing' as const,
+      config: { duration: 320, easing: Easing.bezier(0.25, 0.46, 0.45, 0.94) },
+    },
+    close: {
+      animation: 'timing' as const,
+      config: { duration: 260, easing: Easing.bezier(0.55, 0.06, 0.68, 0.19) },
+    },
+  },
+  cardStyleInterpolator: ({ current, next, layouts }: any) => ({
+    cardStyle: {
+      opacity: current.progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+      }),
+      transform: [
+        {
+          translateY: current.progress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [24, 0],
+          }),
+        },
+      ],
+    },
+    overlayStyle: {
+      opacity: current.progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 0.4],
+      }),
+    },
+  }),
+};
 
 function MainTabs() {
   return (
@@ -70,47 +108,51 @@ function MainTabs() {
       <Tab.Screen name="Home" component={HomeScreen} options={{ title: "D'RENTALS" }} />
       <Tab.Screen name="Catalog" component={CatalogScreen} options={{ title: 'Catalog' }} />
       <Tab.Screen name="Brands" component={BrandsScreen} options={{ title: 'Brands' }} />
-      <Tab.Screen name="Cart" component={CartScreen} options={{ title: 'My Cart' }} />
+      <Tab.Screen name="Cart" component={CartScreen} options={{ title: 'My Cart', tabBarStyle: { display: 'none' } }} />
       <Tab.Screen name="Menu" component={MenuScreen} options={{ title: 'Profile' }} />
     </Tab.Navigator>
   );
 }
 
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerStyle: { backgroundColor: '#09090b' },
-            headerTintColor: '#f8fafc',
-            headerTitleStyle: { fontWeight: '700' },
-          }}
-        >
-          <Stack.Screen 
-            name="MainTabs" 
-            component={MainTabs} 
-            options={{ headerShown: false }} 
-          />
-          <Stack.Screen 
-            name="ProductDetail" 
-            component={ProductDetailScreen} 
-            options={{ headerShown: false }} 
-          />
-          <Stack.Screen 
-            name="BrandDetail" 
-            component={BrandDetailScreen} 
-            options={{ headerShown: false }} 
-          />
-          <Stack.Screen 
-            name="WebView" 
-            component={WebViewScreen} 
-            options={{ title: '', headerTransparent: true, headerTintColor: '#f8fafc' }} 
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerStyle: { backgroundColor: '#09090b' },
+              headerTintColor: '#f8fafc',
+              headerTitleStyle: { fontWeight: '700' },
+              cardStyle: { backgroundColor: '#080808' },
+              ...smoothTransition,
+            }}
+          >
+            <Stack.Screen
+              name="MainTabs"
+              component={MainTabs}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ProductDetail"
+              component={ProductDetailScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="BrandDetail"
+              component={BrandDetailScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="WebView"
+              component={WebViewScreen}
+              options={{ title: '', headerTransparent: true, headerTintColor: '#f8fafc' }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
+
+

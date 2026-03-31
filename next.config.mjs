@@ -7,6 +7,10 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   images: {
+    // Serve images directly — bypasses Vercel /_next/image optimizer entirely.
+    // This avoids paid-plan image transformation costs and lets all formats
+    // (.jpg, .png, .webp, etc.) load without any server-side processing.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -17,12 +21,6 @@ const nextConfig = {
         hostname: '**',
       },
     ],
-    // Enable image optimization
-    unoptimized: false,
-    // Configure image optimization
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    formats: ['image/webp', 'image/avif'],
   },
   // Enable compression
   compress: true,
@@ -57,15 +55,6 @@ const nextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/_next/image(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=86400, stale-while-revalidate=31536000',
           },
         ],
       },
