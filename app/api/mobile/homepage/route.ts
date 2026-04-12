@@ -99,7 +99,13 @@ export async function GET() {
         .filter(Boolean),
     }));
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'CDN-Cache-Control': 'no-store',
+        'Vercel-CDN-Cache-Control': 'no-store'
+      }
+    });
   } catch (error) {
     console.error("[/api/mobile/homepage] Error:", error);
     return NextResponse.json({ error: "Failed to load homepage sections" }, { status: 500 });
