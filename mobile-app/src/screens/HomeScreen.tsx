@@ -132,18 +132,18 @@ export default function HomeScreen({ navigation }: Props) {
 
   const onCardPress = (item: HomepageSectionItem) => {
     if (item.targetType === 'equipment') {
-      navigation.navigate('ProductDetail', { slug: item.payload.slug, equipment: item.payload as any });
+      navigation.navigate('ProductDetail', { slug: item.payload?.slug, equipment: item.payload as any });
     } else if (item.targetType === 'category') {
-      navigation.navigate('Catalog', { categoryId: item.payload.categoryId });
+      navigation.navigate('Catalog', { categoryId: item.payload?.categoryId });
     } else if (item.targetType === 'brand') {
-      navigation.navigate('BrandDetail', { brandName: item.payload.brandName });
+      navigation.navigate('BrandDetail', { brandName: item.payload?.brandName });
     }
   };
 
   const getTargetImage = (item: HomepageSectionItem) => {
     if (item.customImageUrl) return { uri: item.customImageUrl };
-    if (item.targetType === 'equipment' && item.payload.imageUrls?.length) {
-      return { uri: item.payload.imageUrls[0] };
+    if (item.targetType === 'equipment' && item.payload?.imageUrls?.length) {
+      return { uri: item.payload?.imageUrls[0] };
     }
     return null;
   };
@@ -173,12 +173,12 @@ export default function HomeScreen({ navigation }: Props) {
           style={styles.hCardGradient}
         />
         <View style={styles.hCardContent}>
-          {item.targetType === 'equipment' && <Text style={styles.hCardBrand}>{item.payload.brand || 'CINEMA'}</Text>}
+          {item.targetType === 'equipment' && <Text style={styles.hCardBrand}>{item.payload?.brand || 'CINEMA'}</Text>}
           {item.targetType === 'category' && <Text style={styles.hCardBrand}>CATEGORY</Text>}
           {item.targetType === 'brand' && <Text style={styles.hCardBrand}>BRAND</Text>}
-          <Text style={styles.hCardTitle} numberOfLines={2}>{item.payload.name}</Text>
+          <Text style={styles.hCardTitle} numberOfLines={2}>{item.payload?.name}</Text>
           {item.targetType === 'equipment' && (
-            <Text style={styles.hCardPrice}>₹{item.payload.dailyRate}<Text style={styles.hCardPer}>/day</Text></Text>
+            <Text style={styles.hCardPrice}>₹{item.payload?.dailyRate}<Text style={styles.hCardPer}>/day</Text></Text>
           )}
         </View>
       </TouchableOpacity>
@@ -216,7 +216,7 @@ export default function HomeScreen({ navigation }: Props) {
           <LinearGradient colors={['transparent', 'rgba(0,0,0,0.85)']} style={StyleSheet.absoluteFill} />
           <View style={styles.bannerContent}>
             <Text style={styles.bannerTitle}>{section.title}</Text>
-            <Text style={styles.bannerSubtitle}>{item.payload.name}</Text>
+            <Text style={styles.bannerSubtitle}>{item.payload?.name}</Text>
           </View>
         </TouchableOpacity>
       </Animated.View>
@@ -236,8 +236,8 @@ export default function HomeScreen({ navigation }: Props) {
               <View style={styles.gCardImgWrap}>
                 {imgSrc ? <Image source={imgSrc} style={StyleSheet.absoluteFill} contentFit="cover" /> : <View style={styles.gCardPlaceholder} />}
               </View>
-              <Text style={styles.gCardTitle} numberOfLines={2}>{item.payload.name}</Text>
-              {item.targetType === 'equipment' && <Text style={styles.gCardPrice}>₹{item.payload.dailyRate}/day</Text>}
+              <Text style={styles.gCardTitle} numberOfLines={2}>{item.payload?.name}</Text>
+              {item.targetType === 'equipment' && <Text style={styles.gCardPrice}>₹{item.payload?.dailyRate}/day</Text>}
             </TouchableOpacity>
           );
         })}
@@ -310,7 +310,7 @@ export default function HomeScreen({ navigation }: Props) {
                   }}
                 >
                   <ImageBackground
-                    source={{ uri: item.customImageUrl || item.payload.imageUrls?.[0] }}
+                    source={{ uri: item.customImageUrl || item.payload?.imageUrls?.[0] }}
                     style={[styles.heroBanner, { width: W }]}
                   >
                     <LinearGradient
@@ -322,10 +322,10 @@ export default function HomeScreen({ navigation }: Props) {
                       <View style={styles.heroBadge}>
                         <Text style={styles.heroBadgeText}>{heroSection?.title?.toUpperCase() ?? 'FEATURED'}</Text>
                       </View>
-                      <Text style={styles.heroTitle}>{item.payload.name}</Text>
+                      <Text style={styles.heroTitle}>{item.payload?.name}</Text>
                       {item.targetType === 'equipment' && (
                         <Text style={styles.heroPrice}>
-                          From <Text style={styles.heroPriceNum}>₹{item.payload.dailyRate}</Text>/day
+                          From <Text style={styles.heroPriceNum}>₹{item.payload?.dailyRate}</Text>/day
                         </Text>
                       )}
                     </View>
