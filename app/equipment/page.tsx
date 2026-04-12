@@ -9,12 +9,10 @@ import Breadcrumb from "@/components/breadcrumb"
 import { generateMetadata } from "@/lib/seo-config"
 import CanonicalUrl from "@/components/canonical-url"
 import type { Metadata } from "next"
-import Script from "next/script"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
 
-// Update the equipment page metadata with more targeted keywords and optimized description
 export const metadata: Metadata = generateMetadata({
   title: "Camera & Equipment Catalog | Rent in Hyderabad",
   description:
@@ -41,7 +39,6 @@ export default async function EquipmentPage({
 }: {
   searchParams: { category?: string; kit?: string }
 }) {
-  // Disable caching for this page
   unstable_noStore()
 
   const categories = await getCategories()
@@ -53,7 +50,7 @@ export default async function EquipmentPage({
 
   return (
     <>
-      <div className="bg-black min-h-screen">
+      <div className="bg-zinc-950 min-h-screen">
         {/* Add canonical URL component to ensure filtered pages point to the main equipment page */}
         <CanonicalUrl overridePath="/equipment" />
 
@@ -91,10 +88,10 @@ export default async function EquipmentPage({
 }
 
 async function EquipmentList({ categoryId, isKit }: { categoryId?: number, isKit?: boolean }) {
-  // Disable caching for this component
   unstable_noStore()
 
   const equipment = await getAllEquipment(categoryId, isKit || undefined)
 
   return <EquipmentGrid equipment={equipment} />
 }
+

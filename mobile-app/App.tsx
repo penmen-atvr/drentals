@@ -100,7 +100,7 @@ function MainTabs() {
           else if (route.name === 'Catalog') iconName = focused ? 'view-grid' : 'view-grid-outline';
           else if (route.name === 'Brands') iconName = focused ? 'tag-multiple' : 'tag-multiple-outline';
           else if (route.name === 'Cart') iconName = focused ? 'cart' : 'cart-outline';
-          else if (route.name === 'Menu') iconName = focused ? 'account-circle' : 'account-circle-outline';
+          else if (route.name === 'Menu') iconName = focused ? 'menu' : 'menu';
           return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
         },
       })}
@@ -109,7 +109,7 @@ function MainTabs() {
       <Tab.Screen name="Catalog" component={CatalogScreen} options={{ title: 'Catalog' }} />
       <Tab.Screen name="Brands" component={BrandsScreen} options={{ title: 'Brands' }} />
       <Tab.Screen name="Cart" component={CartScreen} options={{ title: 'My Cart', tabBarStyle: { display: 'none' } }} />
-      <Tab.Screen name="Menu" component={MenuScreen} options={{ title: 'Profile' }} />
+      <Tab.Screen name="Menu" component={MenuScreen} options={{ title: 'More' }} />
     </Tab.Navigator>
   );
 }

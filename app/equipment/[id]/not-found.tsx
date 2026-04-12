@@ -8,7 +8,7 @@ export const viewport: Viewport = generateViewport()
 
 export default function EquipmentNotFound() {
   return (
-    <div className="bg-black min-h-screen">
+    <div className="bg-zinc-950 min-h-screen">
       <div className="container mx-auto px-4 py-24 text-center">
         <h1 className="font-heading text-4xl md:text-5xl text-red-500 mb-6 tracking-wide">EQUIPMENT NOT FOUND</h1>
         <p className="text-xl text-zinc-300 mb-10 max-w-2xl mx-auto font-body">
@@ -26,7 +26,7 @@ export default function EquipmentNotFound() {
             asChild
             size="lg"
             variant="outline"
-            className="text-white border-white hover:bg-white/10 rounded-none px-8 py-6 text-base font-heading"
+            className="text-black bg-white hover:bg-zinc-200 border-white rounded-none px-8 py-6 text-base font-heading"
           >
             <Link href="/">RETURN HOME</Link>
           </Button>

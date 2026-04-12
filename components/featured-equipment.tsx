@@ -1,27 +1,22 @@
 import { getFeaturedEquipment } from "@/lib/data"
 import EquipmentCard from "./equipment-card"
 import { unstable_noStore } from "next/cache"
+import SectionHeader from "@/components/section-header"
 
 export default async function FeaturedEquipment() {
-  // Disable caching for this component
   unstable_noStore()
-
   const equipment = await getFeaturedEquipment()
 
   return (
-    <section className="py-16 bg-black">
+    <section className="py-16 bg-zinc-950 border-b border-zinc-800">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-10">
-          <h2 className="font-heading text-3xl text-red-500 tracking-wide">FEATURED EQUIPMENT</h2>
-          <div className="h-px bg-red-500 flex-grow ml-6"></div>
-        </div>
+        <SectionHeader title="FEATURED EQUIPMENT" />
         {equipment.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
             {equipment.map((item, index) => (
               <EquipmentCard
                 key={item.id}
                 equipment={item}
-                // Only prioritize the first 4 items that might be visible in the viewport
                 priority={index < 4}
               />
             ))}

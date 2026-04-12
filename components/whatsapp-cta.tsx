@@ -34,7 +34,7 @@ Hello, I'm interested in renting this equipment from D'RENTALS. Please provide i
   return (
     <Button
       onClick={generateWhatsAppMessage}
-      className="w-full bg-green-600 hover:bg-green-700 text-white rounded-none px-8 py-7 text-sm font-heading flex items-center justify-center gap-3 tracking-widest transition-all duration-300 btn-sweep shadow-float relative"
+      className="w-full bg-green-600 hover:bg-green-700 text-white rounded-none px-8 py-7 text-sm font-heading flex items-center justify-center gap-3 tracking-widest transition-all duration-300 shadow-float relative"
     >
       <div className="absolute -top-1 -right-1 flex h-3 w-3">
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>

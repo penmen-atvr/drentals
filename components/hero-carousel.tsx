@@ -54,12 +54,11 @@ export default function HeroCarousel({ equipment }: HeroCarouselProps) {
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 75vw, 1440px"
           quality={85}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent hidden md:block"></div>
+        {/* Removed translucent overlays, images should be fully visible, and text shadowed with text-shadow instead of background fade */}
       </div>
 
-      {/* Progress Bar */}
-      <div className="absolute top-0 left-0 w-full h-1 z-30 opacity-60">
+      {/* Progress Bar (no opacity) */}
+      <div className="absolute top-0 left-0 w-full h-1 z-30">
         <div 
           key={currentIndex}
           className="h-full bg-red-500 origin-left"
@@ -81,14 +80,14 @@ export default function HeroCarousel({ equipment }: HeroCarouselProps) {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Button
               asChild
-              className="bg-red-500 hover:bg-red-600 text-white rounded-none px-8 py-6 text-sm font-heading btn-sweep"
+              className="bg-red-500 hover:bg-red-600 text-white rounded-none px-8 py-6 text-sm font-heading"
             >
               <Link href={`/equipment/${currentEquipment.id}`}>VIEW DETAILS</Link>
             </Button>
             <Button
               asChild
               variant="outline"
-              className="border-white/20 text-white hover:bg-white hover:text-black rounded-none px-8 py-6 text-sm font-heading bg-zinc-900/80 transition-all"
+              className="border-zinc-500 text-white hover:bg-zinc-700 hover:text-white rounded-none px-8 py-6 text-sm font-heading bg-zinc-900 transition-all"
             >
               <Link href="/equipment">BROWSE ALL</Link>
             </Button>
@@ -103,7 +102,7 @@ export default function HeroCarousel({ equipment }: HeroCarouselProps) {
             variant="ghost"
             size="icon"
             onClick={goToPrevious}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 rounded-full p-1 sm:p-2 z-20"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-zinc-950 text-white hover:bg-zinc-800 border border-zinc-800 rounded-full p-1 sm:p-2 z-20 shadow-md"
             aria-label="Previous slide"
           >
             <ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
@@ -112,7 +111,7 @@ export default function HeroCarousel({ equipment }: HeroCarouselProps) {
             variant="ghost"
             size="icon"
             onClick={goToNext}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 rounded-full p-1 sm:p-2 z-20"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-zinc-950 text-white hover:bg-zinc-800 border border-zinc-800 rounded-full p-1 sm:p-2 z-20 shadow-md"
             aria-label="Next slide"
           >
             <ChevronRight className="h-6 w-6 sm:h-8 sm:w-8" />
@@ -127,8 +126,8 @@ export default function HeroCarousel({ equipment }: HeroCarouselProps) {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full transition-all duration-300 ${
-                currentIndex === index ? "bg-red-500 w-4 sm:w-6" : "bg-white/50 hover:bg-white"
+              className={`h-2.5 w-2.5 sm:h-3 sm:w-3 border border-zinc-500 transition-all duration-300 ${
+                currentIndex === index ? "bg-red-500 border-red-500 w-5 sm:w-8 rounded-full" : "bg-zinc-800 hover:bg-zinc-600 rounded-full"
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />

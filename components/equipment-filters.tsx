@@ -46,12 +46,12 @@ export default function EquipmentFilters({
       <CardContent className="pt-6">
         <div className="space-y-6">
           <div>
-            <h3 className="font-heading mb-4 text-white uppercase tracking-wide text-sm underline decoration-red-500/50 underline-offset-8">View Type</h3>
+            <h3 className="font-heading mb-4 text-white uppercase tracking-wide text-sm underline decoration-red-500 underline-offset-8">View Type</h3>
             <div className="grid grid-cols-1 gap-2">
               <Button
                 variant={!isKitOnly ? "default" : "outline"}
                 className={`w-full justify-start rounded-none font-mono ${
-                  !isKitOnly ? "bg-red-500 hover:bg-red-600" : "text-zinc-400 hover:text-white border-zinc-700 hover:border-red-500/50"
+                  !isKitOnly ? "bg-red-500 hover:bg-red-600" : "text-zinc-400 hover:text-white border-zinc-700 hover:border-red-500 hover:bg-zinc-800"
                 }`}
                 onClick={() => handleFilterChange({ kit: false })}
               >
@@ -60,7 +60,7 @@ export default function EquipmentFilters({
               <Button
                 variant={isKitOnly ? "default" : "outline"}
                 className={`w-full justify-start rounded-none font-mono ${
-                  isKitOnly ? "bg-purple-600 hover:bg-purple-700 shadow-[0_0_15px_rgba(147,51,234,0.3)]" : "text-zinc-400 hover:text-white border-zinc-700 hover:border-purple-500/50"
+                  isKitOnly ? "bg-purple-600 hover:bg-purple-700 shadow-md" : "text-zinc-400 hover:text-white border-zinc-700 hover:border-purple-500 hover:bg-zinc-800"
                 }`}
                 onClick={() => handleFilterChange({ kit: true })}
               >
@@ -70,7 +70,7 @@ export default function EquipmentFilters({
           </div>
 
           <div>
-            <h3 className="font-heading mb-4 text-white uppercase tracking-wide text-sm underline decoration-red-500/50 underline-offset-8">Categories</h3>
+            <h3 className="font-heading mb-4 text-white uppercase tracking-wide text-sm underline decoration-red-500 underline-offset-8">Categories</h3>
             <div className="space-y-2">
               <Button
                 variant={!selectedCategory ? "default" : "outline"}

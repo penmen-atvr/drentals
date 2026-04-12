@@ -97,7 +97,7 @@ export default function ContactForm() {
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 p-6 border border-zinc-800 bg-zinc-900">
       {error && (
-        <div className="p-4 border border-red-500 bg-red-500/10 text-white flex items-center gap-2 rounded-none">
+        <div className="p-4 border border-red-500 bg-red-950 text-white flex items-center gap-2 rounded-none">
           <AlertCircle className="h-5 w-5 text-red-500" />
           <p>{error}</p>
         </div>

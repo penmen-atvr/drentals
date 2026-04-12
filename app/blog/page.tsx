@@ -6,7 +6,8 @@ import Breadcrumb from "@/components/breadcrumb"
 import { generateMetadata } from "@/lib/seo-config"
 import type { Metadata } from "next"
 import SafeImage from "@/components/safe-image"
-import Script from "next/script"
+import PageHeader from "@/components/page-header"
+
 
 export const metadata: Metadata = generateMetadata({
   title: "Blog & Resources | Camera Rental Tips",
@@ -34,39 +35,16 @@ export default async function BlogPage() {
 
   return (
     <>
-      <div className="bg-black min-h-screen">
+      <div className="bg-zinc-950 min-h-screen">
         <div className="container mx-auto px-4 py-4">
           <Breadcrumb items={[{ label: "Blog" }]} />
 
-          <div className="relative py-20 overflow-hidden">
-            <div className="absolute inset-0 bg-black opacity-80 z-0"></div>
-            <div
-              className="absolute inset-0 z-0 bg-cover bg-center"
-              style={{
-                backgroundImage:
-                  "url('https://images.unsplash.com/photo-1516038858710-cd5594d8b4f7?w=1200&auto=format&fit=crop')",
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
-              }}
-            >
-              <div className="absolute inset-0 bg-zinc-900 -z-10"></div>
-            </div>
+          <PageHeader
+            label="OUR INSIGHTS"
+            title={<>D&apos;RENTALS <span className="text-red-500">BLOG</span></>}
+            description="Stay updated with expert tips, guides, and industry insights on camera equipment and filmmaking."
+          />
 
-            <div className="container mx-auto px-4 relative z-10">
-              <div className="max-w-3xl">
-                <div className="inline-block mb-4 px-3 py-1 border border-red-500 bg-black/50">
-                  <span className="text-red-400 font-mono text-sm tracking-widest">OUR INSIGHTS</span>
-                </div>
-                <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl text-white mb-6 tracking-wide leading-tight">
-                  D&apos;RENTALS <span className="text-red-500">BLOG</span>
-                </h1>
-                <p className="text-xl text-zinc-300 mb-6 max-w-2xl font-body">
-                  Stay updated with expert tips, guides, and industry insights on camera equipment and filmmaking.
-                </p>
-              </div>
-            </div>
-          </div>
 
           <div className="py-16">
             {posts.length === 0 ? (
@@ -107,3 +85,4 @@ export default async function BlogPage() {
     </>
   )
 }
+

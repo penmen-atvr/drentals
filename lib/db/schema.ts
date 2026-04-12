@@ -97,3 +97,35 @@ export const kitItemRelations = relations(kitItems, ({ one }) => ({
 }))
 
 
+export const homepageSections = pgTable("homepage_sections", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  type: text("type").default("carousel").notNull(), // "hero", "carousel"
+  isActive: boolean("is_active").default(true).notNull(),
+  displayOrder: integer("display_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+})
+
+export const sectionItems = pgTable("section_items", {
+  id: serial("id").primaryKey(),
+  sectionId: integer("section_id").references(() => homepageSections.id, { onDelete: 'cascade' }).notNull(),
+  equipmentId: integer("equipment_id").references(() => equipment.id, { onDelete: 'cascade' }).notNull(),
+  displayOrder: integer("display_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+})
+
+export const homepageSectionsRelations = relations(homepageSections, ({ many }) => ({
+  items: many(sectionItems),
+}))
+
+export const sectionItemsRelations = relations(sectionItems, ({ one }) => ({
+  section: one(homepageSections, {
+    fields: [sectionItems.sectionId],
+    references: [homepageSections.id],
+  }),
+  equipment: one(equipment, {
+    fields: [sectionItems.equipmentId],
+    references: [equipment.id],
+  }),
+}))

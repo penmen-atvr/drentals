@@ -4,12 +4,11 @@ import { Separator } from "@/components/ui/separator"
 import SafeImage from "@/components/safe-image"
 import Breadcrumb from "@/components/breadcrumb"
 import { generateMetadata, generateViewport } from "@/lib/seo-config"
-import Script from "next/script"
+import PageHeader from "@/components/page-header"
 
-// Add viewport export
+
 export const viewport: Viewport = generateViewport()
 
-// Update the about page metadata with more targeted keywords
 export const metadata: Metadata = generateMetadata({
   title: "About Us | Camera Rental Services in Hyderabad",
   description:
@@ -35,36 +34,14 @@ export const metadata: Metadata = generateMetadata({
 export default function AboutPage() {
   return (
     <>
-      <div className="bg-black min-h-screen">
+      <div className="bg-zinc-950 min-h-screen">
         <div className="container mx-auto px-4 py-4">
           <Breadcrumb items={[{ label: "About" }]} />
 
-          <div className="relative py-20 overflow-hidden">
-            <div className="absolute inset-0 bg-black opacity-80 z-0"></div>
-            <div
-              className="absolute inset-0 z-0 bg-cover bg-center"
-              style={{
-                backgroundImage:
-                  "url('https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&auto=format&fit=crop')",
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
-              }}
-            >
-              <div className="absolute inset-0 bg-zinc-900 -z-10"></div>
-            </div>
-
-            <div className="container mx-auto px-4 relative z-10">
-              <div className="max-w-3xl">
-                <div className="inline-block mb-4 px-3 py-1 border border-red-500 bg-black/50">
-                  <span className="text-red-400 font-mono text-sm tracking-widest">ABOUT US</span>
-                </div>
-                <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl text-white mb-6 tracking-wide leading-tight">
-                  THE <span className="text-red-500">D&apos;RENTALS</span> STORY
-                </h1>
-              </div>
-            </div>
-          </div>
+          <PageHeader
+            label="ABOUT US"
+            title={<>THE <span className="text-red-500">D&apos;RENTALS</span> STORY</>}
+          />
 
           <div className="py-16">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -156,3 +133,4 @@ export default function AboutPage() {
     </>
   )
 }
+

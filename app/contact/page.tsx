@@ -3,9 +3,9 @@ import { Mail, MapPin, Phone } from "lucide-react"
 import ContactForm from "@/components/contact-form"
 import Breadcrumb from "@/components/breadcrumb"
 import { generateMetadata, generateViewport } from "@/lib/seo-config"
-import Script from "next/script"
+import PageHeader from "@/components/page-header"
 
-// Add viewport export
+
 export const viewport: Viewport = generateViewport()
 
 export const metadata: Metadata = generateMetadata({
@@ -28,40 +28,15 @@ export const metadata: Metadata = generateMetadata({
 export default function ContactPage() {
   return (
     <>
-      <div className="bg-black min-h-screen">
+      <div className="bg-zinc-950 min-h-screen">
         <div className="container mx-auto px-4 py-4">
           <Breadcrumb items={[{ label: "Contact" }]} />
 
-          <div className="relative py-20 overflow-hidden">
-            <div className="absolute inset-0 bg-black opacity-80 z-0"></div>
-            <div
-              className="absolute inset-0 z-0 bg-cover bg-center"
-              style={{
-                backgroundImage:
-                  "url('https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&auto=format&fit=crop')",
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
-              }}
-            >
-              <div className="absolute inset-0 bg-zinc-900 -z-10"></div>
-            </div>
-
-            <div className="container mx-auto px-4 relative z-10">
-              <div className="max-w-3xl">
-                <div className="inline-block mb-4 px-3 py-1 border border-red-500 bg-black/50">
-                  <span className="text-red-400 font-mono text-sm tracking-widest">CONTACT US</span>
-                </div>
-                <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl text-white mb-6 tracking-wide leading-tight">
-                  GET IN <span className="text-red-400">TOUCH</span>
-                </h1>
-                <p className="text-xl text-zinc-300 mb-6 max-w-2xl font-body">
-                  Have questions about our equipment or need assistance with your rental? Our team is ready to help you
-                  find the perfect gear for your production.
-                </p>
-              </div>
-            </div>
-          </div>
+          <PageHeader
+            label="CONTACT US"
+            title={<>GET IN <span className="text-red-500">TOUCH</span></>}
+            description="Have questions about our equipment or need assistance with your rental? Our team is ready to help you find the perfect gear for your production."
+          />
 
           <div className="py-16">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -154,3 +129,4 @@ export default function ContactPage() {
     </>
   )
 }
+

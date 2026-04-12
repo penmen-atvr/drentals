@@ -114,4 +114,22 @@ export const fetchPopularEquipment = async (): Promise<Equipment[]> => {
   const items: Equipment[] = await response.json();
   return items.map(transformEquipment);
 };
-// Re-export old logic space removed
+
+export interface HomepageSection {
+  id: number;
+  title: string;
+  type: 'hero' | 'carousel';
+  displayOrder: number;
+  items: Equipment[];
+}
+
+export const fetchHomepageSections = async (): Promise<HomepageSection[]> => {
+  const response = await fetchWithTimeout(`${API_BASE}/mobile/homepage`);
+  if (!response.ok) throw new Error('Failed to fetch homepage sections');
+  const sections: HomepageSection[] = await response.json();
+  return sections.map((section) => ({
+    ...section,
+    items: section.items.map(transformEquipment),
+  }));
+};
+

@@ -84,7 +84,7 @@ export default async function EquipmentDetailPage({
 
   return (
     <>
-      <div className="bg-black min-h-screen">
+      <div className="bg-zinc-950 min-h-screen">
         <ProductSchema equipment={equipment} />
 
         <div className="container mx-auto px-4 py-4">
@@ -96,20 +96,20 @@ export default async function EquipmentDetailPage({
             </div>
 
             <div>
-              <div className="inline-block mb-4 px-3 py-1 border border-red-500 bg-black/50">
+              <div className="inline-block mb-4 px-3 py-1 border border-red-500 bg-zinc-950">
                 <span className="text-red-400 font-mono text-sm tracking-widest">EQUIPMENT ID: {equipment.id}</span>
               </div>
 
               <div className="flex items-center gap-2 mb-2">
                 <Badge
                   variant="outline"
-                  className="bg-transparent border-zinc-700 text-zinc-400 rounded-none font-mono uppercase"
+                  className="bg-zinc-950 border-zinc-700 text-zinc-400 rounded-none font-mono uppercase"
                 >
                   {equipment.brand}
                 </Badge>
                 <Badge
                   variant="outline"
-                  className="bg-transparent border-zinc-700 text-zinc-400 rounded-none font-mono uppercase"
+                  className="bg-zinc-950 border-zinc-700 text-zinc-400 rounded-none font-mono uppercase"
                 >
                   {equipment.condition}
                 </Badge>
@@ -168,7 +168,7 @@ export default async function EquipmentDetailPage({
                       <h2 className="text-xl font-heading mb-3 text-white uppercase tracking-wide">Bundle Components</h2>
                       <div className="grid grid-cols-1 gap-2">
                         {equipment.kitComponents.map((component: any) => (
-                          <div key={component.id} className="flex justify-between items-center p-3 bg-zinc-900/50 border border-zinc-800">
+                          <div key={component.id} className="flex justify-between items-center p-3 bg-zinc-900 border border-zinc-800">
                              <div className="flex flex-col">
                                 <span className="text-white font-mono text-sm">{component.item?.name}</span>
                                 <span className="text-zinc-500 font-mono text-[10px] uppercase">{component.item?.model}</span>

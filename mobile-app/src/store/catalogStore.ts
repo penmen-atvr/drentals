@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Equipment, Category } from '../types';
-import { fetchAllEquipment, fetchCategories, fetchBrands, fetchFeaturedEquipment, fetchPopularEquipment } from '../api';
+import { fetchAllEquipment, fetchCategories, fetchBrands, fetchFeaturedEquipment, fetchPopularEquipment, fetchHomepageSections, HomepageSection } from '../api';
 
 interface CatalogState {
   equipment: Equipment[];
@@ -10,6 +10,7 @@ interface CatalogState {
   brands: string[];
   featured: Equipment[];
   popular: Equipment[];
+  homepageSections: HomepageSection[];
   lastFetched: number | null;
   isLoading: boolean;
   error: string | null;
@@ -29,6 +30,7 @@ export const useCatalogStore = create<CatalogState>()(
       brands: [],
       featured: [],
       popular: [],
+      homepageSections: [],
       lastFetched: null,
       isLoading: false,
       error: null,
@@ -37,9 +39,6 @@ export const useCatalogStore = create<CatalogState>()(
         const { lastFetched } = get();
         const now = Date.now();
         
-        // If we have data and it's not stale, and not forced, we can skip fetching
-        // BUT we actually want to fetch in the background (stale-while-revalidate)
-        // So we only set isLoading: true if we don't have ANY data yet
         const hasData = get().equipment.length > 0;
         
         if (!hasData) {
@@ -47,12 +46,13 @@ export const useCatalogStore = create<CatalogState>()(
         }
 
         try {
-          const [eq, cats, br, feat, pop] = await Promise.all([
+          const [eq, cats, br, feat, pop, sections] = await Promise.all([
             fetchAllEquipment(),
             fetchCategories(),
             fetchBrands(),
             fetchFeaturedEquipment(),
-            fetchPopularEquipment()
+            fetchPopularEquipment(),
+            fetchHomepageSections(),
           ]);
 
           set({
@@ -61,6 +61,7 @@ export const useCatalogStore = create<CatalogState>()(
             brands: br,
             featured: feat,
             popular: pop,
+            homepageSections: sections,
             lastFetched: now,
             isLoading: false,
             error: null,
@@ -70,7 +71,6 @@ export const useCatalogStore = create<CatalogState>()(
           if (!hasData) {
             set({ error: "Failed to load catalog. Please check connection.", isLoading: false });
           } else {
-            // If we have cached data, just gracefully hide the error and rely on cache
             set({ isLoading: false });
           }
         }
@@ -82,6 +82,7 @@ export const useCatalogStore = create<CatalogState>()(
           brands: [],
           featured: [],
           popular: [],
+          homepageSections: [],
           lastFetched: null
         });
       }
@@ -89,13 +90,13 @@ export const useCatalogStore = create<CatalogState>()(
     {
       name: 'drentals-catalog-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      // We don't want to persist isLoading or error state
       partialize: (state) => ({
         equipment: state.equipment,
         categories: state.categories,
         brands: state.brands,
         featured: state.featured,
         popular: state.popular,
+        homepageSections: state.homepageSections,
         lastFetched: state.lastFetched,
       }),
     }

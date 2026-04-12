@@ -3,7 +3,6 @@ import { MapPin } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import Breadcrumb from "@/components/breadcrumb"
 import type { Metadata } from "next"
-import Script from "next/script"
 
 export const metadata: Metadata = {
   title: "Camera Rental Service Areas | D'RENTALS by Penmen Studios",
@@ -80,27 +79,14 @@ const serviceAreas = [
 export default function AreasPage() {
   return (
     <>
-      <div className="bg-black min-h-screen">
+      <div className="bg-zinc-950 min-h-screen">
         <div className="container mx-auto px-4 py-4">
           <Breadcrumb items={[{ label: "Service Areas" }]} />
 
-          <div className="relative py-20 overflow-hidden">
-            <div className="absolute inset-0 bg-black opacity-80 z-0"></div>
-            <div
-              className="absolute inset-0 z-0 bg-cover bg-center"
-              style={{
-                backgroundImage: "url('/hyderabad-camera-delivery.png')",
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
-              }}
-            >
-              <div className="absolute inset-0 bg-zinc-900 -z-10"></div>
-            </div>
-
+          <div className="relative py-20 bg-zinc-950 border-b border-zinc-800">
             <div className="container mx-auto px-4 relative z-10">
               <div className="max-w-3xl">
-                <div className="inline-block mb-4 px-3 py-1 border border-red-500 bg-black/50">
+                <div className="inline-block mb-4 px-3 py-1 border border-red-500 bg-zinc-950">
                   <span className="text-red-400 font-mono text-sm tracking-widest">EQUIPMENT DELIVERY</span>
                 </div>
                 <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl text-white mb-6 tracking-wide leading-tight">
@@ -208,3 +194,4 @@ export default function AreasPage() {
     </>
   )
 }
+

@@ -85,7 +85,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
+    <html lang="en" className="dark scroll-smooth overflow-x-hidden" suppressHydrationWarning>
       <head>
         {/* Preload critical assets */}
         {criticalAssets.map((asset, index) => (
@@ -98,9 +98,9 @@ export default function RootLayout({
       </head>
       <body className={`${blackOpsOne.variable} ${quantico.variable} ${robotoMono.variable} font-body overflow-x-hidden`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
-          <div className="flex min-h-screen flex-col bg-black">
+          <div className="flex min-h-screen flex-col bg-zinc-950">
             <Header />
-            <main className="flex-1">
+            <main className="flex-1 pt-16">
               <PageTransition>{children}</PageTransition>
             </main>
             <BackToTop />

@@ -83,7 +83,7 @@ export default function Header() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 glass-effect">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-950 border-b border-zinc-900">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group" onClick={() => pathname === "/" && scrollToTop()}>
@@ -107,7 +107,7 @@ export default function Header() {
               >
                 {link.label}
                 {isActive(link.href) && (
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-red-500 animate-in-fade" />
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-red-500" />
                 )}
               </Link>
             ))}
