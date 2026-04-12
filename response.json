@@ -1,0 +1,259 @@
+[
+  {
+    "id": 1,
+    "title": "Featured Gear",
+    "type": "hero",
+    "displayOrder": 0,
+    "items": [
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 50,
+          "name": "SONY FX3A SHORTFILM/DEMO KIT",
+          "slug": "sony-fx3a-shortfilm-demo-kit",
+          "brand": "SONY",
+          "dailyRate": "5999",
+          "status": "available",
+          "mainImageUrl": "https://rentals.penmenstudios.com/_next/image?url=https%3A%2F%2F10658twyksqssspz.public.blob.vercel-storage.com%2FRENTALS%2520POSTERS%2520%2FSONY%2520FX3%2520shortfilm%2520package&w=1920&q=85",
+          "imageUrls": [
+            "https://rentals.penmenstudios.com/_next/image?url=https%3A%2F%2F10658twyksqssspz.public.blob.vercel-storage.com%2FRENTALS%2520POSTERS%2520%2FSONY%2520FX3%2520shortfilm%2520package&w=1920&q=85"
+          ]
+        }
+      },
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 32,
+          "name": "Sony FX3A",
+          "slug": "32",
+          "brand": "SONY",
+          "dailyRate": "2499",
+          "status": "available",
+          "mainImageUrl": "https://www.sony.co.in/image/2f3120b61d3cfbe9abcfc8ca42e9212f?fmt=png-alpha&wid=1578&hei=1050&bgcolor=F6F9FF",
+          "imageUrls": [
+            "https://www.sony.co.in/image/988957686fbd13bcf4465a3505472d22?fmt=png-alpha&wid=1578&hei=1050&bgcolor=F6F9FF",
+            "https://www.sony.co.in/image/8de2992d614afa4e93181457c317d0b9?fmt=png-alpha&wid=1578&hei=1050&bgcolor=F6F9FF",
+            "https://www.sony.co.in/image/db43686f9e1da88185795860508a2993?fmt=png-alpha&wid=1578&hei=1050&bgcolor=F6F9FF",
+            "https://www.sony.co.in/image/235638b85c9bf0c6e3cf0573b663359f?fmt=png-alpha&wid=1578&hei=1050&bgcolor=F6F9FF",
+            "https://www.sony.co.in/image/0e6ee499887aff83a21ebf236924db22?fmt=png-alpha&wid=1578&hei=1050&bgcolor=F6F9FF",
+            "https://www.sony.co.in/image/516ad25eeb8bf7fbe94a14b6547c139e?fmt=png-alpha&wid=1578&hei=1050&bgcolor=F6F9FF",
+            "https://www.sony.co.in/image/bed1fc237906e5813f1201c9a4e5b0c5?fmt=png-alpha&wid=1578&hei=1050&bgcolor=F6F9FF",
+            "https://www.sony.co.in/image/2f3120b61d3cfbe9abcfc8ca42e9212f?fmt=png-alpha&wid=1578&hei=1050&bgcolor=F6F9FF"
+          ]
+        }
+      },
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 17,
+          "name": " BMPCC 6K Pro Rig Kit",
+          "slug": "17",
+          "brand": "PACKAGES",
+          "dailyRate": "1999",
+          "status": "available",
+          "mainImageUrl": "https://images.blackmagicdesign.com/images/products/blackmagicpocketcinemacamera/techspecs/hero/blackmagic-pocket-cinema-camera-6k-pro-md.jpg?_v=1655700782",
+          "imageUrls": [
+            "https://images.blackmagicdesign.com/images/products/blackmagicpocketcinemacamera/techspecs/hero/blackmagic-pocket-cinema-camera-6k-pro-md.jpg?_v=1655700782"
+          ]
+        }
+      },
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 30,
+          "name": "RED DEMO film Package",
+          "slug": "30",
+          "brand": "PACKAGES",
+          "dailyRate": "5999",
+          "status": "available",
+          "mainImageUrl": "https://10658twyksqssspz.public.blob.vercel-storage.com/rental%20website/red%20%20komodo/redkomodo-700x700.png",
+          "imageUrls": [
+            "https://10658twyksqssspz.public.blob.vercel-storage.com/rental%20website/red%20%20komodo/redkomodo-700x700.png"
+          ]
+        }
+      },
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 1,
+          "name": "Red Komodo 6k",
+          "slug": "1",
+          "brand": "RED",
+          "dailyRate": "2499",
+          "status": "available",
+          "mainImageUrl": "https://images.red.com/og/komodo.jpg",
+          "imageUrls": [
+            "https://www.red.com/SSP%20Applications/Red@SuiteCentric/SCA%20Kilimanjaro/img/komodo/marketing/accessories-tile-2.jpg",
+            "https://www.red.com/SSP%20Applications/Red@SuiteCentric/SCA%20Kilimanjaro/img/komodo/marketing/accessories-tile-3.jpg",
+            "https://10658twyksqssspz.public.blob.vercel-storage.com/red%20komodo-k98tdokwGY5MC6uKVtGxWitELesYbn.jpg",
+            "https://10658twyksqssspz.public.blob.vercel-storage.com/red%20komodoaa-KvDIIUjMaC2VkkAb8f1Bq08SEdCnem.avif",
+            "https://images.red.com/og/komodo.jpg"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Trending Now",
+    "type": "grid",
+    "displayOrder": 1,
+    "items": [
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 46,
+          "name": "VESPID PRIMEs 2 set",
+          "slug": "46",
+          "brand": "DZOFILM",
+          "dailyRate": "6000",
+          "status": "available",
+          "mainImageUrl": "https://images.dzofilm.com/dzofilm-zh/imgs/vp2-b5.webp",
+          "imageUrls": [
+            "https://images.dzofilm.com/dzofilm-zh/imgs/vp2-b11-4.webp",
+            "https://images.dzofilm.com/dzofilm-zh/imgs/vp2-b11-6.webp",
+            "https://images.dzofilm.com/dzofilm-zh/imgs/vp2-b11-1.webp",
+            "https://images.dzofilm.com/dzofilm-zh/imgs/vp2-b11-2.webp",
+            "https://images.dzofilm.com/dzofilm-zh/imgs/vp2-b11-3.webp",
+            "https://images.dzofilm.com/dzofilm-zh/imgs/vp2-b5.webp"
+          ]
+        }
+      },
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 22,
+          "name": "BMPCC SHORTFILM PACKAGE",
+          "slug": "22",
+          "brand": "PACKAGES",
+          "dailyRate": "4999",
+          "status": "available",
+          "mainImageUrl": "https://images.unsplash.com/photo-1718809578634-af3d1a9c1b5d?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          "imageUrls": [
+            "https://www.lksamyang.com/upload/product/product/1551768408.png",
+            "https://www.lksamyang.com/upload/product/product/1551769885.png",
+            "https://images.samsung.com/is/image/samsung/p6pim/in/mu-pe1t0s-ww/gallery/in-portable-ssd-t7-shield-mu-pe1t0s-ww-532192732?$684_547_JPG$",
+            "https://i1.adis.ws/i/canon/ef-50mm-f1.4-usm-match_eb7a70b38b744ab78e904425d51cb84b?$prod-gallery-1by1$",
+            "https://djiindiashop.com/cdn/shop/files/6_f58a314a-b3fb-4fbf-a0f2-eeed72c66877.jpg?v=1726489469&width=800",
+            "https://www.digitek.net.in/cdn/shop/files/DCL-150WBCRPD1of9.png?v=1707725905&width=1000",
+            "https://images.unsplash.com/photo-1718809578634-af3d1a9c1b5d?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          ]
+        }
+      },
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 19,
+          "name": "DJI Air 2S DRONE",
+          "slug": "19",
+          "brand": "DJI",
+          "dailyRate": "1999",
+          "status": "available",
+          "mainImageUrl": "https://10658twyksqssspz.public.blob.vercel-storage.com/rental%20website/air%202s_1-E27yUa3SQ1SUs0z7KLMnIYDSAV37ll.png",
+          "imageUrls": [
+            "https://10658twyksqssspz.public.blob.vercel-storage.com/rental%20website/air%202s-tSWC56QWYDkMui1hJLS8wMTdWOjoQ7.png",
+            "https://10658twyksqssspz.public.blob.vercel-storage.com/rental%20website/air%202s_3-mSEcWiLY8B44fE7n1IWZtJJVtreKrv.png",
+            "https://10658twyksqssspz.public.blob.vercel-storage.com/rental%20website/air%202s_4-URDdrJHvmkVfzKXS7Cpee6qxINnHAs.png",
+            "https://10658twyksqssspz.public.blob.vercel-storage.com/rental%20website/air%202s_2-oAqZVavViFJsOrPz7qmWGA11BF9kcf.png",
+            "https://10658twyksqssspz.public.blob.vercel-storage.com/rental%20website/air%202s_1-E27yUa3SQ1SUs0z7KLMnIYDSAV37ll.png"
+          ]
+        }
+      },
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 35,
+          "name": "SONY FX3 WITH LENS",
+          "slug": "",
+          "brand": "SONY",
+          "dailyRate": "3499",
+          "status": "available",
+          "mainImageUrl": "https://10658twyksqssspz.public.blob.vercel-storage.com/RENTALS%20POSTERS%20/SONY%20FX3%20WITH%20LENS",
+          "imageUrls": [
+            "https://10658twyksqssspz.public.blob.vercel-storage.com/RENTALS%20POSTERS%20/SONY%20FX3%20WITH%20LENS"
+          ]
+        }
+      },
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 48,
+          "name": "DZOFILM Pictor ZOOM LENS",
+          "slug": "48",
+          "brand": "DZOFILM",
+          "dailyRate": "2200",
+          "status": "available",
+          "mainImageUrl": "https://www.tanotis.com/cdn/shop/products/1594721136_1574481_f2fdc63c-1629-400d-9eb8-33b500479cfa_800x.jpg?v=1628760543",
+          "imageUrls": [
+            "https://www.tanotis.com/cdn/shop/products/1594720920_IMG_1387714_800x.jpg?v=1628760544",
+            "https://www.tanotis.com/cdn/shop/products/1594721136_1574481_f2fdc63c-1629-400d-9eb8-33b500479cfa_800x.jpg?v=1628760543"
+          ]
+        }
+      },
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 47,
+          "name": "Samyang vdslr ii lens set",
+          "slug": "47",
+          "brand": "Samyang",
+          "dailyRate": "3000",
+          "status": "available",
+          "mainImageUrl": "https://samyangus.com/cdn/shop/files/24_35_50_85mmVDSLRIIBundleThumbnail.png?v=1733770954&width=1800",
+          "imageUrls": [
+            "https://cdn.shopify.com/s/files/1/0488/0790/3385/products/14mm_T3.1II-side_540x.jpg?v=1600873124",
+            "https://cdn.shopify.com/s/files/1/0488/0790/3385/products/35mm_T1.5_side_540x.jpg?v=1600875325",
+            "https://cdn.shopify.com/s/files/1/0488/0790/3385/products/24mm_T1.5II-side_540x.jpg?v=1600874058",
+            "https://cdn.shopify.com/s/files/1/0488/0790/3385/products/85mm_T1.5II-side_540x.jpg?v=1600878470",
+            "https://cdn.shopify.com/s/files/1/0488/0790/3385/products/14mm_T3.1II-side_540x.jpg?v=1600873124",
+            "https://cdn.shopify.com/s/files/1/0488/0790/3385/products/50mmT1.5ASUMCIF-side_540x.jpg?v=1600875921",
+            "https://samyangus.com/cdn/shop/files/24_35_50_85mmVDSLRIIBundleThumbnail.png?v=1733770954&width=1800"
+          ]
+        }
+      },
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 43,
+          "name": "RODE NT-USB Mini",
+          "slug": "43",
+          "brand": "RODE",
+          "dailyRate": "599",
+          "status": "available",
+          "mainImageUrl": "https://edge.rode.com/images/page/77/modules/3685/RODE_NT-USB_Mini_FRONT_DEEP_ETCHED-2000x2000-ecf456c.png",
+          "imageUrls": [
+            "https://edge.rode.com/images/page/77/modules/3685/RODE_NT-USB_Mini_FRONT_DEEP_ETCHED-2000x2000-ecf456c.png"
+          ]
+        }
+      },
+      {
+        "targetType": "equipment",
+        "customImageUrl": null,
+        "payload": {
+          "id": 42,
+          "name": "Boya BY-MM1 Microphone",
+          "slug": "42",
+          "brand": "BOYA",
+          "dailyRate": "399",
+          "status": "available",
+          "mainImageUrl": "https://boya-mic.in/cdn/shop/files/71_wDPAN8nL._AC_SL1500.jpg?v=1761973599&width=800",
+          "imageUrls": [
+            "https://boya-mic.in/cdn/shop/files/71_wDPAN8nL._AC_SL1500.jpg?v=1761973599&width=800"
+          ]
+        }
+      }
+    ]
+  }
+]
