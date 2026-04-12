@@ -69,7 +69,7 @@ export default function TermsConditionsPage() {
                   5. LIABILITY
                 </h2>
                 <p className="text-zinc-400 font-body text-base">
-                  D'RENTALS is not liable for indirect or consequential damages, including loss of data or loss of profit,
+                  D&apos;RENTALS is not liable for indirect or consequential damages, including loss of data or loss of profit,
                   arising from equipment malfunction or user error during the production.
                 </p>
               </div>

@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
               <p className="text-zinc-400 font-body text-base">
                 Your privacy is important to us. This Privacy Policy explains how we collect, use,
                 disclose and safeguard your information when you visit our website, use our mobile application, or rent
-                equipment through D'RENTALS.
+                equipment through D&apos;RENTALS.
               </p>
 
               <div>
@@ -85,7 +85,7 @@ export default function PrivacyPolicyPage() {
                   <a href="mailto:admin@penmenstudios.com" className="text-red-500 hover:text-white transition-colors">
                     admin@penmenstudios.com
                   </a>
-                  {" "}with the subject line "Account Deletion Request". We will process your request within 5-7 business days, provided there are no outstanding rental disputes or legal holding requirements.
+                  {" "}with the subject line &quot;Account Deletion Request&quot;. We will process your request within 5-7 business days, provided there are no outstanding rental disputes or legal holding requirements.
                 </p>
               </div>
 
