@@ -115,21 +115,39 @@ export const fetchPopularEquipment = async (): Promise<Equipment[]> => {
   return items.map(transformEquipment);
 };
 
+export interface HomepageSectionItem {
+  targetType: 'equipment' | 'category' | 'brand';
+  customImageUrl?: string | null;
+  payload: any;
+}
+
 export interface HomepageSection {
   id: number;
   title: string;
-  type: 'hero' | 'carousel';
+  type: 'hero' | 'carousel' | 'grid' | 'banner';
   displayOrder: number;
-  items: Equipment[];
+  items: HomepageSectionItem[];
 }
 
 export const fetchHomepageSections = async (): Promise<HomepageSection[]> => {
   const response = await fetchWithTimeout(`${API_BASE}/mobile/homepage`);
   if (!response.ok) throw new Error('Failed to fetch homepage sections');
-  const sections: HomepageSection[] = await response.json();
+  const sections: any[] = await response.json();
   return sections.map((section) => ({
     ...section,
-    items: section.items.map(transformEquipment),
+    items: section.items.map((item: any) => {
+      // Fallback for older API responses where the item IS the payload (no targetType exist)
+      if (!item.targetType) {
+        return {
+          targetType: 'equipment',
+          payload: transformEquipment(item),
+        };
+      }
+      return {
+        ...item,
+        payload: item.targetType === 'equipment' ? transformEquipment(item.payload) : item.payload,
+      };
+    }),
   }));
 };
 

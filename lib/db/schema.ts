@@ -7,7 +7,8 @@ import {
   numeric, 
   boolean, 
   jsonb,
-  varchar
+  varchar,
+  pgEnum
 } from "drizzle-orm/pg-core"
 import { relations } from "drizzle-orm"
 
@@ -96,11 +97,13 @@ export const kitItemRelations = relations(kitItems, ({ one }) => ({
   }),
 }))
 
+export const sectionTypeEnum = pgEnum("homepage_section_type", ["hero", "carousel", "grid", "banner"])
+export const sectionTargetTypeEnum = pgEnum("section_item_target_type", ["equipment", "category", "brand"])
 
 export const homepageSections = pgTable("homepage_sections", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
-  type: text("type").default("carousel").notNull(), // "hero", "carousel"
+  type: sectionTypeEnum("type").default("carousel").notNull(), // "hero", "carousel"
   isActive: boolean("is_active").default(true).notNull(),
   displayOrder: integer("display_order").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -110,7 +113,11 @@ export const homepageSections = pgTable("homepage_sections", {
 export const sectionItems = pgTable("section_items", {
   id: serial("id").primaryKey(),
   sectionId: integer("section_id").references(() => homepageSections.id, { onDelete: 'cascade' }).notNull(),
-  equipmentId: integer("equipment_id").references(() => equipment.id, { onDelete: 'cascade' }).notNull(),
+  targetType: sectionTargetTypeEnum("target_type").default("equipment").notNull(),
+  equipmentId: integer("equipment_id").references(() => equipment.id, { onDelete: 'cascade' }),
+  categoryId: integer("category_id").references(() => equipmentCategories.id, { onDelete: 'cascade' }),
+  brand: text("brand"),
+  customImageUrl: text("custom_image_url"),
   displayOrder: integer("display_order").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 })
@@ -127,5 +134,9 @@ export const sectionItemsRelations = relations(sectionItems, ({ one }) => ({
   equipment: one(equipment, {
     fields: [sectionItems.equipmentId],
     references: [equipment.id],
+  }),
+  category: one(equipmentCategories, {
+    fields: [sectionItems.categoryId],
+    references: [equipmentCategories.id],
   }),
 }))

@@ -38,6 +38,7 @@ export async function GET() {
                 images: true,
               },
             },
+            category: true,
           },
         },
       },
@@ -49,21 +50,53 @@ export async function GET() {
       type: section.type,
       displayOrder: section.displayOrder,
       items: section.items
-        .filter((si) => si.equipment && si.equipment.status === "available")
         .map((si) => {
-          const eq = si.equipment;
-          const imageUrls = buildImageUrls(eq);
-          return {
-            id: eq.id,
-            name: eq.name,
-            slug: eq.slug ?? String(eq.id),
-            brand: eq.brand,
-            dailyRate: eq.dailyRate,
-            status: eq.status,
-            mainImageUrl: resolveUrl(eq.mainImageUrl),
-            imageUrls,
-          };
-        }),
+          const customImg = resolveUrl(si.customImageUrl);
+          
+          if (si.targetType === "equipment" && si.equipment) {
+            const eq = si.equipment;
+            if (eq.status !== "available") return null;
+            return {
+              targetType: "equipment",
+              customImageUrl: customImg,
+              payload: {
+                id: eq.id,
+                name: eq.name,
+                slug: eq.slug ?? String(eq.id),
+                brand: eq.brand,
+                dailyRate: eq.dailyRate,
+                status: eq.status,
+                mainImageUrl: resolveUrl(eq.mainImageUrl),
+                imageUrls: buildImageUrls(eq),
+              }
+            };
+          }
+          
+          if (si.targetType === "category" && si.category) {
+            return {
+              targetType: "category",
+              customImageUrl: customImg,
+              payload: {
+                categoryId: si.category.id,
+                name: si.category.name,
+              }
+            };
+          }
+
+          if (si.targetType === "brand" && si.brand) {
+            return {
+              targetType: "brand",
+              customImageUrl: customImg,
+              payload: {
+                brandName: si.brand,
+                name: si.brand,
+              }
+            };
+          }
+
+          return null;
+        })
+        .filter(Boolean),
     }));
 
     return NextResponse.json(response);

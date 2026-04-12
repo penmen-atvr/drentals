@@ -14,7 +14,7 @@ import { RootStackParamList, MainTabParamList } from '../../App';
 import { useCatalogStore } from '../store/catalogStore';
 import { SkeletonHorizontalCard, SkeletonPill } from '../components/SkeletonCard';
 import { Equipment } from '../types';
-import { HomepageSection } from '../api';
+import { HomepageSection, HomepageSectionItem } from '../api';
 import { useCartStore } from '../store/cartStore';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
@@ -42,7 +42,7 @@ export default function HomeScreen({ navigation }: Props) {
   // The hero section is always the first "hero" type section
   const heroSection = homepageSections.find((s) => s.type === 'hero');
   const heroItems = heroSection?.items ?? [];
-  const carouselSections = homepageSections.filter((s) => s.type === 'carousel');
+  const otherSections = homepageSections.filter((s) => s.type !== 'hero');
 
   const startAutoSlide = useCallback(() => {
     if (autoSlideTimer.current) clearInterval(autoSlideTimer.current);
@@ -130,41 +130,66 @@ export default function HomeScreen({ navigation }: Props) {
     </View>
   );
 
-  const renderHorizontalCard = (item: Equipment) => (
-    <TouchableOpacity
-      key={item.id}
-      style={styles.hCard}
-      onPress={() => navigation.navigate('ProductDetail', { slug: item.slug, equipment: item })}
-      activeOpacity={0.88}
-    >
-      {item.imageUrls && item.imageUrls.length > 0 ? (
-        <Image 
-          source={{ uri: item.imageUrls[0] }} 
-          style={styles.hCardImage} 
-          contentFit="cover" 
+  const onCardPress = (item: HomepageSectionItem) => {
+    if (item.targetType === 'equipment') {
+      navigation.navigate('ProductDetail', { slug: item.payload.slug, equipment: item.payload as any });
+    } else if (item.targetType === 'category') {
+      navigation.navigate('Catalog', { categoryId: item.payload.categoryId });
+    } else if (item.targetType === 'brand') {
+      navigation.navigate('BrandDetail', { brandName: item.payload.brandName });
+    }
+  };
+
+  const getTargetImage = (item: HomepageSectionItem) => {
+    if (item.customImageUrl) return { uri: item.customImageUrl };
+    if (item.targetType === 'equipment' && item.payload.imageUrls?.length) {
+      return { uri: item.payload.imageUrls[0] };
+    }
+    return null;
+  };
+
+  const renderHorizontalCard = (item: HomepageSectionItem, idx: number) => {
+    const imgSrc = getTargetImage(item);
+    return (
+      <TouchableOpacity
+        key={idx}
+        style={styles.hCard}
+        onPress={() => onCardPress(item)}
+        activeOpacity={0.88}
+      >
+        {imgSrc ? (
+          <Image 
+            source={imgSrc} 
+            style={styles.hCardImage} 
+            contentFit="cover" 
+          />
+        ) : (
+          <View style={styles.hCardPlaceholder}>
+            <Ionicons name="camera-outline" size={28} color="#333" />
+          </View>
+        )}
+        <LinearGradient
+          colors={['transparent', 'rgba(8,8,8,0.9)']}
+          style={styles.hCardGradient}
         />
-      ) : (
-        <View style={styles.hCardPlaceholder}>
-          <Ionicons name="camera-outline" size={28} color="#333" />
+        <View style={styles.hCardContent}>
+          {item.targetType === 'equipment' && <Text style={styles.hCardBrand}>{item.payload.brand || 'CINEMA'}</Text>}
+          {item.targetType === 'category' && <Text style={styles.hCardBrand}>CATEGORY</Text>}
+          {item.targetType === 'brand' && <Text style={styles.hCardBrand}>BRAND</Text>}
+          <Text style={styles.hCardTitle} numberOfLines={2}>{item.payload.name}</Text>
+          {item.targetType === 'equipment' && (
+            <Text style={styles.hCardPrice}>₹{item.payload.dailyRate}<Text style={styles.hCardPer}>/day</Text></Text>
+          )}
         </View>
-      )}
-      <LinearGradient
-        colors={['transparent', 'rgba(8,8,8,0.9)']}
-        style={styles.hCardGradient}
-      />
-      <View style={styles.hCardContent}>
-        <Text style={styles.hCardBrand}>{item.brand || 'CINEMA'}</Text>
-        <Text style={styles.hCardTitle} numberOfLines={2}>{item.name}</Text>
-        <Text style={styles.hCardPrice}>₹{item.dailyRate}<Text style={styles.hCardPer}>/day</Text></Text>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   const renderCarouselSection = (section: HomepageSection) => (
     <Animated.View key={section.id} style={[styles.section, { opacity: sectionsOpacity, transform: [{ translateY: sectionsTranslate }] }]}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{section.title}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Catalog', {})}>
+        <TouchableOpacity onPress={() => navigation.navigate('Catalog', {} as any)}>
           <Text style={styles.seeAll}>See All</Text>
         </TouchableOpacity>
       </View>
@@ -175,10 +200,57 @@ export default function HomeScreen({ navigation }: Props) {
         decelerationRate="fast"
         snapToInterval={W * 0.72 + 16}
       >
-        {section.items.map(renderHorizontalCard)}
+        {section.items.map((item, idx) => renderHorizontalCard(item, idx))}
       </ScrollView>
     </Animated.View>
   );
+
+  const renderBannerSection = (section: HomepageSection) => {
+    const item = section.items[0];
+    if (!item) return null;
+    const imgSrc = getTargetImage(item);
+    return (
+      <Animated.View key={section.id} style={[styles.section, { opacity: sectionsOpacity, transform: [{ translateY: sectionsTranslate }], marginHorizontal: 24 }]}>
+        <TouchableOpacity onPress={() => onCardPress(item)} activeOpacity={0.9} style={styles.bannerCard}>
+          {imgSrc ? <Image source={imgSrc} style={StyleSheet.absoluteFill} contentFit="cover" /> : <View style={styles.bannerPlaceholder} />}
+          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.85)']} style={StyleSheet.absoluteFill} />
+          <View style={styles.bannerContent}>
+            <Text style={styles.bannerTitle}>{section.title}</Text>
+            <Text style={styles.bannerSubtitle}>{item.payload.name}</Text>
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
+
+  const renderGridSection = (section: HomepageSection) => (
+    <Animated.View key={section.id} style={[styles.section, { opacity: sectionsOpacity, transform: [{ translateY: sectionsTranslate }] }]}>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>{section.title}</Text>
+      </View>
+      <View style={styles.gGrid}>
+        {section.items.map((item, idx) => {
+          const imgSrc = getTargetImage(item);
+          return (
+            <TouchableOpacity key={idx} style={styles.gCard} onPress={() => onCardPress(item)} activeOpacity={0.88}>
+              <View style={styles.gCardImgWrap}>
+                {imgSrc ? <Image source={imgSrc} style={StyleSheet.absoluteFill} contentFit="cover" /> : <View style={styles.gCardPlaceholder} />}
+              </View>
+              <Text style={styles.gCardTitle} numberOfLines={2}>{item.payload.name}</Text>
+              {item.targetType === 'equipment' && <Text style={styles.gCardPrice}>₹{item.payload.dailyRate}/day</Text>}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </Animated.View>
+  );
+
+  const renderSection = (section: HomepageSection) => {
+    if (section.type === 'carousel') return renderCarouselSection(section);
+    if (section.type === 'banner') return renderBannerSection(section);
+    if (section.type === 'grid') return renderGridSection(section);
+    return null;
+  };
 
   return (
     <View style={styles.container}>
@@ -227,10 +299,18 @@ export default function HomeScreen({ navigation }: Props) {
                 <TouchableOpacity
                   key={i}
                   activeOpacity={0.95}
-                  onPress={() => navigation.navigate('ProductDetail', { slug: item.slug, equipment: item })}
+                  onPress={() => {
+                    if (item.targetType === 'equipment') {
+                      navigation.navigate('ProductDetail', { slug: item.payload.slug, equipment: item.payload as any });
+                    } else if (item.targetType === 'category') {
+                      navigation.navigate('Catalog', { categoryId: item.payload.categoryId });
+                    } else if (item.targetType === 'brand') {
+                      navigation.navigate('BrandDetail', { brandName: item.payload.brandName });
+                    }
+                  }}
                 >
                   <ImageBackground
-                    source={{ uri: item.imageUrls?.[0] }}
+                    source={{ uri: item.customImageUrl || item.payload.imageUrls?.[0] }}
                     style={[styles.heroBanner, { width: W }]}
                   >
                     <LinearGradient
@@ -242,10 +322,12 @@ export default function HomeScreen({ navigation }: Props) {
                       <View style={styles.heroBadge}>
                         <Text style={styles.heroBadgeText}>{heroSection?.title?.toUpperCase() ?? 'FEATURED'}</Text>
                       </View>
-                      <Text style={styles.heroTitle}>{item.name}</Text>
-                      <Text style={styles.heroPrice}>
-                        From <Text style={styles.heroPriceNum}>₹{item.dailyRate}</Text>/day
-                      </Text>
+                      <Text style={styles.heroTitle}>{item.payload.name}</Text>
+                      {item.targetType === 'equipment' && (
+                        <Text style={styles.heroPrice}>
+                          From <Text style={styles.heroPriceNum}>₹{item.payload.dailyRate}</Text>/day
+                        </Text>
+                      )}
                     </View>
                   </ImageBackground>
                 </TouchableOpacity>
@@ -283,8 +365,8 @@ export default function HomeScreen({ navigation }: Props) {
           </ScrollView>
         </Animated.View>
 
-        {/* ── DYNAMIC CAROUSEL SECTIONS (from DB) ── */}
-        {carouselSections.map(renderCarouselSection)}
+        {/* ── DYNAMIC SECTIONS (Carousel/Grid/Banner from DB) ── */}
+        {otherSections.map(renderSection)}
       </ScrollView>
     </View>
   );
@@ -340,4 +422,20 @@ const styles = StyleSheet.create({
   hCardTitle: { color: '#fff', fontSize: 17, fontWeight: '800', lineHeight: 22, letterSpacing: -0.3, marginBottom: 6 },
   hCardPrice: { color: '#fff', fontSize: 15, fontWeight: '800' },
   hCardPer: { color: '#888', fontWeight: '500', fontSize: 13 },
+
+  // Banner cards
+  bannerCard: { width: '100%', height: 160, borderRadius: 20, overflow: 'hidden', backgroundColor: CARD, borderWidth: 1, borderColor: BORDER },
+  bannerPlaceholder: { flex: 1, backgroundColor: '#1a1a1a' },
+  bannerContent: { position: 'absolute', bottom: 0, left: 0, padding: 20, width: '100%' },
+  bannerTitle: { color: '#FAFAFA', fontSize: 18, fontWeight: '900', letterSpacing: -0.5, marginBottom: 2 },
+  bannerSubtitle: { color: '#aaa', fontSize: 14, fontWeight: '600' },
+
+  // Grid cards
+  gGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 24, gap: 16 },
+  gCard: { width: (W - 48 - 16) / 2, backgroundColor: CARD, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: BORDER, paddingBottom: 12 },
+  gCardImgWrap: { width: '100%', aspectRatio: 1, backgroundColor: '#141414', marginBottom: 12 },
+  gCardImg: { width: '100%', height: '100%' },
+  gCardPlaceholder: { flex: 1 },
+  gCardTitle: { color: '#FAFAFA', fontSize: 14, fontWeight: '700', paddingHorizontal: 12, marginBottom: 4 },
+  gCardPrice: { color: ACCENT, fontSize: 13, fontWeight: '800', paddingHorizontal: 12 },
 });
