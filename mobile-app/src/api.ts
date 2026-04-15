@@ -1,87 +1,69 @@
 import { Category, Equipment } from './types';
 
-export const API_BASE = 'https://rentals.penmenstudios.com/api';
+export const API_BASE = __DEV__ 
+  ? (process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api') 
+  : 'https://rentals.penmenstudios.com/api';
 
-// Wrapper that applies a timeout to any fetch call
 async function fetchWithTimeout(url: string, timeoutMs = 10000): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
+
   try {
-    const response = await fetch(url, { signal: controller.signal });
-    return response;
+    return await fetch(url, { signal: controller.signal });
   } finally {
     clearTimeout(timer);
   }
 }
 
-export const getOptimizedImage = (url: string, _width: number = 1080): string => {
+const DOMAIN = 'https://rentals.penmenstudios.com';
+
+export const getOptimizedImage = (url: string): string => {
   if (!url) return '';
-  const domain = 'https://rentals.penmenstudios.com';
-  
-  // Strip any existing /_next/image wrapper and return the direct URL
-  // React Native doesn't benefit from Next.js image optimization (web-only)
+
   let actualUrl = url;
   if (url.includes('/_next/image')) {
     try {
-      // Create a dummy base if url is relative, just to parse search params
-      const parsed = new URL(url, domain);
+      const parsed = new URL(url, DOMAIN);
       const inner = parsed.searchParams.get('url');
-      if (inner) {
-        actualUrl = inner;
-      }
+      if (inner) actualUrl = inner;
     } catch {
-      // Continue with original url if parsing fails
+      // Ignore malformed wrapper URLs and continue with the original value.
     }
   }
 
-  // Resolve relative paths to absolute URLs
-  let finalUrl = actualUrl.startsWith('/') ? `${domain}${actualUrl}` : actualUrl;
-  
-  // React Native's Image decoders (especially Glide on Android) sometimes fail 
-  // silently if a URL doesn't end in a standard image extension, even if the 
-  // server returns the correct mime type. 
-  // We append a dummy query parameter to help it recognize the image type.
-  const hasExtension = /\.(jpe?g|png|webp|avif|gif|svg|HEIC)(\?.*)?$/i.test(finalUrl);
+  let finalUrl = actualUrl.startsWith('/') ? `${DOMAIN}${actualUrl}` : actualUrl;
+  const hasExtension = /\.(jpe?g|png|webp|avif|gif|svg|heic)(\?.*)?$/i.test(finalUrl);
   if (!hasExtension) {
-    // We default to jpg, but since we are trusting the server's Content-Type, 
-    // the actual dummy extension type here doesn't matter much as long as it's an image extension
-    finalUrl += (finalUrl.includes('?') ? '&' : '?') + 'ext=.jpg';
+    finalUrl += `${finalUrl.includes('?') ? '&' : '?'}ext=.jpg`;
   }
 
   return finalUrl;
 };
 
-const transformEquipment = (eq: Equipment): Equipment => {
-  // If imageUrls is empty but we have a mainImageUrl, use it as fallback
-  const fallbackUrls = eq.imageUrls && eq.imageUrls.length > 0 
-    ? eq.imageUrls 
-    : (eq.mainImageUrl ? [eq.mainImageUrl] : []);
-    
+const transformEquipment = <T extends { imageUrls?: string[]; mainImageUrl?: string | null }>(equipment: T): T => {
+  const fallbackUrls =
+    equipment.imageUrls && equipment.imageUrls.length > 0
+      ? equipment.imageUrls
+      : equipment.mainImageUrl
+        ? [equipment.mainImageUrl]
+        : [];
+
   return {
-    ...eq,
-    imageUrls: fallbackUrls.map(u => getOptimizedImage(u, 1080)),
-    mainImageUrl: eq.mainImageUrl ? getOptimizedImage(eq.mainImageUrl, 1080) : undefined
+    ...equipment,
+    imageUrls: fallbackUrls.map((url) => getOptimizedImage(url)),
+    mainImageUrl: equipment.mainImageUrl ? getOptimizedImage(equipment.mainImageUrl) : undefined,
   };
 };
 
-export const fetchCategories = async (): Promise<Category[]> => {
-  const response = await fetchWithTimeout(`${API_BASE}/categories`);
+export const fetchCategories = async (cacheBustParam = ''): Promise<Category[]> => {
+  const response = await fetchWithTimeout(`${API_BASE}/categories${cacheBustParam}`);
   if (!response.ok) throw new Error('Failed to fetch categories');
   return response.json();
 };
 
-export const fetchFeaturedEquipment = async (): Promise<Equipment[]> => {
-  const response = await fetchWithTimeout(`${API_BASE}/equipment?featured=true`);
-  if (!response.ok) throw new Error('Failed to fetch featured equipment');
-  const items: Equipment[] = await response.json();
-  return items.map(transformEquipment);
-};
-
 export const fetchAllEquipment = async (categoryId?: number): Promise<Equipment[]> => {
   let url = `${API_BASE}/equipment`;
-  if (categoryId) {
-    url += `?categoryId=${categoryId}`;
-  }
+  if (categoryId) url += `?categoryId=${categoryId}`;
   const response = await fetchWithTimeout(url);
   if (!response.ok) throw new Error('Failed to fetch equipment');
   const items: Equipment[] = await response.json();
@@ -108,46 +90,115 @@ export const fetchEquipmentByBrand = async (brandSlug: string): Promise<Equipmen
   return items.map(transformEquipment);
 };
 
-export const fetchPopularEquipment = async (): Promise<Equipment[]> => {
-  const response = await fetchWithTimeout(`${API_BASE}/popular`);
-  if (!response.ok) throw new Error('Failed to fetch popular equipment');
-  const items: Equipment[] = await response.json();
-  return items.map(transformEquipment);
-};
-
-export interface HomepageSectionItem {
-  targetType: 'equipment' | 'category' | 'brand';
-  customImageUrl?: string | null;
-  payload: any;
-}
-
-export interface HomepageSection {
+export interface HomeEquipmentItem {
   id: number;
-  title: string;
-  type: 'hero' | 'carousel' | 'grid' | 'banner';
-  displayOrder: number;
-  items: HomepageSectionItem[];
+  name: string;
+  slug: string;
+  brand: string | null;
+  dailyRate: string | number;
+  status: string;
+  mainImageUrl: string | null;
+  imageUrls: string[];
+  customImageUrl?: string | null;
 }
 
-export const fetchHomepageSections = async (): Promise<HomepageSection[]> => {
-  const response = await fetchWithTimeout(`${API_BASE}/mobile/homepage`);
-  if (!response.ok) throw new Error('Failed to fetch homepage sections');
-  const sections: any[] = await response.json();
-  return sections.map((section) => ({
-    ...section,
-    items: section.items.map((item: any) => {
-      // Fallback for older API responses where the item IS the payload (no targetType exist)
-      if (!item.targetType) {
-        return {
-          targetType: 'equipment',
-          payload: transformEquipment(item),
-        };
-      }
-      return {
-        ...item,
-        payload: item.targetType === 'equipment' ? transformEquipment(item.payload) : item.payload,
-      };
-    }),
-  }));
-};
+export interface HomeCategoryItem {
+  id: number;
+  name: string;
+  description: string | null;
+  imageUrl: string | null;
+  customImageUrl?: string | null;
+}
 
+export interface HomeBrandItem {
+  brand: string;
+  imageUrl: string | null;
+  customImageUrl?: string | null;
+}
+
+interface HomeSectionBase {
+  id: number;
+  key: string;
+  title: string;
+  subtitle: string | null;
+  displayOrder: number;
+}
+
+export type HomeSection =
+  | (HomeSectionBase & {
+      type: 'hero';
+      items: HomeEquipmentItem[];
+    })
+  | (HomeSectionBase & {
+      type: 'equipment_carousel';
+      items: HomeEquipmentItem[];
+    })
+  | (HomeSectionBase & {
+      type: 'kit_grid';
+      items: HomeEquipmentItem[];
+    })
+  | (HomeSectionBase & {
+      type: 'category_strip';
+      items: HomeCategoryItem[];
+    })
+  | (HomeSectionBase & {
+      type: 'brand_strip';
+      items: HomeBrandItem[];
+    });
+
+function isHomeEquipmentItem(value: any): value is HomeEquipmentItem {
+  return Boolean(value && value.id != null && typeof value.name === 'string');
+}
+
+function isHomeCategoryItem(value: any): value is HomeCategoryItem {
+  return Boolean(value && value.id != null && typeof value.name === 'string');
+}
+
+function isHomeBrandItem(value: any): value is HomeBrandItem {
+  return Boolean(value && typeof value.brand === 'string' && value.brand.trim().length > 0);
+}
+
+function normalizeHomeSection(section: any): HomeSection | null {
+  if (!section || typeof section !== 'object') return null;
+  if (typeof section.id !== 'number' || typeof section.key !== 'string' || typeof section.title !== 'string') {
+    return null;
+  }
+
+  const baseSection = {
+    id: section.id,
+    key: section.key,
+    title: section.title,
+    subtitle: typeof section.subtitle === 'string' ? section.subtitle : null,
+    displayOrder: typeof section.displayOrder === 'number' ? section.displayOrder : 0,
+  };
+
+  if (section.type === 'hero' || section.type === 'equipment_carousel' || section.type === 'kit_grid') {
+    const items = Array.isArray(section.items)
+      ? section.items.filter(isHomeEquipmentItem).map(transformEquipment)
+      : [];
+
+    return items.length > 0 ? { ...baseSection, type: section.type, items } : null;
+  }
+
+  if (section.type === 'category_strip') {
+    const items = Array.isArray(section.items) ? section.items.filter(isHomeCategoryItem) : [];
+    return items.length > 0 ? { ...baseSection, type: section.type, items } : null;
+  }
+
+  if (section.type === 'brand_strip') {
+    const items = Array.isArray(section.items) ? section.items.filter(isHomeBrandItem) : [];
+    return items.length > 0 ? { ...baseSection, type: section.type, items } : null;
+  }
+
+  return null;
+}
+
+export const fetchHomeSections = async (cacheBustParam = ''): Promise<HomeSection[]> => {
+  const response = await fetchWithTimeout(`${API_BASE}/mobile/homepage${cacheBustParam}`);
+  if (!response.ok) throw new Error('Failed to fetch home sections');
+
+  const sections: any[] = await response.json();
+  return sections
+    .map(normalizeHomeSection)
+    .filter((section): section is HomeSection => Boolean(section));
+};

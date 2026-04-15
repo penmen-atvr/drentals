@@ -14,12 +14,7 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.drentals.app",
-      "infoPlist": {
-        "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": true
-        }
-      }
+      "bundleIdentifier": "com.drentals.app"
     },
     "android": {
       "adaptiveIcon": {

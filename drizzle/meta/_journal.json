@@ -8,6 +8,13 @@
       "when": 1776004753861,
       "tag": "0000_aspiring_chameleon",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776250000000,
+      "tag": "0001_mobile_home_sections",
+      "breakpoints": true
     }
   ]
 }

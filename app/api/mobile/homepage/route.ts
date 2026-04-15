@@ -1,113 +1,309 @@
 import { NextResponse } from "next/server";
+import { and, asc, desc, eq, sql as drizzleSql } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { homepageSections, sectionItems } from "@/lib/db/schema";
-import { eq, asc } from "drizzle-orm";
+import {
+  equipment,
+  equipmentCategories,
+  mobileHomeSectionBrandItems,
+  mobileHomeSectionCategoryItems,
+  mobileHomeSectionEquipmentItems,
+  mobileHomeSections,
+} from "@/lib/db/schema";
+import { buildEquipmentImageUrls, resolveImageUrl } from "@/lib/image-utils";
 
 export const dynamic = "force-dynamic";
 
-const SITE_BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://rentals.penmenstudios.com";
+type EquipmentPayload = {
+  id: number;
+  name: string;
+  slug: string;
+  brand: string | null;
+  dailyRate: string | number;
+  status: string;
+  mainImageUrl: string | null;
+  imageUrls: string[];
+};
 
-function resolveUrl(url: string | null | undefined): string | null {
-  if (!url) return null;
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  return `${SITE_BASE}${url.startsWith("/") ? "" : "/"}${url}`;
+type CategoryPayload = {
+  id: number;
+  name: string;
+  description: string | null;
+  imageUrl: string | null;
+};
+
+type BrandPayload = {
+  brand: string;
+  imageUrl: string | null;
+};
+
+type HomeSection =
+  | {
+      id: number;
+      key: string;
+      title: string;
+      subtitle: string | null;
+      type: "hero" | "equipment_carousel" | "kit_grid";
+      displayOrder: number;
+      items: Array<EquipmentPayload & { customImageUrl?: string | null }>;
+    }
+  | {
+      id: number;
+      key: string;
+      title: string;
+      subtitle: string | null;
+      type: "category_strip";
+      displayOrder: number;
+      items: Array<CategoryPayload & { customImageUrl?: string | null }>;
+    }
+  | {
+      id: number;
+      key: string;
+      title: string;
+      subtitle: string | null;
+      type: "brand_strip";
+      displayOrder: number;
+      items: Array<BrandPayload & { customImageUrl?: string | null }>;
+    };
+
+function toEquipmentPayload(item: {
+  id: number;
+  name: string;
+  slug: string | null;
+  brand: string | null;
+  dailyRate: string | number;
+  status: string;
+  mainImageUrl: string | null;
+  images?: { imageUrl: string }[];
+}) {
+  return {
+    id: item.id,
+    name: item.name,
+    slug: item.slug ?? String(item.id),
+    brand: item.brand,
+    dailyRate: item.dailyRate,
+    status: item.status,
+    mainImageUrl: resolveImageUrl(item.mainImageUrl),
+    imageUrls: buildEquipmentImageUrls(item),
+  };
 }
 
-function buildImageUrls(item: { mainImageUrl?: string | null; images?: { imageUrl: string }[] }): string[] {
-  const fromRelation = (item.images ?? [])
-    .map((img) => resolveUrl(img.imageUrl))
-    .filter((u): u is string => Boolean(u));
-  const fromMain = resolveUrl(item.mainImageUrl);
-  const all = fromMain && !fromRelation.includes(fromMain)
-    ? [...fromRelation, fromMain]
-    : fromRelation;
-  return all;
+async function buildFallbackSections(): Promise<HomeSection[]> {
+  const [heroItems, featuredItems, kitItems, categories, brands] = await Promise.all([
+    db.query.equipment.findMany({
+      where: eq(equipment.status, "available"),
+      with: { images: true },
+      orderBy: [desc(equipment.featured), desc(equipment.dailyRate)],
+      limit: 4,
+    }),
+    db.query.equipment.findMany({
+      where: and(eq(equipment.featured, true), eq(equipment.status, "available")),
+      with: { images: true },
+      orderBy: [desc(equipment.updatedAt)],
+      limit: 10,
+    }),
+    db.query.equipment.findMany({
+      where: and(eq(equipment.isKit, true), eq(equipment.status, "available")),
+      with: { images: true },
+      orderBy: [desc(equipment.updatedAt)],
+      limit: 6,
+    }),
+    db.query.equipmentCategories.findMany({
+      orderBy: [equipmentCategories.name],
+      limit: 12,
+    }),
+    db
+      .selectDistinct({ brand: equipment.brand })
+      .from(equipment)
+      .where(drizzleSql`${equipment.brand} IS NOT NULL AND ${equipment.brand} != ''`)
+      .orderBy(equipment.brand)
+      .limit(12),
+  ]);
+
+  const sections: HomeSection[] = [];
+
+  if (heroItems.length > 0) {
+    sections.push({
+      id: -1,
+      key: "fallback-hero",
+      title: "Featured Gear",
+      subtitle: "Always available from your latest catalog",
+      type: "hero",
+      displayOrder: 0,
+      items: heroItems.map((item) => ({ ...toEquipmentPayload(item), customImageUrl: null })),
+    });
+  }
+
+  if (featuredItems.length > 0) {
+    sections.push({
+      id: -2,
+      key: "fallback-featured",
+      title: "Popular Picks",
+      subtitle: "Curated from featured inventory",
+      type: "equipment_carousel",
+      displayOrder: 1,
+      items: featuredItems.map((item) => ({ ...toEquipmentPayload(item), customImageUrl: null })),
+    });
+  }
+
+  if (categories.length > 0) {
+    sections.push({
+      id: -3,
+      key: "fallback-categories",
+      title: "Browse by Category",
+      subtitle: "Jump straight into the gear you need",
+      type: "category_strip",
+      displayOrder: 2,
+      items: categories.map((category) => ({
+        id: category.id,
+        name: category.name,
+        description: category.description,
+        imageUrl: null,
+        customImageUrl: null,
+      })),
+    });
+  }
+
+  if (brands.length > 0) {
+    sections.push({
+      id: -4,
+      key: "fallback-brands",
+      title: "Brands We Stock",
+      subtitle: "Explore gear by manufacturer",
+      type: "brand_strip",
+      displayOrder: 3,
+      items: brands
+        .map((entry) => entry.brand)
+        .filter((brand): brand is string => Boolean(brand))
+        .map((brand) => ({
+          brand,
+          imageUrl: null,
+          customImageUrl: null,
+        })),
+    });
+  }
+
+  if (kitItems.length > 0) {
+    sections.push({
+      id: -5,
+      key: "fallback-kits",
+      title: "Ready-to-Rent Kits",
+      subtitle: "Bundles that ship together cleanly",
+      type: "kit_grid",
+      displayOrder: 4,
+      items: kitItems.map((item) => ({ ...toEquipmentPayload(item), customImageUrl: null })),
+    });
+  }
+
+  return sections;
 }
 
 export async function GET() {
   try {
-    const sections = await db.query.homepageSections.findMany({
-      where: eq(homepageSections.isActive, true),
-      orderBy: [asc(homepageSections.displayOrder)],
+    const sections = await db.query.mobileHomeSections.findMany({
+      where: eq(mobileHomeSections.isActive, true),
+      orderBy: [asc(mobileHomeSections.displayOrder)],
       with: {
-        items: {
-          orderBy: [asc(sectionItems.displayOrder)],
+        equipmentItems: {
+          orderBy: [asc(mobileHomeSectionEquipmentItems.displayOrder)],
           with: {
             equipment: {
               with: {
                 images: true,
               },
             },
+          },
+        },
+        categoryItems: {
+          orderBy: [asc(mobileHomeSectionCategoryItems.displayOrder)],
+          with: {
             category: true,
           },
+        },
+        brandItems: {
+          orderBy: [asc(mobileHomeSectionBrandItems.displayOrder)],
         },
       },
     });
 
-    const response = sections.map((section) => ({
-      id: section.id,
-      title: section.title,
-      type: section.type,
-      displayOrder: section.displayOrder,
-      items: section.items
-        .map((si) => {
-          const customImg = resolveUrl(si.customImageUrl);
-          
-          if (si.targetType === "equipment" && si.equipment) {
-            const eq = si.equipment;
-            if (eq.status !== "available") return null;
-            return {
-              targetType: "equipment",
-              customImageUrl: customImg,
-              payload: {
-                id: eq.id,
-                name: eq.name,
-                slug: eq.slug ?? String(eq.id),
-                brand: eq.brand,
-                dailyRate: eq.dailyRate,
-                status: eq.status,
-                mainImageUrl: resolveUrl(eq.mainImageUrl),
-                imageUrls: buildImageUrls(eq),
-              }
-            };
-          }
-          
-          if (si.targetType === "category" && si.category) {
-            return {
-              targetType: "category",
-              customImageUrl: customImg,
-              payload: {
-                categoryId: si.category.id,
-                name: si.category.name,
-              }
-            };
-          }
+    const response = sections
+      .map<HomeSection | null>((section) => {
+        const baseSection = {
+          id: section.id,
+          key: section.key,
+          title: section.title,
+          subtitle: section.subtitle,
+          displayOrder: section.displayOrder,
+        };
 
-          if (si.targetType === "brand" && si.brand) {
-            return {
-              targetType: "brand",
-              customImageUrl: customImg,
-              payload: {
-                brandName: si.brand,
-                name: si.brand,
-              }
-            };
-          }
+        if (section.type === "hero" || section.type === "equipment_carousel" || section.type === "kit_grid") {
+          const items = section.equipmentItems
+            .filter((item) => Boolean(item.equipment))
+            .filter((item) => item.equipment!.status === "available")
+            .map((item) => ({
+              ...toEquipmentPayload(item.equipment!),
+              customImageUrl: resolveImageUrl(item.customImageUrl),
+            }));
 
-          return null;
-        })
-        .filter(Boolean),
-    }));
+          if (items.length === 0) return null;
+          return { ...baseSection, type: section.type, items };
+        }
 
-    return NextResponse.json(response, {
+        if (section.type === "category_strip") {
+          const items = section.categoryItems
+            .map((item) => ({
+              id: item.category.id,
+              name: item.category.name,
+              description: item.category.description,
+              imageUrl: null,
+              customImageUrl: resolveImageUrl(item.customImageUrl),
+            }));
+
+          if (items.length === 0) return null;
+          return { ...baseSection, type: section.type, items };
+        }
+
+        if (section.type === "brand_strip") {
+          const items = section.brandItems
+            .map((item) => ({
+              brand: item.brand.trim(),
+              imageUrl: null,
+              customImageUrl: resolveImageUrl(item.customImageUrl),
+            }))
+            .filter((item) => item.brand.length > 0);
+
+          if (items.length === 0) return null;
+          return { ...baseSection, type: section.type, items };
+        }
+
+        return null;
+      })
+      .filter((section): section is HomeSection => Boolean(section));
+
+    const payload = response.length > 0 ? response : await buildFallbackSections();
+
+    return NextResponse.json(payload, {
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        'CDN-Cache-Control': 'no-store',
-        'Vercel-CDN-Cache-Control': 'no-store'
-      }
+        "Cache-Control": "public, s-maxage=120, stale-while-revalidate=300",
+        "CDN-Cache-Control": "public, s-maxage=120, stale-while-revalidate=300",
+        "Vercel-CDN-Cache-Control": "public, s-maxage=120, stale-while-revalidate=300",
+      },
     });
   } catch (error) {
     console.error("[/api/mobile/homepage] Error:", error);
-    return NextResponse.json({ error: "Failed to load homepage sections" }, { status: 500 });
+
+    try {
+      const fallback = await buildFallbackSections();
+      return NextResponse.json(fallback, {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+        },
+      });
+    } catch (fallbackError) {
+      console.error("[/api/mobile/homepage] Fallback Error:", fallbackError);
+      return NextResponse.json(
+        { error: "Failed to load homepage" },
+        { status: 500 }
+      );
+    }
   }
 }

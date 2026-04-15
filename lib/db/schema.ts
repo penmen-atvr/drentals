@@ -97,46 +97,85 @@ export const kitItemRelations = relations(kitItems, ({ one }) => ({
   }),
 }))
 
-export const sectionTypeEnum = pgEnum("homepage_section_type", ["hero", "carousel", "grid", "banner"])
-export const sectionTargetTypeEnum = pgEnum("section_item_target_type", ["equipment", "category", "brand"])
+export const mobileHomeSectionTypeEnum = pgEnum("mobile_home_section_type", [
+  "hero",
+  "equipment_carousel",
+  "category_strip",
+  "brand_strip",
+  "kit_grid",
+])
 
-export const homepageSections = pgTable("homepage_sections", {
+export const mobileHomeSections = pgTable("mobile_home_sections", {
   id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(),
   title: text("title").notNull(),
-  type: sectionTypeEnum("type").default("carousel").notNull(), // "hero", "carousel"
+  subtitle: text("subtitle"),
+  type: mobileHomeSectionTypeEnum("type").notNull(),
   isActive: boolean("is_active").default(true).notNull(),
   displayOrder: integer("display_order").default(0).notNull(),
+  config: jsonb("config"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
 
-export const sectionItems = pgTable("section_items", {
+export const mobileHomeSectionEquipmentItems = pgTable("mobile_home_section_equipment_items", {
   id: serial("id").primaryKey(),
-  sectionId: integer("section_id").references(() => homepageSections.id, { onDelete: 'cascade' }).notNull(),
-  targetType: sectionTargetTypeEnum("target_type").default("equipment").notNull(),
-  equipmentId: integer("equipment_id").references(() => equipment.id, { onDelete: 'cascade' }),
-  categoryId: integer("category_id").references(() => equipmentCategories.id, { onDelete: 'cascade' }),
-  brand: text("brand"),
+  sectionId: integer("section_id").references(() => mobileHomeSections.id, { onDelete: "cascade" }).notNull(),
+  equipmentId: integer("equipment_id").references(() => equipment.id, { onDelete: "cascade" }).notNull(),
   customImageUrl: text("custom_image_url"),
   displayOrder: integer("display_order").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 })
 
-export const homepageSectionsRelations = relations(homepageSections, ({ many }) => ({
-  items: many(sectionItems),
+export const mobileHomeSectionCategoryItems = pgTable("mobile_home_section_category_items", {
+  id: serial("id").primaryKey(),
+  sectionId: integer("section_id").references(() => mobileHomeSections.id, { onDelete: "cascade" }).notNull(),
+  categoryId: integer("category_id").references(() => equipmentCategories.id, { onDelete: "cascade" }).notNull(),
+  customImageUrl: text("custom_image_url"),
+  displayOrder: integer("display_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+})
+
+export const mobileHomeSectionBrandItems = pgTable("mobile_home_section_brand_items", {
+  id: serial("id").primaryKey(),
+  sectionId: integer("section_id").references(() => mobileHomeSections.id, { onDelete: "cascade" }).notNull(),
+  brand: text("brand").notNull(),
+  customImageUrl: text("custom_image_url"),
+  displayOrder: integer("display_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+})
+
+export const mobileHomeSectionsRelations = relations(mobileHomeSections, ({ many }) => ({
+  equipmentItems: many(mobileHomeSectionEquipmentItems),
+  categoryItems: many(mobileHomeSectionCategoryItems),
+  brandItems: many(mobileHomeSectionBrandItems),
 }))
 
-export const sectionItemsRelations = relations(sectionItems, ({ one }) => ({
-  section: one(homepageSections, {
-    fields: [sectionItems.sectionId],
-    references: [homepageSections.id],
+export const mobileHomeSectionEquipmentItemsRelations = relations(mobileHomeSectionEquipmentItems, ({ one }) => ({
+  section: one(mobileHomeSections, {
+    fields: [mobileHomeSectionEquipmentItems.sectionId],
+    references: [mobileHomeSections.id],
   }),
   equipment: one(equipment, {
-    fields: [sectionItems.equipmentId],
+    fields: [mobileHomeSectionEquipmentItems.equipmentId],
     references: [equipment.id],
   }),
+}))
+
+export const mobileHomeSectionCategoryItemsRelations = relations(mobileHomeSectionCategoryItems, ({ one }) => ({
+  section: one(mobileHomeSections, {
+    fields: [mobileHomeSectionCategoryItems.sectionId],
+    references: [mobileHomeSections.id],
+  }),
   category: one(equipmentCategories, {
-    fields: [sectionItems.categoryId],
+    fields: [mobileHomeSectionCategoryItems.categoryId],
     references: [equipmentCategories.id],
+  }),
+}))
+
+export const mobileHomeSectionBrandItemsRelations = relations(mobileHomeSectionBrandItems, ({ one }) => ({
+  section: one(mobileHomeSections, {
+    fields: [mobileHomeSectionBrandItems.sectionId],
+    references: [mobileHomeSections.id],
   }),
 }))

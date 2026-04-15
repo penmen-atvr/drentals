@@ -1,24 +1,39 @@
+import { asc, eq } from 'drizzle-orm';
 import { db } from '../lib/db';
-import { homepageSections, sectionItems } from '../lib/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import {
+  mobileHomeSectionBrandItems,
+  mobileHomeSectionCategoryItems,
+  mobileHomeSectionEquipmentItems,
+  mobileHomeSections,
+} from '../lib/db/schema';
 
 async function main() {
-  const sections = await db.query.homepageSections.findMany({
-    where: eq(homepageSections.isActive, true),
-    orderBy: [asc(homepageSections.displayOrder)],
+  const sections = await db.query.mobileHomeSections.findMany({
+    where: eq(mobileHomeSections.isActive, true),
+    orderBy: [asc(mobileHomeSections.displayOrder)],
     with: {
-      items: {
-        orderBy: [asc(sectionItems.displayOrder)],
+      equipmentItems: {
+        orderBy: [asc(mobileHomeSectionEquipmentItems.displayOrder)],
         with: {
           equipment: {
-            with: { images: true }
+            with: { images: true },
           },
-          category: true
-        }
-      }
-    }
+        },
+      },
+      categoryItems: {
+        orderBy: [asc(mobileHomeSectionCategoryItems.displayOrder)],
+        with: {
+          category: true,
+        },
+      },
+      brandItems: {
+        orderBy: [asc(mobileHomeSectionBrandItems.displayOrder)],
+      },
+    },
   });
+
   console.log(JSON.stringify(sections, null, 2));
   process.exit(0);
 }
+
 main();

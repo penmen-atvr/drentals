@@ -3,37 +3,7 @@ import { db, equipment, equipmentCategories, equipmentImages } from "./db"
 import { cache } from "react"
 import type { Category, Equipment, EquipmentImage, BlogPost } from "./types"
 import { eq, and, or, desc, sql as drizzleSql } from "drizzle-orm"
-
-// Resolve relative image urls to absolute so that mobile clients receive
-// direct CDN/storage links without routing through Vercel image optimization.
-const SITE_BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://rentals.penmenstudios.com'
-function resolveImageUrl(url: string | null | undefined): string | null {
-  if (!url) return null
-  if (url.startsWith('http://') || url.startsWith('https://')) return url
-  // Relative path — prepend the site base so mobile gets a full absolute URL
-  return `${SITE_BASE}${url.startsWith('/') ? '' : '/'}${url}`
-}
-
-/**
- * Build a deduplicated imageUrls array for an equipment item.
- * Priority: equipment_images relation (ordered by displayOrder) first,
- * then mainImageUrl as a fallback/supplement so items with only a
- * mainImageUrl column still return an image instead of an empty array.
- */
-function buildImageUrls(item: { mainImageUrl?: string | null; images?: { imageUrl: string }[] }): string[] {
-  const fromRelation = (item.images ?? [])
-    .map((img) => resolveImageUrl(img.imageUrl))
-    .filter((u): u is string => Boolean(u))
-
-  const fromMain = resolveImageUrl(item.mainImageUrl)
-
-  // Merge: relation images first, then main image (if not already present)
-  const all = fromMain && !fromRelation.includes(fromMain)
-    ? [...fromRelation, fromMain]
-    : fromRelation
-
-  return all
-}
+import { resolveImageUrl, buildEquipmentImageUrls } from "./image-utils"
 
 export const getCategories = cache(async (): Promise<Category[]> => {
   return await db.query.equipmentCategories.findMany({
@@ -55,7 +25,7 @@ export const getFeaturedEquipment = cache(async (): Promise<Equipment[]> => {
   const formattedResult = result.map(item => ({
     ...item,
     categoryName: item.category?.name,
-    imageUrls: buildImageUrls(item)
+    imageUrls: buildEquipmentImageUrls(item)
   }))
 
   return formattedResult as unknown as Equipment[]
@@ -78,7 +48,7 @@ export const getAllEquipment = cache(async (categoryId?: number, isKit?: boolean
   return result.map(item => ({
     ...item,
     categoryName: item.category?.name,
-    imageUrls: buildImageUrls(item)
+    imageUrls: buildEquipmentImageUrls(item)
   })) as unknown as Equipment[]
 })
 
@@ -101,7 +71,7 @@ export const getEquipmentById = cache(async (id: number): Promise<Equipment | un
   return {
     ...item,
     categoryName: item.category?.name,
-    imageUrls: buildImageUrls(item)
+    imageUrls: buildEquipmentImageUrls(item)
   } as unknown as Equipment
 })
 
@@ -119,7 +89,7 @@ export const getEquipmentBySlug = cache(async (slug: string): Promise<Equipment 
   return {
     ...item,
     categoryName: item.category?.name,
-    imageUrls: buildImageUrls(item)
+    imageUrls: buildEquipmentImageUrls(item)
   } as unknown as Equipment
 })
 
@@ -143,7 +113,7 @@ export const getEquipmentByBrand = cache(async (brand: string): Promise<Equipmen
   return result.map(item => ({
     ...item,
     categoryName: item.category?.name,
-    imageUrls: buildImageUrls(item)
+    imageUrls: buildEquipmentImageUrls(item)
   })) as unknown as Equipment[]
 })
 
@@ -170,7 +140,7 @@ export const getPopularEquipmentForArea = cache(async (limit = 4): Promise<Equip
   return result.map(item => ({
     ...item,
     categoryName: item.category?.name,
-    imageUrls: buildImageUrls(item)
+    imageUrls: buildEquipmentImageUrls(item)
   })) as unknown as Equipment[]
 })
 

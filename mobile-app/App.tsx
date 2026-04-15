@@ -146,7 +146,7 @@ export default function App() {
             <Stack.Screen
               name="WebView"
               component={WebViewScreen}
-              options={{ title: '', headerTransparent: true, headerTintColor: '#f8fafc' }}
+              options={{ headerShown: false }}
             />
           </Stack.Navigator>
         </NavigationContainer>
@@ -154,5 +154,4 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
-
 

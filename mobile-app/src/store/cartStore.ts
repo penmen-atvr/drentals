@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { Equipment } from '../types';
+import { parseRate } from '../utils/pricing';
 
 function diffDays(start: Date, end: Date) {
   const diffTime = Math.abs(end.getTime() - start.getTime());
@@ -77,9 +78,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   clearCart: () => set({ items: [] }),
   getTotal: () => {
     return get().items.reduce((total, item) => {
-      const rate = typeof item.equipment.dailyRate === 'string' 
-        ? parseFloat(item.equipment.dailyRate) 
-        : (item.equipment.dailyRate || 0);
+      const rate = parseRate(item.equipment.dailyRate);
       return total + (rate * item.quantity * item.durationDays);
     }, 0);
   }

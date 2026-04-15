@@ -19,13 +19,13 @@ import * as Haptics from 'expo-haptics';
 
 const { width: W } = Dimensions.get('window');
 
-const ACCENT    = '#E31B23';
+const ACCENT = '#E31B23';
 const ACCENT_DIM = 'rgba(227,27,35,0.12)';
-const BG        = '#080808';
-const CARD      = '#111111';
-const BORDER    = 'rgba(255,255,255,0.06)';
-const TEXT_P    = '#FAFAFA';
-const TEXT_S    = '#666666';
+const BG = '#080808';
+const CARD = '#111111';
+const BORDER = 'rgba(255,255,255,0.06)';
+const TEXT_P = '#FAFAFA';
+const TEXT_S = '#666666';
 
 type Props = CompositeScreenProps<
   NativeStackScreenProps<RootStackParamList, 'ProductDetail'>,
@@ -36,12 +36,11 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
   const insets = useSafeAreaInsets();
   const { slug, equipment: initEquip } = route.params;
   const [equipment, setEquipment] = useState<Equipment | undefined>(initEquip);
-  const [loading, setLoading]     = useState(!initEquip);
-  const [imgIndex, setImgIndex]   = useState(0);
-  const addItem = useCartStore(s => s.addItem);
-  const cartCount = useCartStore(s => s.items.length);
+  const [loading, setLoading] = useState(!initEquip);
+  const [imgIndex, setImgIndex] = useState(0);
+  const addItem = useCartStore((s) => s.addItem);
+  const cartCount = useCartStore((s) => s.items.length);
 
-  // Animation values
   const heroOpacity = useRef(new Animated.Value(0)).current;
   const heroTranslate = useRef(new Animated.Value(-20)).current;
   const contentOpacity = useRef(new Animated.Value(0)).current;
@@ -50,6 +49,13 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
   const barTranslate = useRef(new Animated.Value(30)).current;
 
   const runEntryAnimations = () => {
+    heroOpacity.setValue(0);
+    heroTranslate.setValue(-20);
+    contentOpacity.setValue(0);
+    contentTranslate.setValue(30);
+    barOpacity.setValue(0);
+    barTranslate.setValue(30);
+
     Animated.stagger(120, [
       Animated.parallel([
         Animated.timing(heroOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
@@ -67,36 +73,43 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
   };
 
   useEffect(() => {
+    let isActive = true;
+    let animationTimer: ReturnType<typeof setTimeout> | undefined;
+
     if (!initEquip) {
       const load = async () => {
         try {
           const data = await fetchEquipmentDetails(slug);
-          setEquipment(data);
+          if (isActive) setEquipment(data);
         } catch (e) {
           console.log('Error loading product', e);
         } finally {
-          setLoading(false);
+          if (isActive) setLoading(false);
         }
       };
       load();
     } else {
-      // data already available, run immediately
-      setTimeout(runEntryAnimations, 50);
+      animationTimer = setTimeout(runEntryAnimations, 50);
     }
+
+    return () => {
+      isActive = false;
+      if (animationTimer) clearTimeout(animationTimer);
+    };
   }, [slug, initEquip]);
 
   useEffect(() => {
-    if (!loading && equipment) {
+    if (!loading && equipment && !initEquip) {
       runEntryAnimations();
     }
-  }, [loading, equipment]);
+  }, [loading, equipment, initEquip]);
 
   const handleAddToCart = () => {
-    if (equipment) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      addItem(equipment, 1, 1);
-      navigation.navigate('MainTabs', { screen: 'Cart' } as any);
-    }
+    if (!equipment) return;
+
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    addItem(equipment, 1, 1);
+    navigation.navigate('MainTabs', { screen: 'Cart' } as any);
   };
 
   if (loading || !equipment) {
@@ -112,14 +125,12 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} bounces>
-
-        {/* ── IMAGE CAROUSEL ── */}
         <Animated.View style={{ height: 480, opacity: heroOpacity, transform: [{ translateY: heroTranslate }] }}>
           <ScrollView
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={e => {
+            onMomentumScrollEnd={(e) => {
               setImgIndex(Math.round(e.nativeEvent.contentOffset.x / W));
             }}
             decelerationRate="fast"
@@ -134,14 +145,12 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
             )}
           </ScrollView>
 
-          {/* Gradient overlay */}
           <LinearGradient
             colors={['rgba(8,8,8,0)', 'rgba(8,8,8,0.6)', BG]}
             style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 200 }}
             locations={[0, 0.5, 1]}
           />
 
-          {/* Dot indicators */}
           {images.length > 1 && (
             <View style={styles.dots}>
               {images.map((_, i) => (
@@ -150,7 +159,6 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
             </View>
           )}
 
-          {/* Back button */}
           <TouchableOpacity
             style={[styles.backBtn, { top: insets.top + 12 }]}
             onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.goBack(); }}
@@ -158,7 +166,6 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
             <Ionicons name="arrow-back" size={20} color="#fff" />
           </TouchableOpacity>
 
-          {/* Cart button */}
           <TouchableOpacity
             style={[styles.cartBtn, { top: insets.top + 12 }]}
             onPress={() => navigation.navigate('MainTabs', { screen: 'Cart' } as any)}
@@ -172,9 +179,7 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
           </TouchableOpacity>
         </Animated.View>
 
-        {/* ── CONTENT ── */}
         <Animated.View style={[styles.content, { opacity: contentOpacity, transform: [{ translateY: contentTranslate }] }]}>
-          {/* Brand + Category */}
           <View style={styles.metaRow}>
             {equipment.brand && (
               <View style={styles.brandPill}>
@@ -188,48 +193,44 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
 
           <Text style={styles.title}>{equipment.name}</Text>
 
-          {/* Price row */}
           <View style={styles.priceRow}>
             <View>
               <Text style={styles.priceLabel}>Daily Rate</Text>
-              <Text style={styles.price}>₹{equipment.dailyRate}<Text style={styles.priceUnit}> / day</Text></Text>
+              <Text style={styles.price}>Rs. {equipment.dailyRate}<Text style={styles.priceUnit}> / day</Text></Text>
             </View>
             {equipment.depositAmount && (
               <View style={styles.depositBadge}>
                 <Text style={styles.depositLabel}>Deposit</Text>
-                <Text style={styles.depositAmount}>₹{equipment.depositAmount}</Text>
+                <Text style={styles.depositAmount}>Rs. {equipment.depositAmount}</Text>
               </View>
             )}
           </View>
 
-          {/* Divider */}
           <View style={styles.divider} />
 
-          {/* Rate tiers */}
           {(equipment.weeklyRate || equipment.weekendRate || equipment.monthlyRate) && (
             <View style={styles.ratesGrid}>
               {equipment.weekendRate && (
                 <View style={styles.rateCard}>
                   <Text style={styles.rateLabel}>Weekend</Text>
-                  <Text style={styles.rateValue}>₹{equipment.weekendRate}</Text>
+                  <Text style={styles.rateValue}>Rs. {equipment.weekendRate}</Text>
                 </View>
               )}
               {equipment.weeklyRate && (
                 <View style={styles.rateCard}>
                   <Text style={styles.rateLabel}>Weekly</Text>
-                  <Text style={styles.rateValue}>₹{equipment.weeklyRate}</Text>
+                  <Text style={styles.rateValue}>Rs. {equipment.weeklyRate}</Text>
                 </View>
               )}
               {equipment.monthlyRate && (
                 <View style={styles.rateCard}>
                   <Text style={styles.rateLabel}>Monthly</Text>
-                  <Text style={styles.rateValue}>₹{equipment.monthlyRate}</Text>
+                  <Text style={styles.rateValue}>Rs. {equipment.monthlyRate}</Text>
                 </View>
               )}
             </View>
           )}
 
-          {/* Description */}
           {equipment.description && (
             <>
               <Text style={styles.sectionTitle}>About This Gear</Text>
@@ -241,7 +242,6 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
         <View style={{ height: 120 }} />
       </ScrollView>
 
-      {/* ── BOTTOM ACTION BAR ── */}
       <Animated.View style={[styles.actionBar, { paddingBottom: insets.bottom + 8 }, { opacity: barOpacity, transform: [{ translateY: barTranslate }] }]}>
         {Platform.OS === 'ios'
           ? <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
@@ -250,7 +250,7 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
         <View style={styles.actionContent}>
           <View>
             <Text style={styles.actionSub}>Daily Rate</Text>
-            <Text style={styles.actionPrice}>₹{equipment.dailyRate}</Text>
+            <Text style={styles.actionPrice}>Rs. {equipment.dailyRate}</Text>
           </View>
           <TouchableOpacity style={styles.addToCartBtn} onPress={handleAddToCart} activeOpacity={0.85}>
             <Ionicons name="bag-add-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
@@ -265,7 +265,6 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: BG },
 
-  // Image area
   dots: { position: 'absolute', bottom: 24, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center' },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.25)', marginHorizontal: 3 },
   dotActive: { width: 20, backgroundColor: ACCENT },
@@ -274,7 +273,6 @@ const styles = StyleSheet.create({
   cartBadge: { position: 'absolute', top: 5, right: 5, backgroundColor: ACCENT, borderRadius: 7, width: 14, height: 14, justifyContent: 'center', alignItems: 'center' },
   cartBadgeText: { color: '#fff', fontSize: 8, fontWeight: '900' },
 
-  // Content
   content: { paddingHorizontal: 24, paddingTop: 8 },
   metaRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 8 },
   brandPill: { backgroundColor: ACCENT_DIM, borderWidth: 1, borderColor: ACCENT, paddingHorizontal: 12, paddingVertical: 5, borderRadius: 100 },
@@ -292,17 +290,14 @@ const styles = StyleSheet.create({
 
   divider: { height: StyleSheet.hairlineWidth, backgroundColor: BORDER, marginVertical: 24 },
 
-  // Rate tiers
   ratesGrid: { flexDirection: 'row', gap: 12, marginBottom: 28 },
   rateCard: { flex: 1, backgroundColor: CARD, borderRadius: 16, padding: 14, borderWidth: 1, borderColor: BORDER },
   rateLabel: { color: TEXT_S, fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 },
   rateValue: { color: TEXT_P, fontSize: 18, fontWeight: '800' },
 
-  // Description
   sectionTitle: { color: TEXT_P, fontSize: 20, fontWeight: '800', marginBottom: 12, letterSpacing: -0.3 },
   description: { color: '#888', fontSize: 16, lineHeight: 28, fontWeight: '400' },
 
-  // Action bar
   actionBar: { position: 'absolute', bottom: 0, left: 0, right: 0, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: BORDER },
   actionContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingTop: 16 },
   actionSub: { color: TEXT_S, fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8 },

@@ -11,7 +11,7 @@ import { RootStackParamList, MainTabParamList } from '../../App';
 import { useCatalogStore } from '../store/catalogStore';
 import { SkeletonCatalogCard } from '../components/SkeletonCard';
 import { Equipment } from '../types';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -35,7 +35,7 @@ export default function CatalogScreen({ route, navigation }: Props) {
   const insets = useSafeAreaInsets();
   const initialCategoryId = route.params?.categoryId;
 
-  const { equipment, categories, brands, isLoading, error, fetchCatalog } = useCatalogStore();
+  const { equipment, categories, brands, isLoading, error, fetchCatalogData } = useCatalogStore();
   
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(initialCategoryId ?? null);
   const [activeBrand, setActiveBrand] = useState<string | null>(null);
@@ -49,7 +49,9 @@ export default function CatalogScreen({ route, navigation }: Props) {
   }, [initialCategoryId]);
 
   useEffect(() => {
-  }, []);
+    fetchCatalogData();
+  }, [fetchCatalogData]);
+
 
   const processedEquipment = useMemo(() => {
     let arr = equipment.filter(item => {
@@ -74,7 +76,7 @@ export default function CatalogScreen({ route, navigation }: Props) {
 
   useEffect(() => {
     if (activeBrand && !activeBrands.includes(activeBrand)) setActiveBrand(null);
-  }, [activeBrands]);
+  }, [activeBrand, activeBrands]);
 
   const activeFilterCount = [activeCategoryId, activeBrand, activeSort !== 'recommended' ? activeSort : null].filter(Boolean).length;
 
@@ -139,7 +141,7 @@ export default function CatalogScreen({ route, navigation }: Props) {
           <Ionicons name="cloud-offline-outline" size={52} color="#2a2a2a" />
           <Text style={{ color: '#555', fontSize: 15, fontWeight: '600', marginTop: 16, textAlign: 'center', paddingHorizontal: 40 }}>{error}</Text>
           <TouchableOpacity
-            onPress={() => fetchCatalog(true)}
+            onPress={() => fetchCatalogData(true)}
             style={{ marginTop: 24, backgroundColor: ACCENT, paddingVertical: 14, paddingHorizontal: 32, borderRadius: 100 }}
           >
             <Text style={{ color: '#fff', fontWeight: '800', fontSize: 15 }}>Try Again</Text>
@@ -258,7 +260,7 @@ export default function CatalogScreen({ route, navigation }: Props) {
                   <Text style={styles.sheetSectionLabel}>Category</Text>
                   <View style={styles.chipGrid}>
                     <ChipRow label="All Types" isActive={activeCategoryId === null} onPress={() => setActiveCategoryId(null)} />
-                    {categories.map(cat => (
+                    {categories.map((cat) => (
                       <ChipRow 
                         key={cat.id.toString()} 
                         label={cat.name} 

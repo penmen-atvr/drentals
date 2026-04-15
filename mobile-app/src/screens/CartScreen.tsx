@@ -6,21 +6,23 @@ import {
 import { Image } from 'expo-image';
 import { BlurView } from 'expo-blur';
 import { Calendar } from 'react-native-calendars';
-import { useCartStore } from '../store/cartStore';
+import type { MarkedDates } from 'react-native-calendars/src/types';
+import { useCartStore, CartItem } from '../store/cartStore';
 import { CompositeScreenProps } from '@react-navigation/native';
-import { BottomTabScreenProps, useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, MainTabParamList } from '../../App';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { parseRate } from '../utils/pricing';
 
-const ACCENT    = '#E31B23';
+const ACCENT = '#E31B23';
 const ACCENT_DIM = 'rgba(227,27,35,0.12)';
-const BG        = '#080808';
-const CARD      = '#111111';
-const BORDER    = 'rgba(255,255,255,0.06)';
-const TEXT_P    = '#FAFAFA';
-const TEXT_S    = '#666666';
+const BG = '#080808';
+const CARD = '#111111';
+const BORDER = 'rgba(255,255,255,0.06)';
+const TEXT_P = '#FAFAFA';
+const TEXT_S = '#666666';
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, 'Cart'>,
@@ -32,44 +34,50 @@ export default function CartScreen({ navigation }: Props) {
   const { items, removeItem, clearCart, getTotal, startDate, endDate, setDates, updateQuantity } = useCartStore();
   const [pickerMode, setPickerMode] = useState<'start' | 'end' | null>(null);
 
+  const handleBack = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+      return;
+    }
+
+    navigation.navigate('MainTabs', { screen: 'Home' } as never);
+  };
+
   const handleCheckout = () => {
     if (items.length === 0) return;
 
     let message = "Hi, I'd like to reserve the following items from D'RENTALS:\n\n";
-    message += `*Rental Period:* ${startDate.toDateString()} to ${endDate.toDateString()}\n\n`;
-    
-    items.forEach((item, index) => {
-      message += `${index + 1}. *${item.equipment.name}*\n`;
-      message += `   Qty: ${item.quantity} | Duration: ${item.durationDays} days\n`;
-      message += `   Rate: ₹${item.equipment.dailyRate}/day\n\n`;
-    });
-    message += `*Total Estimated Rental: ₹${getTotal().toFixed(0)}*\n\n`;
-    message += "Please let me know if these are available and the next steps for payment/deposit.";
+    message += `Rental Period: ${startDate.toDateString()} to ${endDate.toDateString()}\n\n`;
 
-    // Use wa.me which is universally supported
-    const phoneNumber = "917794872701";
+    items.forEach((item, index) => {
+      message += `${index + 1}. ${item.equipment.name}\n`;
+      message += `   Qty: ${item.quantity} | Duration: ${item.durationDays} days\n`;
+      message += `   Rate: Rs. ${item.equipment.dailyRate}/day\n\n`;
+    });
+    message += `Total Estimated Rental: Rs. ${getTotal().toFixed(0)}\n\n`;
+    message += 'Please let me know if these are available and the next steps for payment/deposit.';
+
+    const phoneNumber = '917794872701';
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
-    Linking.openURL(whatsappUrl).catch(err => {
-      Alert.alert("Error", "Could not open WhatsApp.");
+    Linking.openURL(whatsappUrl).catch(() => {
+      Alert.alert('Error', 'Could not open WhatsApp.');
     });
   };
 
   const formatDateString = (d: Date) => {
-    const pad = (n: number) => n < 10 ? `0${n}` : n;
+    const pad = (n: number) => (n < 10 ? `0${n}` : n);
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   };
 
-  // Build a full marked date range for the calendar
   const buildMarkedDates = () => {
-    const marked: Record<string, any> = {};
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const marked: MarkedDates = {};
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
 
-    const start = new Date(startDate); start.setHours(0,0,0,0);
-    const end = new Date(endDate); end.setHours(0,0,0,0);
     const cursor = new Date(start);
-
     while (cursor <= end) {
       const key = formatDateString(cursor);
       const isStart = cursor.getTime() === start.getTime();
@@ -82,10 +90,11 @@ export default function CartScreen({ navigation }: Props) {
       };
       cursor.setDate(cursor.getDate() + 1);
     }
+
     return marked;
   };
-  const onDayPress = (day: any) => {
-    // Construct local date at noon to avoid timezone shift issues
+
+  const onDayPress = (day: { dateString: string }) => {
     const selectedDate = new Date(`${day.dateString}T12:00:00`);
     selectedDate.setHours(0, 0, 0, 0);
 
@@ -97,7 +106,7 @@ export default function CartScreen({ navigation }: Props) {
     setPickerMode(null);
   };
 
-  const renderItem = ({ item }: { item: any }) => (
+  const renderItem = ({ item }: { item: CartItem }) => (
     <View style={styles.cartItem}>
       {item.equipment.imageUrls && item.equipment.imageUrls.length > 0 ? (
         <Image source={{ uri: item.equipment.imageUrls[0] }} style={styles.cartImage} contentFit="cover" />
@@ -112,7 +121,6 @@ export default function CartScreen({ navigation }: Props) {
           <Text style={styles.itemBrand}>{item.equipment.brand}</Text>
         )}
         <Text style={styles.itemMeta}>{item.durationDays} day(s)</Text>
-        {/* Quantity stepper */}
         <View style={styles.stepper}>
           <TouchableOpacity
             style={styles.stepBtn}
@@ -131,7 +139,7 @@ export default function CartScreen({ navigation }: Props) {
       </View>
       <View style={styles.itemRight}>
         <Text style={styles.itemPrice}>
-          ₹{(parseFloat(item.equipment.dailyRate) * item.quantity * item.durationDays).toFixed(0)}
+          Rs. {(parseRate(item.equipment.dailyRate) * item.quantity * item.durationDays).toFixed(0)}
         </Text>
         <TouchableOpacity style={styles.removeBtn} onPress={() => removeItem(item.equipment.id)}>
           <Ionicons name="trash-outline" size={16} color={ACCENT} />
@@ -140,17 +148,16 @@ export default function CartScreen({ navigation }: Props) {
     </View>
   );
 
-  // Empty state
   if (items.length === 0) {
     return (
       <View style={[styles.container, styles.emptyContainer]}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={{ position: 'absolute', top: insets.top + 20, left: 24, zIndex: 10 }}
-          onPress={() => navigation.goBack()}
+          onPress={handleBack}
         >
           <Ionicons name="arrow-back" size={28} color={TEXT_P} />
         </TouchableOpacity>
-        
+
         <View style={styles.emptyIcon}>
           <Ionicons name="bag-outline" size={48} color="#222" />
         </View>
@@ -165,10 +172,9 @@ export default function CartScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 16 }}>
+          <TouchableOpacity onPress={handleBack} style={{ marginRight: 16 }}>
             <Ionicons name="arrow-back" size={30} color={TEXT_P} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>My Cart</Text>
@@ -185,22 +191,20 @@ export default function CartScreen({ navigation }: Props) {
 
       <FlatList
         data={items}
-        keyExtractor={item => item.equipment.id.toString()}
+        keyExtractor={(item) => item.equipment.id.toString()}
         renderItem={renderItem}
         contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 210 }]}
         showsVerticalScrollIndicator={false}
       />
 
-      {/* Bottom Action Bar */}
       <View style={[styles.actionBar, { bottom: 0, paddingBottom: insets.bottom + 12 }]}>
         {Platform.OS === 'ios'
           ? <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
           : <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(8,8,8,0.96)' }]} />
         }
-        
-        {/* Date Selector Row */}
+
         <View style={styles.dateSelector}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}
             activeOpacity={0.7}
             onPress={() => setPickerMode('start')}
@@ -209,7 +213,7 @@ export default function CartScreen({ navigation }: Props) {
             <Text style={styles.dateSelectorLabel}>Start:</Text>
             <Text style={styles.dateSelectorValue}>{startDate.toLocaleDateString()}</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center' }}
             activeOpacity={0.7}
             onPress={() => setPickerMode('end')}
@@ -223,7 +227,7 @@ export default function CartScreen({ navigation }: Props) {
         <View style={styles.actionContent}>
           <View style={{ flex: 1, paddingRight: 12 }}>
             <Text style={styles.actionLabel}>Total Estimate</Text>
-            <Text style={styles.actionTotal} numberOfLines={1}>₹{getTotal().toFixed(0)}</Text>
+            <Text style={styles.actionTotal} numberOfLines={1}>Rs. {getTotal().toFixed(0)}</Text>
           </View>
           <TouchableOpacity style={styles.checkoutBtn} onPress={handleCheckout} activeOpacity={0.85}>
             <Ionicons name="logo-whatsapp" size={18} color="#fff" style={{ marginRight: 6 }} />
@@ -298,12 +302,10 @@ const styles = StyleSheet.create({
   itemPrice: { color: TEXT_P, fontSize: 17, fontWeight: '900' },
   removeBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: ACCENT_DIM, borderWidth: 1, borderColor: 'rgba(227,27,35,0.2)', justifyContent: 'center', alignItems: 'center' },
 
-  // Quantity stepper
   stepper: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
   stepBtn: { width: 28, height: 28, borderRadius: 14, backgroundColor: ACCENT_DIM, borderWidth: 1, borderColor: 'rgba(227,27,35,0.25)', justifyContent: 'center', alignItems: 'center' },
   stepValue: { color: TEXT_P, fontSize: 15, fontWeight: '800', minWidth: 28, textAlign: 'center' },
 
-  // Empty state
   emptyContainer: { justifyContent: 'center', alignItems: 'center', paddingHorizontal: 40 },
   emptyIcon: { width: 100, height: 100, borderRadius: 50, backgroundColor: CARD, borderWidth: 1, borderColor: BORDER, justifyContent: 'center', alignItems: 'center', marginBottom: 24 },
   emptyTitle: { color: TEXT_P, fontSize: 24, fontWeight: '800', marginBottom: 8, letterSpacing: -0.5 },
@@ -311,7 +313,6 @@ const styles = StyleSheet.create({
   emptyBtn: { backgroundColor: ACCENT, paddingVertical: 16, paddingHorizontal: 36, borderRadius: 100, shadowColor: ACCENT, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.35, shadowRadius: 16, elevation: 10 },
   emptyBtnText: { color: '#fff', fontSize: 16, fontWeight: '800' },
 
-  // Action bar
   actionBar: { position: 'absolute', bottom: 0, left: 0, right: 0, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: BORDER },
   dateSelector: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 24, paddingVertical: 18, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: BORDER },
   dateSelectorLabel: { color: TEXT_S, fontSize: 13, fontWeight: '600', marginLeft: 8 },
@@ -322,7 +323,6 @@ const styles = StyleSheet.create({
   checkoutBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#25D366', paddingVertical: 14, paddingHorizontal: 20, borderRadius: 100, shadowColor: '#25D366', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16, elevation: 10 },
   checkoutText: { color: '#fff', fontSize: 16, fontWeight: '900', letterSpacing: -0.2 },
 
-  // Filter sheet / Calendar overlay
   overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'flex-end' },
   sheet: { backgroundColor: '#141414', borderTopLeftRadius: 32, borderTopRightRadius: 32 },
   sheetHandle: { width: 40, height: 4, borderRadius: 2, backgroundColor: '#333', alignSelf: 'center', marginTop: 14, marginBottom: 4 },
