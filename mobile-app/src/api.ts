@@ -7,7 +7,13 @@ async function fetchWithTimeout(url: string, timeoutMs = 10000): Promise<Respons
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    return await fetch(url, { signal: controller.signal });
+    return await fetch(url, { 
+      signal: controller.signal,
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache'
+      }
+    });
   } finally {
     clearTimeout(timer);
   }
