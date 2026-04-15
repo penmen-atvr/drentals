@@ -1,8 +1,6 @@
 import { Category, Equipment } from './types';
 
-export const API_BASE = __DEV__ 
-  ? (process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api') 
-  : 'https://rentals.penmenstudios.com/api';
+export const API_BASE = process.env.EXPO_PUBLIC_API_URL || (__DEV__ ? 'http://192.168.29.65:3000/api' : 'https://rentals.penmenstudios.com/api');
 
 async function fetchWithTimeout(url: string, timeoutMs = 10000): Promise<Response> {
   const controller = new AbortController();
