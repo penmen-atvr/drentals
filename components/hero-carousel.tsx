@@ -50,7 +50,8 @@ export default function HeroCarousel({ equipment }: HeroCarouselProps) {
           alt={`${currentEquipment.brand} ${currentEquipment.name}`}
           fill
           priority={true}
-          className="object-cover object-center transition-transform duration-[10000ms] ease-out scale-110 group-hover/carousel:scale-100 animate-in-fade"
+          className="object-cover object-center transition-transform ease-out scale-110 group-hover/carousel:scale-100 animate-in-fade"
+          style={{ transitionDuration: '10000ms' }}
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 75vw, 1440px"
           quality={85}
         />
