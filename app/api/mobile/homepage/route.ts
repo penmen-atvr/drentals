@@ -281,13 +281,7 @@ export async function GET() {
 
     const payload = response.length > 0 ? response : await buildFallbackSections();
 
-    return NextResponse.json(payload, {
-      headers: {
-        "Cache-Control": "public, s-maxage=120, stale-while-revalidate=300",
-        "CDN-Cache-Control": "public, s-maxage=120, stale-while-revalidate=300",
-        "Vercel-CDN-Cache-Control": "public, s-maxage=120, stale-while-revalidate=300",
-      },
-    });
+    return NextResponse.json(payload);
   } catch (error) {
     console.error("[/api/mobile/homepage] Error:", error);
 
