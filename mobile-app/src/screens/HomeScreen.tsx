@@ -107,9 +107,8 @@ export default function HomeScreen({ navigation }: Props) {
 
   useFocusEffect(
     useCallback(() => {
-      if (loading) return;
       loadData();
-    }, [loading, loadData])
+    }, [loadData])
   );
 
   const onRefresh = useCallback(async () => {

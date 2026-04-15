@@ -287,11 +287,7 @@ export async function GET() {
 
     try {
       const fallback = await buildFallbackSections();
-      return NextResponse.json(fallback, {
-        headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
-        },
-      });
+      return NextResponse.json(fallback);
     } catch (fallbackError) {
       console.error("[/api/mobile/homepage] Fallback Error:", fallbackError);
       return NextResponse.json(
