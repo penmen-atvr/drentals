@@ -1,30 +1,70 @@
-# Camera rental platform
+# D'Rentals (HydCineRentals) 🎥
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+D'Rentals is a cross-platform, enterprise-grade Camera & Production equipment rental architecture native to Hyderabad. Designed with a cinematic dark-mode visual interface, it powers both a web-based e-commerce front and a seamless Android/iOS Companion application utilizing shared database clusters and state logic.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/teja-vardhan-reddy-aenugus-projects/v0-camera-rental-platform-b5)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/sA3LU2Gnxap)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
+[![React Native](https://img.shields.io/badge/Mobile-Expo_Go-black?style=for-the-badge&logo=react)](https://expo.dev/)
+[![Database](https://img.shields.io/badge/Database-Neon_Serverless-black?style=for-the-badge&logo=postgresql)](https://neon.tech/)
 
-## Overview
+## 🏗 System Architecture
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+The D'Rentals stack is split into two major components unified by a single Next.js database cluster & unified RESTful API standard:
 
-## Deployment
+1.  **D'Rentals Customer Facing Web Portal** (`/app`)
+    *   **Framework**: Next.js 14+ (App Router).
+    *   **Styling**: Vanilla CSS structure via standard Tailwind hooks. Hard-coded dark-mode styling utilizing glassmorphic layers (`backdrop-blur`).
+    *   **Features**: Lightning fast Infinite Scrolling catalogs, Server-Side Pagination offset data loading, Cart/Checkout State Management.
+2.  **D'Rentals Consumer Mobile Application** (`/mobile-app`)
+    *   **Framework**: Expo & React Native.
+    *   **Architecture**: High-performance Native SDK components decoupled from WebView limits.
+    *   **State Management**: Transient client-side Zustand store tied into Next.js generic REST JSON interceptors (`/api/mobile/homepage`).
+    *   **Navigation**: React Navigation (Bottom Tabs, Nested Stack Routing).
 
-Your project is live at:
+### ⚙️ The Database Layer
 
-**[https://vercel.com/teja-vardhan-reddy-aenugus-projects/v0-camera-rental-platform-b5](https://vercel.com/teja-vardhan-reddy-aenugus-projects/v0-camera-rental-platform-b5)**
+D'Rentals operates exclusively on **Neon Serverless PostgreSQL** driven by the **Drizzle ORM** instance mapped inside `/lib/db`. 
 
-## Build your app
+*   **Paginating Scale**: By querying identical datasets mapped via `OFFSET` & `LIMIT` across SQL layers, the platform natively prevents Out-of-Memory (OOM) bugs universally without limiting maximum vendor inventory size.
+*   **Security Policies**: Full API endpoints utilizing strict JSON serialization. Hard fallback logic handles missing slugs dynamically routing by `ID`.
 
-Continue building your app on:
+## 🚀 Getting Started
 
-**[https://v0.dev/chat/projects/sA3LU2Gnxap](https://v0.dev/chat/projects/sA3LU2Gnxap)**
+### Web Application (Next.js)
 
-## How It Works
+1. Ensure the `.env` configuration contains your active `DATABASE_URL` for Drizzle to hit Neon.
+2. Install standard dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development portal:
+   ```bash
+   npm run dev
+   ```
 
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+### Mobile Application (Expo / React Native)
+
+1. Move directory state into the isolated package folder:
+   ```bash
+   cd mobile-app
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Spin up the Expo Go Metro Bundler:
+   ```bash
+   npx expo start
+   ```
+
+---
+
+## 📱 Google Play Store Pre-Flight Guidelines
+
+To guarantee the `mobile-app` module is securely approved under Google Play Protect Protocol guidelines during the upcoming deployment, this codebase explicitly adheres to the following conditions:
+
+- **Permission Transparency:** Minimal permissions are requested. Currently, no risky broadcast receivers, background location sniffers, or unsolicited contact parsers run natively to break the Play Policy sandbox.
+- **Image Protocol Safeties:** App imagery (CDNs) safely utilize optimized SSL hooks via `getOptimizedImage(url)`, bypassing potential unencrypted payload flag violations.
+- **Deep Fallback Structures:** All HTTP fetches against external Next.js routes dynamically wrap inside `fetchWithTimeout` handlers. Timeouts inherently prevent Play Store review boots (Application Not Responding / ANR warnings) which trigger heavy penalty flags if an endpoint hangs up.
+- **Appropriate Data Scoping:** All user and product analytics enforce generic payload stripping over REST API intercepts, ensuring user hardware isn't tracking restricted data metrics.
+
+*Built under strict production guidelines for enterprise rental environments.*

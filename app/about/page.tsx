@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next"
-import { Award, Users, Clock } from "lucide-react"
+import { Award, Users, Clock, MapPin, Mail, Shield } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import SafeImage from "@/components/safe-image"
 import Breadcrumb from "@/components/breadcrumb"
 import { generateMetadata, generateViewport } from "@/lib/seo-config"
 import PageHeader from "@/components/page-header"
-
+import Link from "next/link"
 
 export const viewport: Viewport = generateViewport()
 
@@ -44,6 +44,7 @@ export default function AboutPage() {
           />
 
           <div className="py-16">
+            {/* Mission Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <div className="aspect-[4/3] relative rounded-none overflow-hidden border border-zinc-800 bg-zinc-800">
@@ -78,6 +79,35 @@ export default function AboutPage() {
 
             <Separator className="my-16 bg-zinc-800" />
 
+            {/* About the App Section */}
+            <div className="mb-16">
+              <h2 className="font-heading text-3xl text-white mb-6 tracking-wide text-center">
+                THE D&apos;RENTALS APP
+              </h2>
+              <p className="text-zinc-300 max-w-3xl mx-auto font-body text-center mb-8">
+                The D&apos;RENTALS Android app is your on-the-go companion for browsing our full equipment
+                catalog, checking real-time availability, and submitting rental enquiries — all from your
+                phone. Available for free on Google Play.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                <div className="p-5 border border-zinc-800 bg-zinc-900 text-center">
+                  <p className="text-red-500 font-heading text-sm tracking-wider mb-2">PLATFORM</p>
+                  <p className="text-white font-body">Android (Google Play)</p>
+                </div>
+                <div className="p-5 border border-zinc-800 bg-zinc-900 text-center">
+                  <p className="text-red-500 font-heading text-sm tracking-wider mb-2">DEVELOPER</p>
+                  <p className="text-white font-body">Penmen Studios</p>
+                </div>
+                <div className="p-5 border border-zinc-800 bg-zinc-900 text-center">
+                  <p className="text-red-500 font-heading text-sm tracking-wider mb-2">TYPE</p>
+                  <p className="text-white font-body">Free — Equipment Discovery</p>
+                </div>
+              </div>
+            </div>
+
+            <Separator className="my-16 bg-zinc-800" />
+
+            {/* Why Choose Section */}
             <div className="text-center mb-16">
               <h2 className="font-heading text-3xl text-white mb-6 tracking-wide">WHY CHOOSE D&apos;RENTALS</h2>
               <p className="text-zinc-300 max-w-3xl mx-auto font-body">
@@ -86,7 +116,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
               <div className="p-6 border border-zinc-800 bg-zinc-900 military-border">
                 <div className="flex justify-center mb-4">
                   <Award className="h-12 w-12 text-red-500" />
@@ -127,10 +157,68 @@ export default function AboutPage() {
                 </p>
               </div>
             </div>
+
+            <Separator className="my-16 bg-zinc-800" />
+
+            {/* Company Info Section — Required for Play Store */}
+            <div className="max-w-3xl mx-auto">
+              <h2 className="font-heading text-3xl text-white mb-8 tracking-wide text-center">
+                COMPANY INFORMATION
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="p-6 border border-zinc-800 bg-zinc-900 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 text-red-500 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-white font-heading text-sm tracking-wider mb-1">LOCATION</p>
+                      <p className="text-zinc-400 font-body text-sm">
+                        Hyderabad, Telangana, India
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Mail className="h-5 w-5 text-red-500 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-white font-heading text-sm tracking-wider mb-1">EMAIL</p>
+                      <a
+                        href="mailto:admin@penmenstudios.com"
+                        className="text-red-500 hover:text-white transition-colors font-body text-sm"
+                      >
+                        admin@penmenstudios.com
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6 border border-zinc-800 bg-zinc-900 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <Shield className="h-5 w-5 text-red-500 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-white font-heading text-sm tracking-wider mb-1">LEGAL PAGES</p>
+                      <ul className="space-y-1 font-body text-sm">
+                        <li>
+                          <Link href="/privacy-policy" className="text-red-500 hover:text-white transition-colors">
+                            Privacy Policy
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/terms-conditions" className="text-red-500 hover:text-white transition-colors">
+                            Terms &amp; Conditions
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/return-policy" className="text-red-500 hover:text-white transition-colors">
+                            Return &amp; Cancellation Policy
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </>
   )
 }
-
