@@ -12,6 +12,8 @@ import {
 import { buildEquipmentImageUrls, resolveImageUrl } from "@/lib/image-utils";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 type EquipmentPayload = {
   id: number;

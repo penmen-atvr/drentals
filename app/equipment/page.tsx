@@ -1,7 +1,8 @@
-import { getCategories, getAllEquipment } from "@/lib/data"
+import { getCategories, getEquipmentPaginated } from "@/lib/data"
 import EquipmentGrid from "@/components/equipment-grid"
 import EquipmentFilters from "@/components/equipment-filters"
 import MobileCategoryDropdown from "@/components/mobile-category-dropdown"
+import EquipmentSearch from "@/components/equipment-search"
 import { Suspense } from "react"
 import { EquipmentSkeleton } from "@/components/skeletons"
 import { unstable_noStore } from "next/cache"
@@ -37,13 +38,14 @@ export const metadata: Metadata = generateMetadata({
 export default async function EquipmentPage({
   searchParams,
 }: {
-  searchParams: { category?: string; kit?: string }
+  searchParams: { category?: string; kit?: string; q?: string }
 }) {
   unstable_noStore()
 
   const categories = await getCategories()
   const categoryId = searchParams.category ? Number.parseInt(searchParams.category) : undefined
   const isKit = searchParams.kit === 'true'
+  const searchQuery = searchParams.q || undefined
 
   // Find the selected category name if a category is selected
   const selectedCategory = categoryId ? categories.find((cat) => cat.id === categoryId) : undefined
@@ -59,10 +61,17 @@ export default async function EquipmentPage({
             items={[{ label: "Equipment" }, ...(selectedCategory ? [{ label: selectedCategory.name }] : [])]}
           />
 
-          <div className="py-8">
-            <div className="flex items-center justify-between mb-10">
-              <h1 className="text-3xl font-heading text-red-500 tracking-wide uppercase">Browse Equipment</h1>
-              <div className="h-px bg-red-500 flex-grow ml-6"></div>
+          <div className="py-8 space-y-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+              <div className="flex items-center">
+                <h1 className="text-3xl font-heading text-red-500 tracking-wide uppercase">
+                  {searchQuery ? `Results for "${searchQuery}"` : selectedCategory ? selectedCategory.name : "Browse Equipment"}
+                </h1>
+                <div className="hidden md:block h-px bg-red-500/50 w-16 lg:w-32 ml-6"></div>
+              </div>
+              <div className="w-full md:w-auto">
+                <EquipmentSearch />
+              </div>
             </div>
 
             {/* Mobile Category Dropdown - Only visible on mobile */}
@@ -75,8 +84,8 @@ export default async function EquipmentPage({
               </div>
 
               <div className="lg:col-span-3">
-                <Suspense fallback={<EquipmentSkeleton />}>
-                  <EquipmentList categoryId={categoryId} isKit={isKit} />
+                <Suspense fallback={<EquipmentSkeleton />} key={`${categoryId}-${isKit}-${searchQuery}`}>
+                  <EquipmentList categoryId={categoryId} isKit={isKit} searchQuery={searchQuery} />
                 </Suspense>
               </div>
             </div>
@@ -87,11 +96,18 @@ export default async function EquipmentPage({
   )
 }
 
-async function EquipmentList({ categoryId, isKit }: { categoryId?: number, isKit?: boolean }) {
+async function EquipmentList({ categoryId, isKit, searchQuery }: { categoryId?: number, isKit?: boolean, searchQuery?: string }) {
   unstable_noStore()
 
-  const equipment = await getAllEquipment(categoryId, isKit || undefined)
+  const result = await getEquipmentPaginated({ categoryId, isKit, searchQuery, page: 1, limit: 12 })
+  const hasNextPage = result.total > 12
 
-  return <EquipmentGrid equipment={equipment} />
+  return <EquipmentGrid 
+    equipment={result.data} 
+    hasNextPage={hasNextPage} 
+    categoryId={categoryId} 
+    isKit={isKit} 
+    searchQuery={searchQuery} 
+  />
 }
 

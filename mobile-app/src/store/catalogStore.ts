@@ -24,9 +24,19 @@ interface CatalogState {
   brands: string[];
   lastFetched: number | null;
   isLoading: boolean;
+  isFetchingNextPage: boolean;
   error: string | null;
+  page: number;
+  hasNextPage: boolean;
 
-  fetchCatalogData: (forceRefresh?: boolean) => Promise<void>;
+  fetchCatalogData: (
+    page?: number,
+    categoryId?: number | null,
+    sort?: string | null,
+    brand?: string | null,
+    q?: string | null,
+    forceRefresh?: boolean
+  ) => Promise<void>;
   clearCache: () => void;
 }
 
@@ -38,40 +48,58 @@ export const useCatalogStore = create<CatalogState>()(
       brands: [],
       lastFetched: null,
       isLoading: false,
+      isFetchingNextPage: false,
       error: null,
+      page: 1,
+      hasNextPage: false,
 
-      fetchCatalogData: async (forceRefresh = false) => {
-        const { lastFetched, equipment } = get();
+      fetchCatalogData: async (
+        page = 1,
+        categoryId = null,
+        sort = null,
+        brand = null,
+        q = null,
+        forceRefresh = false
+      ) => {
+        const { equipment, lastFetched } = get();
         const now = Date.now();
-
         const isFresh = lastFetched !== null && now - lastFetched < CATALOG_CACHE_MS;
+        const isInitialPage = page === 1;
         const hasData = equipment.length > 0;
 
-        // Skip if data is fresh, unless explicitly forced
-        if (!forceRefresh && isFresh && hasData) return;
+        // Skip cache bypass if we're aggressively fetching the same fresh base page
+        if (!forceRefresh && isFresh && isInitialPage && hasData) return;
 
-        // Only show skeleton on a cold start (no cached data)
-        if (!hasData) set({ isLoading: true, error: null });
+        if (isInitialPage) {
+          set({ isLoading: !hasData, error: null });
+        } else {
+          set({ isFetchingNextPage: true, error: null });
+        }
 
         try {
-          const [eq, categories, br] = await Promise.all([
-            fetchAllEquipment(),
+          const [eqRes, categories, br] = await Promise.all([
+            fetchAllEquipment(page, 12, categoryId, sort, brand, q),
             fetchCategories(),
             fetchBrands(),
           ]);
-          set({
-            equipment: eq,
+
+          set((state) => ({
+            equipment: isInitialPage ? eqRes.data : [...state.equipment, ...eqRes.data],
+            hasNextPage: eqRes.hasNextPage,
+            page: page,
             categories,
             brands: br,
             lastFetched: now,
             isLoading: false,
+            isFetchingNextPage: false,
             error: null,
-          });
+          }));
         } catch (err) {
           console.error('[fetchCatalogData]', err);
           set({
             isLoading: false,
-            error: hasData ? null : 'Failed to load catalog. Check your connection.',
+            isFetchingNextPage: false,
+            error: isInitialPage && !hasData ? 'Failed to load catalog. Check your connection.' : null,
           });
         }
       },

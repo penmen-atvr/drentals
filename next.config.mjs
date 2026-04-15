@@ -11,6 +11,9 @@ const nextConfig = {
     // This avoids paid-plan image transformation costs and lets all formats
     // (.jpg, .png, .webp, etc.) load without any server-side processing.
     unoptimized: true,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
       {
         protocol: 'https',

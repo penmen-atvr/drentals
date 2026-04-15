@@ -76,20 +76,24 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
     let isActive = true;
     let animationTimer: ReturnType<typeof setTimeout> | undefined;
 
-    if (!initEquip) {
-      const load = async () => {
-        try {
-          const data = await fetchEquipmentDetails(slug);
-          if (isActive) setEquipment(data);
-        } catch (e) {
-          console.log('Error loading product', e);
-        } finally {
-          if (isActive) setLoading(false);
+    const loadFullDetails = async () => {
+      try {
+        const fullData = await fetchEquipmentDetails(slug);
+        if (isActive) {
+          setEquipment(fullData);
+          setLoading(false);
         }
-      };
-      load();
+      } catch (e) {
+        console.log('Error loading product details', e);
+        if (isActive) setLoading(false);
+      }
+    };
+
+    if (!initEquip) {
+      loadFullDetails();
     } else {
       animationTimer = setTimeout(runEntryAnimations, 50);
+      loadFullDetails(); // Silently upgrade sparse item to full item
     }
 
     return () => {

@@ -31,10 +31,27 @@ export const getFeaturedEquipment = cache(async (): Promise<Equipment[]> => {
   return formattedResult as unknown as Equipment[]
 })
 
-export const getAllEquipment = cache(async (categoryId?: number, isKit?: boolean): Promise<Equipment[]> => {
+export const getAllEquipment = cache(async (categoryId?: number, isKit?: boolean, searchQuery?: string): Promise<Equipment[]> => {
   const whereConditions = []
   if (categoryId) whereConditions.push(eq(equipment.categoryId, categoryId))
   if (isKit !== undefined) whereConditions.push(eq(equipment.isKit, isKit))
+  
+  if (searchQuery) {
+    const searchTokens = searchQuery.trim().split(/\s+/).filter(Boolean)
+    
+    if (searchTokens.length > 0) {
+      const tokenConditions = searchTokens.map(token => {
+        const searchParam = `%${token}%`
+        return or(
+          drizzleSql`${equipment.name} ILIKE ${searchParam}`,
+          drizzleSql`${equipment.brand} ILIKE ${searchParam}`,
+          drizzleSql`${equipment.description} ILIKE ${searchParam}`
+        )
+      })
+      
+      whereConditions.push(and(...tokenConditions.filter(Boolean)))
+    }
+  }
 
   const result = await db.query.equipment.findMany({
     where: whereConditions.length > 0 ? and(...whereConditions) : undefined,
@@ -50,6 +67,68 @@ export const getAllEquipment = cache(async (categoryId?: number, isKit?: boolean
     categoryName: item.category?.name,
     imageUrls: buildEquipmentImageUrls(item)
   })) as unknown as Equipment[]
+})
+
+export interface GetEquipmentOptions {
+  categoryId?: number;
+  isKit?: boolean;
+  searchQuery?: string;
+  brand?: string;
+  sort?: string;
+  page?: number;
+  limit?: number;
+}
+
+export const getEquipmentPaginated = cache(async (options: GetEquipmentOptions): Promise<{ data: Equipment[], total: number }> => {
+  const { categoryId, isKit, searchQuery, brand, sort, page = 1, limit = 12 } = options;
+  const offset = (page - 1) * limit;
+
+  const whereConditions = []
+  if (categoryId) whereConditions.push(eq(equipment.categoryId, categoryId))
+  if (isKit !== undefined) whereConditions.push(eq(equipment.isKit, isKit))
+  if (brand) whereConditions.push(eq(equipment.brand, brand))
+  
+  if (searchQuery) {
+    const searchTokens = searchQuery.trim().split(/\s+/).filter(Boolean)
+    if (searchTokens.length > 0) {
+      const tokenConditions = searchTokens.map(token => {
+        const searchParam = `%${token}%`
+        return or(
+          drizzleSql`${equipment.name} ILIKE ${searchParam}`,
+          drizzleSql`${equipment.brand} ILIKE ${searchParam}`,
+          drizzleSql`${equipment.description} ILIKE ${searchParam}`
+        )
+      })
+      whereConditions.push(and(...tokenConditions.filter(Boolean)))
+    }
+  }
+
+  const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined
+
+  let orderByClause = [equipment.name] as any[]; // default 'name_asc'
+  if (sort === 'price_asc') orderByClause = [equipment.dailyRate];
+  if (sort === 'price_desc') orderByClause = [desc(equipment.dailyRate)];
+  if (sort === 'name_asc') orderByClause = [equipment.name];
+
+  const result = await db.query.equipment.findMany({
+    where: whereClause,
+    with: { category: true, images: true },
+    orderBy: orderByClause,
+    limit: limit,
+    offset: offset,
+  })
+
+  // To get the total count for true pagination mathematics
+  const countResult = await db.select({ count: drizzleSql<number>`count(*)` }).from(equipment).where(whereClause);
+  const total = Number(countResult[0]?.count || 0);
+
+  const data = result.map(item => ({
+    ...item,
+    categoryName: item.category?.name,
+    imageUrls: buildEquipmentImageUrls(item)
+  })) as unknown as Equipment[];
+
+  return { data, total };
 })
 
 export const getEquipmentById = cache(async (id: number): Promise<Equipment | undefined> => {
@@ -76,11 +155,21 @@ export const getEquipmentById = cache(async (id: number): Promise<Equipment | un
 })
 
 export const getEquipmentBySlug = cache(async (slug: string): Promise<Equipment | undefined> => {
+  const numericId = parseInt(slug, 10);
+  const isValidId = !isNaN(numericId);
+
   const item = await db.query.equipment.findFirst({
-    where: eq(equipment.slug, slug),
+    where: isValidId 
+      ? or(eq(equipment.slug, slug), eq(equipment.id, numericId))
+      : eq(equipment.slug, slug),
     with: {
       category: true,
       images: true,
+      kitComponents: {
+        with: {
+          item: true
+        }
+      }
     }
   })
 

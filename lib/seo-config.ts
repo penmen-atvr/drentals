@@ -9,7 +9,7 @@ export const siteConfig = {
   description:
     "Rent professional cinema cameras, lenses, and accessories for your production from Penmen Studios in Hyderabad, India.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://rentals.penmenstudios.com",
-  ogImage: "https://rentals.penmenstudios.com/og-image.jpg",
+  ogImage: "https://rentals.penmenstudios.com/camera-rental-hyderabad.png",
   links: {
     twitter: "https://twitter.com/penmenstudios",
     instagram: "https://instagram.com/penmenstudios",

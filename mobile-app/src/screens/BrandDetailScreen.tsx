@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
-  ActivityIndicator, Platform, Modal, ScrollView
+  ActivityIndicator, Platform, Modal, ScrollView, Animated
 } from 'react-native';
 import { Image } from 'expo-image';
 import { fetchEquipmentByBrand } from '../api';
 import { Equipment } from '../types';
+import { SkeletonCatalogCard } from '../components/SkeletonCard';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
@@ -56,32 +57,52 @@ export default function BrandDetailScreen({ route, navigation }: Props) {
     }
   }, [equipment, activeSort]);
 
-  const renderItem = ({ item }: { item: Equipment }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => navigation.navigate('ProductDetail', { slug: item.slug, equipment: item })}
-      activeOpacity={0.88}
-    >
-      <View style={styles.cardImgWrapper}>
-        {item.imageUrls && item.imageUrls.length > 0 ? (
-          <Image source={{ uri: item.imageUrls[0] }} style={styles.cardImg} contentFit="cover" />
-        ) : (
-          <View style={styles.cardImgPlaceholder}>
-            <Ionicons name="camera-outline" size={28} color="#2a2a2a" />
+  const AnimatedCard = React.useCallback(({ item, index }: { item: Equipment; index: number }) => {
+    const opacity = React.useRef(new Animated.Value(0)).current;
+    const translateY = React.useRef(new Animated.Value(30)).current;
+    
+    useEffect(() => {
+      Animated.parallel([
+        Animated.timing(opacity, { toValue: 1, duration: 400, delay: index * 70, useNativeDriver: true }),
+        Animated.spring(translateY, { toValue: 0, useNativeDriver: true, tension: 60, friction: 10, delay: index * 70 } as any),
+      ]).start();
+    }, []);
+
+    return (
+      <Animated.View style={{ opacity, transform: [{ translateY }], width: '48.5%' }}>
+        <TouchableOpacity
+          style={[styles.card, { width: '100%' }]}
+          onPress={() => navigation.navigate('ProductDetail', { slug: item.slug, equipment: item })}
+          activeOpacity={0.88}
+        >
+          <View style={styles.cardImgWrapper}>
+            {item.imageUrls && item.imageUrls.length > 0 ? (
+              <Image source={{ uri: item.imageUrls[0] }} style={styles.cardImg} contentFit="cover" />
+            ) : (
+              <View style={styles.cardImgPlaceholder}>
+                <Ionicons name="camera-outline" size={28} color="#2a2a2a" />
+              </View>
+            )}
           </View>
-        )}
-      </View>
-      <View style={styles.cardBody}>
-        <Text style={styles.cardTitle} numberOfLines={2}>{item.name}</Text>
-        <Text style={styles.cardPrice}>₹{item.dailyRate}<Text style={styles.perDay}>/day</Text></Text>
-      </View>
-    </TouchableOpacity>
+          <View style={styles.cardBody}>
+            <Text style={styles.cardTitle} numberOfLines={2}>{item.name}</Text>
+            <Text style={styles.cardPrice}>₹{item.dailyRate}<Text style={styles.perDay}>/day</Text></Text>
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  }, [navigation]);
+
+  const renderItem = ({ item, index }: { item: Equipment; index: number }) => (
+    <AnimatedCard item={item} index={index} />
   );
 
   return (
     <View style={styles.container}>
       {loading ? (
-        <View style={styles.centered}><ActivityIndicator size="large" color={ACCENT} /></View>
+        <View style={{ paddingTop: insets.top + 80, paddingHorizontal: 16, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          {[1,2,3,4,5,6].map(i => <View key={i} style={{ width: '48.5%', marginBottom: 14 }}><SkeletonCatalogCard /></View>)}
+        </View>
       ) : (
         <FlatList
           data={sortedEquipment}

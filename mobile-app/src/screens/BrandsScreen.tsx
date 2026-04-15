@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator, Animated
 } from 'react-native';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -31,26 +31,42 @@ export default function BrandsScreen({ navigation }: Props) {
     fetchCatalogData();
   }, [fetchCatalogData]);
 
-  const renderBrand = ({ item, index }: { item: string; index: number }) => (
-    <TouchableOpacity
-      style={styles.row}
-      onPress={() => navigation.navigate('BrandDetail', { brandName: item })}
-      activeOpacity={0.85}
-    >
-      {/* Initials avatar */}
-      <View style={[styles.avatar, { borderColor: index === 0 ? ACCENT : BORDER }]}>
-        <Text style={[styles.avatarText, { color: index === 0 ? ACCENT : '#555' }]}>
-          {item.slice(0, 2).toUpperCase()}
-        </Text>
-      </View>
+  const renderBrand = ({ item, index }: { item: string; index: number }) => {
+    return <AnimatedBrandRow item={item} index={index} navigation={navigation} />;
+  };
 
-      <Text style={styles.brandName}>{item}</Text>
+  const AnimatedBrandRow = ({ item, index, navigation }: { item: string; index: number; navigation: any }) => {
+    const opacity = React.useRef(new Animated.Value(0)).current;
+    const translateY = React.useRef(new Animated.Value(15)).current;
+    
+    useEffect(() => {
+      Animated.parallel([
+        Animated.timing(opacity, { toValue: 1, duration: 350, delay: index * 40, useNativeDriver: true }),
+        Animated.timing(translateY, { toValue: 0, duration: 350, delay: index * 40, useNativeDriver: true })
+      ]).start();
+    }, []);
 
-      <View style={styles.rowRight}>
-        <Ionicons name="chevron-forward" size={18} color="#333" />
-      </View>
-    </TouchableOpacity>
-  );
+    return (
+      <Animated.View style={{ opacity, transform: [{ translateY }] }}>
+        <TouchableOpacity
+          style={styles.row}
+          onPress={() => navigation.navigate('BrandDetail', { brandName: item })}
+          activeOpacity={0.85}
+        >
+          {/* Initials avatar */}
+          <View style={[styles.avatar, { borderColor: index === 0 ? ACCENT : BORDER }]}>
+            <Text style={[styles.avatarText, { color: index === 0 ? ACCENT : '#555' }]}>
+              {item.slice(0, 2).toUpperCase()}
+            </Text>
+          </View>
+          <Text style={styles.brandName}>{item}</Text>
+          <View style={styles.rowRight}>
+            <Ionicons name="chevron-forward" size={18} color="#333" />
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
 
   return (
     <View style={styles.container}>

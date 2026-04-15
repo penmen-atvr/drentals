@@ -48,25 +48,43 @@ export default function CatalogScreen({ route, navigation }: Props) {
     if (initialCategoryId !== undefined) setActiveCategoryId(initialCategoryId);
   }, [initialCategoryId]);
 
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
+  // Debounce search query
   useEffect(() => {
-    fetchCatalogData();
-  }, [fetchCatalogData]);
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 400);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
 
+  // Unified API fetcher acting as the source of truth instead of client-side filtering
+  useEffect(() => {
+    const fetchArgs = {
+      page: 1,
+      cat: activeCategoryId || null,
+      sort: activeSort === 'recommended' ? null : activeSort,
+      brand: activeBrand || null,
+      q: debouncedSearchQuery || null
+    };
+    
+    // Always force refresh when filters change to wipe the array and start at page 1
+    fetchCatalogData(fetchArgs.page, fetchArgs.cat, fetchArgs.sort, fetchArgs.brand, fetchArgs.q, true);
+  }, [activeCategoryId, activeSort, activeBrand, debouncedSearchQuery, fetchCatalogData]);
 
-  const processedEquipment = useMemo(() => {
-    let arr = equipment.filter(item => {
-      const cat  = activeCategoryId ? item.categoryId === activeCategoryId : true;
-      const brnd = activeBrand      ? item.brand === activeBrand           : true;
-      const srch = searchQuery      ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
-      return cat && brnd && srch;
-    });
-    switch (activeSort) {
-      case 'price_asc':  return [...arr].sort((a, b) => Number(a.dailyRate) - Number(b.dailyRate));
-      case 'price_desc': return [...arr].sort((a, b) => Number(b.dailyRate) - Number(a.dailyRate));
-      case 'name_asc':   return [...arr].sort((a, b) => a.name.localeCompare(b.name));
-      default:           return arr;
-    }
-  }, [equipment, activeCategoryId, activeBrand, activeSort, searchQuery]);
+  const loadMore = useCallback(() => {
+    const { isFetchingNextPage, hasNextPage, page } = useCatalogStore.getState();
+    if (isFetchingNextPage || !hasNextPage) return;
+    
+    fetchCatalogData(
+      page + 1, 
+      activeCategoryId || null, 
+      activeSort === 'recommended' ? null : activeSort, 
+      activeBrand || null, 
+      debouncedSearchQuery || null, 
+      true
+    );
+  }, [activeCategoryId, activeSort, activeBrand, debouncedSearchQuery, fetchCatalogData]);
 
   const activeBrands = useMemo(() => {
     if (!activeCategoryId) return brands;
@@ -149,13 +167,15 @@ export default function CatalogScreen({ route, navigation }: Props) {
         </View>
       ) : (
         <FlatList
-          data={processedEquipment}
+          data={equipment}
           keyExtractor={item => item.id.toString()}
           renderItem={renderItem}
           numColumns={2}
           contentContainerStyle={[styles.list, { paddingTop: insets.top + 130, paddingBottom: insets.bottom + 130 }]}
           columnWrapperStyle={styles.row}
           showsVerticalScrollIndicator={false}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.4}
           ListEmptyComponent={
             <View style={styles.emptyWrap}>
               <Ionicons name="search-outline" size={48} color="#2a2a2a" />
@@ -174,7 +194,7 @@ export default function CatalogScreen({ route, navigation }: Props) {
         <View style={styles.headerRow}>
           <Text style={styles.headerTitle}>Catalog</Text>
           <View style={styles.headerCount}>
-            <Text style={styles.headerCountText}>{processedEquipment.length} items</Text>
+            <Text style={styles.headerCountText}>{equipment.length} items</Text>
           </View>
         </View>
 
@@ -289,7 +309,7 @@ export default function CatalogScreen({ route, navigation }: Props) {
             {/* CTA */}
             <View style={styles.sheetFooter}>
               <TouchableOpacity style={styles.sheetCta} onPress={() => setModalVisible(false)} activeOpacity={0.85}>
-                <Text style={styles.sheetCtaText}>Show {processedEquipment.length} Results</Text>
+                <Text style={styles.sheetCtaText}>Show Results</Text>
               </TouchableOpacity>
             </View>
           </View>

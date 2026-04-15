@@ -65,13 +65,33 @@ export const fetchCategories = async (cacheBustParam = ''): Promise<Category[]> 
   return response.json();
 };
 
-export const fetchAllEquipment = async (categoryId?: number): Promise<Equipment[]> => {
-  let url = `${API_BASE}/equipment`;
-  if (categoryId) url += `?categoryId=${categoryId}`;
+export interface PaginatedEquipmentResponse {
+  data: Equipment[];
+  hasNextPage: boolean;
+}
+
+export const fetchAllEquipment = async (
+  page: number = 1,
+  limit: number = 12,
+  categoryId?: number | null,
+  sort?: string | null,
+  brand?: string | null,
+  q?: string | null
+): Promise<PaginatedEquipmentResponse> => {
+  let url = `${API_BASE}/equipment?page=${page}&limit=${limit}`;
+  if (categoryId) url += `&categoryId=${categoryId}`;
+  if (sort) url += `&sort=${sort}`;
+  if (brand) url += `&brand=${encodeURIComponent(brand)}`;
+  if (q) url += `&q=${encodeURIComponent(q)}`;
+
   const response = await fetchWithTimeout(url);
   if (!response.ok) throw new Error('Failed to fetch equipment');
-  const items: Equipment[] = await response.json();
-  return items.map(transformEquipment);
+  
+  const result: { data: Equipment[], hasNextPage: boolean } = await response.json();
+  return {
+    data: result.data.map(transformEquipment),
+    hasNextPage: result.hasNextPage
+  };
 };
 
 export const fetchEquipmentDetails = async (slug: string): Promise<Equipment> => {
@@ -87,11 +107,14 @@ export const fetchBrands = async (): Promise<string[]> => {
   return response.json();
 };
 
-export const fetchEquipmentByBrand = async (brandSlug: string): Promise<Equipment[]> => {
-  const response = await fetchWithTimeout(`${API_BASE}/brands/${encodeURIComponent(brandSlug)}`);
+export const fetchEquipmentByBrand = async (brandSlug: string, page: number = 1): Promise<PaginatedEquipmentResponse> => {
+  const response = await fetchWithTimeout(`${API_BASE}/equipment?brand=${encodeURIComponent(brandSlug)}&page=${page}&limit=12`);
   if (!response.ok) throw new Error('Failed to fetch equipment for brand');
-  const items: Equipment[] = await response.json();
-  return items.map(transformEquipment);
+  const result: { data: Equipment[], hasNextPage: boolean } = await response.json();
+  return {
+    data: result.data.map(transformEquipment),
+    hasNextPage: result.hasNextPage
+  };
 };
 
 export interface HomeEquipmentItem {

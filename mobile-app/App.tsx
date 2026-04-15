@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators, TransitionSpecs } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -7,7 +7,13 @@ import { BlurView } from 'expo-blur';
 import { StyleSheet, Platform, View, Easing } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useFonts } from 'expo-font';
+import { BlackOpsOne_400Regular } from '@expo-google-fonts/black-ops-one';
+import { Quantico_400Regular, Quantico_700Bold } from '@expo-google-fonts/quantico';
+import { RobotoMono_400Regular, RobotoMono_700Bold } from '@expo-google-fonts/roboto-mono';
+import * as SplashScreen from 'expo-splash-screen';
 
+SplashScreen.preventAutoHideAsync();
 import HomeScreen from './src/screens/HomeScreen';
 import CatalogScreen from './src/screens/CatalogScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
@@ -115,6 +121,24 @@ function MainTabs() {
 }
 
 export default function App() {
+  const [fontsLoaded, fontError] = useFonts({
+    BlackOpsOne_400Regular,
+    Quantico_400Regular,
+    Quantico_700Bold,
+    RobotoMono_400Regular,
+    RobotoMono_700Bold,
+  });
+
+  useEffect(() => {
+    if (fontsLoaded || fontError) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [fontsLoaded, fontError]);
+
+  if (!fontsLoaded && !fontError) return null;
+
+
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
@@ -123,7 +147,7 @@ export default function App() {
             screenOptions={{
               headerStyle: { backgroundColor: '#09090b' },
               headerTintColor: '#f8fafc',
-              headerTitleStyle: { fontWeight: '700' },
+              headerTitleStyle: { fontWeight: '700', fontFamily: 'Quantico_700Bold' },
               cardStyle: { backgroundColor: '#080808' },
               ...smoothTransition,
             }}

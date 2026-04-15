@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
@@ -86,7 +87,15 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-950 border-b border-zinc-900">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group" onClick={() => pathname === "/" && scrollToTop()}>
+          <Link href="/" className="flex items-center gap-3 group" onClick={() => pathname === "/" && scrollToTop()}>
+            <Image 
+              src="/icon.png" 
+              alt="D'RENTALS Logo" 
+              width={36} 
+              height={36} 
+              className="rounded-lg object-contain"
+              priority
+            />
             <div className="flex flex-col">
               <span className="font-heading text-xl tracking-wider uppercase text-white group-hover:text-red-500 transition-colors">D&apos;RENTALS</span>
               <span className="text-xs text-zinc-400 font-mono tracking-tight group-hover:text-zinc-300 transition-colors">by Penmen Studios</span>
@@ -165,8 +174,15 @@ export default function Header() {
 
         <div className="mt-auto mb-8 border-t border-zinc-800 pt-6">
           <div className="flex flex-col items-center gap-4 text-center">
-            <div>
-              <span className="font-heading text-lg text-white">D&apos;RENTALS</span>
+            <div className="flex items-center gap-3">
+              <Image 
+                src="/icon.png" 
+                alt="D'RENTALS Logo" 
+                width={32} 
+                height={32} 
+                className="rounded-lg object-contain"
+              />
+              <span className="font-heading text-xl text-white">D&apos;RENTALS</span>
             </div>
             <p className="text-zinc-400 text-sm font-mono">
               Professional cinema equipment rental
