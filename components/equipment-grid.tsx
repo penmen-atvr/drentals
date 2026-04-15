@@ -59,7 +59,7 @@ export default function EquipmentGrid({ equipment, hasNextPage = false, category
         <Component className="w-16 h-16 text-zinc-700 mb-6" />
         <h3 className="text-2xl font-heading text-red-500 uppercase tracking-wide mb-3">No matching gear found</h3>
         <p className="text-zinc-500 max-w-md mx-auto">
-          We couldn't track down any cameras or accessories matching your exact filters. Try tweaking your search query or exploring other categories.
+          We couldn&apos;t track down any cameras or accessories matching your exact filters. Try tweaking your search query or exploring other categories.
         </p>
       </div>
     )
