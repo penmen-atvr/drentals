@@ -21,6 +21,12 @@
       "android": {
         "buildType": "app-bundle"
       }
+    },
+    "verification": {
+      "extends": "production",
+      "android": {
+        "buildType": "apk"
+      }
     }
   },
   "submit": {

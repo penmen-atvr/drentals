@@ -1,6 +1,8 @@
 import { Category, Equipment } from './types';
 
-export const API_BASE = process.env.EXPO_PUBLIC_API_URL || (__DEV__ ? 'http://192.168.29.65:3000/api' : 'https://rentals.penmenstudios.com/api');
+// Production domain — never use plaintext http:// in the APK bundle.
+// For local dev, set EXPO_PUBLIC_API_URL in a .env.local file (not committed).
+export const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? 'https://rentals.penmenstudios.com/api';
 
 async function fetchWithTimeout(url: string, timeoutMs = 10000): Promise<Response> {
   const controller = new AbortController();
@@ -82,7 +84,9 @@ export const fetchAllEquipment = async (
   if (categoryId) url += `&categoryId=${categoryId}`;
   if (sort) url += `&sort=${sort}`;
   if (brand) url += `&brand=${encodeURIComponent(brand)}`;
-  if (q) url += `&q=${encodeURIComponent(q)}`;
+  // Sanitise: trim and cap search query length to prevent oversized requests
+  const sanitisedQ = q ? q.trim().slice(0, 100) : null;
+  if (sanitisedQ) url += `&q=${encodeURIComponent(sanitisedQ)}`;
 
   const response = await fetchWithTimeout(url);
   if (!response.ok) throw new Error('Failed to fetch equipment');

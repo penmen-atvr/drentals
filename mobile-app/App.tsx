@@ -1,10 +1,10 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators, TransitionSpecs } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { StyleSheet, Platform, View, Easing } from 'react-native';
+import { StyleSheet, Platform, View, Easing, Text, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
@@ -23,6 +23,42 @@ import BrandDetailScreen from './src/screens/BrandDetailScreen';
 import MenuScreen from './src/screens/MenuScreen';
 import WebViewScreen from './src/screens/WebViewScreen';
 import { Equipment } from './src/types';
+
+// ── Error Boundary ─────────────────────────────────────────────
+// Prevents uncaught JS exceptions from hard-crashing the app during review.
+interface EBState { hasError: boolean }
+class AppErrorBoundary extends Component<{ children: React.ReactNode }, EBState> {
+  state: EBState = { hasError: false };
+
+  static getDerivedStateFromError(): EBState {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error) {
+    if (__DEV__) console.error('[AppErrorBoundary]', error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <View style={{ flex: 1, backgroundColor: '#080808', justifyContent: 'center', alignItems: 'center', padding: 32 }}>
+          <Text style={{ color: '#fff', fontSize: 22, fontWeight: '800', marginBottom: 12 }}>Something went wrong</Text>
+          <Text style={{ color: '#666', fontSize: 15, textAlign: 'center', lineHeight: 22 }}>
+            Please close and reopen the app. If the problem persists, contact us at admin@penmenstudios.com
+          </Text>
+          <TouchableOpacity
+            style={{ marginTop: 32, backgroundColor: '#E31B23', paddingVertical: 14, paddingHorizontal: 32, borderRadius: 100 }}
+            onPress={() => this.setState({ hasError: false })}
+          >
+            <Text style={{ color: '#fff', fontWeight: '800', fontSize: 15 }}>Try Again</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 
 export type RootStackParamList = {
   MainTabs: undefined;
@@ -140,42 +176,44 @@ export default function App() {
 
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              headerStyle: { backgroundColor: '#09090b' },
-              headerTintColor: '#f8fafc',
-              headerTitleStyle: { fontWeight: '700', fontFamily: 'Quantico_700Bold' },
-              cardStyle: { backgroundColor: '#080808' },
-              ...smoothTransition,
-            }}
-          >
-            <Stack.Screen
-              name="MainTabs"
-              component={MainTabs}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ProductDetail"
-              component={ProductDetailScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="BrandDetail"
-              component={BrandDetailScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="WebView"
-              component={WebViewScreen}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <AppErrorBoundary>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{
+                headerStyle: { backgroundColor: '#09090b' },
+                headerTintColor: '#f8fafc',
+                headerTitleStyle: { fontWeight: '700', fontFamily: 'Quantico_700Bold' },
+                cardStyle: { backgroundColor: '#080808' },
+                ...smoothTransition,
+              }}
+            >
+              <Stack.Screen
+                name="MainTabs"
+                component={MainTabs}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="ProductDetail"
+                component={ProductDetailScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="BrandDetail"
+                component={BrandDetailScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="WebView"
+                component={WebViewScreen}
+                options={{ headerShown: false }}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </AppErrorBoundary>
   );
 }
 

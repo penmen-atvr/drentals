@@ -15,6 +15,7 @@ import { RootStackParamList, MainTabParamList } from '../../App';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { parseRate } from '../utils/pricing';
+import { WHATSAPP_NUMBER } from '../config';
 
 const ACCENT = '#E31B23';
 const ACCENT_DIM = 'rgba(227,27,35,0.12)';
@@ -57,8 +58,7 @@ export default function CartScreen({ navigation }: Props) {
     message += `Total Estimated Rental: Rs. ${getTotal().toFixed(0)}\n\n`;
     message += 'Please let me know if these are available and the next steps for payment/deposit.';
 
-    const phoneNumber = '917794872701';
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
     Linking.openURL(whatsappUrl).catch(() => {
       Alert.alert('Error', 'Could not open WhatsApp.');

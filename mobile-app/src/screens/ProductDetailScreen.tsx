@@ -84,7 +84,7 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
           setLoading(false);
         }
       } catch (e) {
-        console.log('Error loading product details', e);
+        if (__DEV__) console.log('Error loading product details', e);
         if (isActive) setLoading(false);
       }
     };

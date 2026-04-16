@@ -9,6 +9,7 @@ import { CompositeScreenProps } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, MainTabParamList } from '../../App';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { WHATSAPP_NUMBER } from '../config';
 
 const ACCENT  = '#E31B23';
 const BG      = '#080808';
@@ -115,7 +116,7 @@ export default function MenuScreen({ navigation }: Props) {
         <TouchableOpacity
           style={styles.whatsappBtn}
           activeOpacity={0.85}
-          onPress={() => Linking.openURL('https://wa.me/917794872701')}
+          onPress={() => Linking.openURL(`https://wa.me/${WHATSAPP_NUMBER}`)}
         >
           <Ionicons name="logo-whatsapp" size={22} color="#fff" style={{ marginRight: 10 }} />
           <Text style={styles.whatsappText}>Chat with us on WhatsApp</Text>

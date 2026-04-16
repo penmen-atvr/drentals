@@ -83,26 +83,18 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <ul className="space-y-2 list-disc pl-5">
                   <li>
-                    <strong className="text-white">INTERNET</strong> — Required to fetch equipment listings
-                    and submit rental enquiries.
-                  </li>
-                  <li>
-                    <strong className="text-white">READ_EXTERNAL_STORAGE / READ_MEDIA_IMAGES</strong> —
-                    Required only if you upload a KYC document photo for identity verification. We do not
-                    access, store, or share any other files on your device.
-                  </li>
-                  <li>
-                    <strong className="text-white">CAMERA</strong> — Optional. Required only if you
-                    choose to capture a KYC photo in-app. This permission is requested at the time of use
-                    and can be revoked from Android Settings &gt; Apps &gt; D&apos;RENTALS &gt; Permissions
-                    at any time.
+                    <strong className="text-white">INTERNET</strong> — Required to fetch equipment listings,
+                    browse the catalog, and submit rental enquiries via WhatsApp.
                   </li>
                 </ul>
                 <p className="mt-3 text-zinc-400">
-                  We do <em className="text-white not-italic">not</em> access your Contacts, Call Logs,
-                  SMS, Microphone, or any other sensitive device resource.
+                  We do <em className="text-white not-italic">not</em> request access to your Camera,
+                  Contacts, Call Logs, SMS, Microphone, precise GPS Location, or any device files.
+                  If a future version of the app introduces additional permissions (such as Camera for
+                  KYC document upload), this policy will be updated prior to that release.
                 </p>
               </div>
+
 
               {/* 3 */}
               <div>
