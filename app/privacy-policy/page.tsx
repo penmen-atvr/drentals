@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
                 Your privacy is important to us. This Privacy Policy explains how{" "}
                 <strong className="text-white">D&apos;RENTALS by Penmen Studios</strong> (&quot;we&quot;,
                 &quot;us&quot;, or &quot;our&quot;) collects, uses, discloses and safeguards your
-                information when you visit our website (<strong className="text-white">drentals.in</strong>)
+                information when you visit our website (<strong className="text-white">rentals.penmenstudios.com</strong>)
                 or use our mobile application (&quot;D&apos;RENTALS App&quot;) available on Google Play,
                 or rent equipment through our platform. Please read this policy carefully. If you disagree
                 with its terms, please discontinue use of our services.
@@ -279,7 +279,7 @@ export default function PrivacyPolicyPage() {
                   We may revise this Privacy Policy periodically. When we make material changes, we will
                   update the &quot;Last Updated&quot; date below and, where required, notify you via
                   email or an in-app notification. The latest version is always available at{" "}
-                  <strong className="text-white">drentals.in/privacy-policy</strong>. Continued use of
+                  <strong className="text-white">rentals.penmenstudios.com/privacy-policy</strong>. Continued use of
                   our services after changes become effective constitutes acceptance of the revised policy.
                 </p>
               </div>

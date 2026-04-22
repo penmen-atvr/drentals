@@ -37,7 +37,7 @@ export default function BrandDetailScreen({ route, navigation }: Props) {
     const load = async () => {
       try {
         const data = await fetchEquipmentByBrand(brandName);
-        setEquipment(data);
+        setEquipment(data.data);
       } catch (err) {
         console.error(err);
       } finally {

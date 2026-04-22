@@ -11,7 +11,6 @@ type Props = NativeStackScreenProps<RootStackParamList, 'WebView'>;
 // Only allow URLs from our own domain to prevent open-redirect abuse.
 const ALLOWED_ORIGINS = [
   'https://rentals.penmenstudios.com',
-  'https://drentals.in',
 ];
 
 function isSafeUrl(url: string): boolean {

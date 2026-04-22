@@ -82,7 +82,7 @@ export default function BrandsScreen({ navigation }: Props) {
         <View style={styles.centered}>
           <Ionicons name="cloud-offline-outline" size={48} color="#2a2a2a" />
           <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity style={styles.retryBtn} onPress={() => fetchCatalogData(true)}>
+          <TouchableOpacity style={styles.retryBtn} onPress={() => fetchCatalogData(1, null, null, null, null, true)}>
             <Text style={styles.retryText}>Try Again</Text>
           </TouchableOpacity>
         </View>

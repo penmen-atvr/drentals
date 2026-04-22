@@ -1,0 +1,46 @@
+name: Build Android App (Local via GitHub Actions)
+
+on:
+  workflow_dispatch: # Allows you to manually trigger the build from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        working-directory: mobile-app
+        run: npm install
+
+      - name: Build Android App Bundle (.aab)
+        working-directory: mobile-app
+        run: eas build --local --platform android --profile production --non-interactive --output app-release.aab
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          NODE_OPTIONS: --max-old-space-size=6144 # GitHub runners have 7GB RAM, we give 6GB to Node
+
+      - name: Upload Android App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: drentals-android-build
+          path: mobile-app/app-release.aab

@@ -116,7 +116,7 @@ export default function MenuScreen({ navigation }: Props) {
         <TouchableOpacity
           style={styles.whatsappBtn}
           activeOpacity={0.85}
-          onPress={() => Linking.openURL(`https://wa.me/${WHATSAPP_NUMBER}`)}
+          onPress={() => Linking.openURL(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi D'RENTALS! I have an inquiry.\n\n[Inquiry sent via D'RENTALS Mobile App]")}`)}
         >
           <Ionicons name="logo-whatsapp" size={22} color="#fff" style={{ marginRight: 10 }} />
           <Text style={styles.whatsappText}>Chat with us on WhatsApp</Text>

@@ -47,13 +47,16 @@ export default function CartScreen({ navigation }: Props) {
   const handleCheckout = () => {
     if (items.length === 0) return;
 
-    let message = "Hi, I'd like to reserve the following items from D'RENTALS:\n\n";
+    let message = "Hi, I'd like to reserve the following items from D'RENTALS:\n\n[Inquiry sent via D'RENTALS Mobile App]\n\n";
     message += `Rental Period: ${startDate.toDateString()} to ${endDate.toDateString()}\n\n`;
 
     items.forEach((item, index) => {
-      message += `${index + 1}. ${item.equipment.name}\n`;
+      const eq = item.equipment as any;
+      message += `${index + 1}. ${eq.name}\n`;
+      message += `   Equipment ID: ${eq.id}\n`;
       message += `   Qty: ${item.quantity} | Duration: ${item.durationDays} days\n`;
-      message += `   Rate: Rs. ${item.equipment.dailyRate}/day\n\n`;
+      message += `   Rate: Rs. ${eq.dailyRate}/day\n`;
+      message += '\n';
     });
     message += `Total Estimated Rental: Rs. ${getTotal().toFixed(0)}\n\n`;
     message += 'Please let me know if these are available and the next steps for payment/deposit.';

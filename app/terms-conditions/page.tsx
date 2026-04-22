@@ -31,7 +31,7 @@ export default function TermsConditionsPage() {
                 These Terms &amp; Conditions (&quot;Terms&quot;) constitute a legally binding agreement
                 between you and <strong className="text-white">Penmen Studios</strong> (operating under
                 the brand <strong className="text-white">D&apos;RENTALS</strong>), governing your use of
-                our website (<strong className="text-white">drentals.in</strong>), Android mobile
+                our website (<strong className="text-white">rentals.penmenstudios.com</strong>), Android mobile
                 application (&quot;D&apos;RENTALS App&quot;), and equipment rental services. By accessing
                 or using any part of our services, you confirm that you have read, understood, and agree
                 to be bound by these Terms.
@@ -131,7 +131,7 @@ export default function TermsConditionsPage() {
                   <li>
                     Cancellations made more than 48 hours before the rental start time may be eligible
                     for a partial refund per our Return &amp; Cancellation Policy at{" "}
-                    <strong className="text-white">drentals.in/return-policy</strong>.
+                    <strong className="text-white">rentals.penmenstudios.com/return-policy</strong>.
                   </li>
                   <li>
                     All prices are quoted in Indian Rupees (INR) and are inclusive of applicable taxes
@@ -297,7 +297,7 @@ export default function TermsConditionsPage() {
                       admin@penmenstudios.com
                     </a>
                   </p>
-                  <p>Website: <strong className="text-white">drentals.in</strong></p>
+                  <p>Website: <strong className="text-white">rentals.penmenstudios.com</strong></p>
                 </address>
               </div>
 

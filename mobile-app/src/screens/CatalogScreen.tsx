@@ -159,7 +159,7 @@ export default function CatalogScreen({ route, navigation }: Props) {
           <Ionicons name="cloud-offline-outline" size={52} color="#2a2a2a" />
           <Text style={{ color: '#555', fontSize: 15, fontWeight: '600', marginTop: 16, textAlign: 'center', paddingHorizontal: 40 }}>{error}</Text>
           <TouchableOpacity
-            onPress={() => fetchCatalogData(true)}
+            onPress={() => fetchCatalogData(1, activeCategoryId || null, activeSort === 'recommended' ? null : activeSort, activeBrand || null, debouncedSearchQuery || null, true)}
             style={{ marginTop: 24, backgroundColor: ACCENT, paddingVertical: 14, paddingHorizontal: 32, borderRadius: 100 }}
           >
             <Text style={{ color: '#fff', fontWeight: '800', fontSize: 15 }}>Try Again</Text>

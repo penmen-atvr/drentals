@@ -12,5 +12,4 @@ export const PRODUCTION_DOMAIN = 'https://rentals.penmenstudios.com';
 /** Allowed origins for the in-app WebView */
 export const ALLOWED_WEBVIEW_ORIGINS = [
   PRODUCTION_DOMAIN,
-  'https://drentals.in',
 ];

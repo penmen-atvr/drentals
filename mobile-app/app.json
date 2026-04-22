@@ -38,8 +38,7 @@
     },
     "plugins": [
       "@react-native-community/datetimepicker",
-      "expo-font",
-      "./withAndroidAssets.js"
+      "expo-font"
     ],
     "runtimeVersion": {
       "policy": "appVersion"

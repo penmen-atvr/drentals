@@ -12,14 +12,12 @@ interface WhatsAppCTAProps {
 export default function WhatsAppCTA({ equipment }: WhatsAppCTAProps) {
   const generateWhatsAppMessage = () => {
     // Create a well-formatted message with equipment details
-    const message = `*Inquiry for Equipment ID: ${equipment.id}*
+    const details = `*Inquiry for Equipment ID: ${equipment.id}*
     
 *Item:* ${equipment.name}
-*Brand:* ${equipment.brand || "N/A"}
-*Model:* ${equipment.model || "N/A"}
-*Daily Rate:* ${formatCurrency(equipment.dailyRate)}
+*Daily Rate:* ${formatCurrency(equipment.dailyRate)}`;
 
-Hello, I'm interested in renting this equipment from D'RENTALS. Please provide information about availability and booking process. Thank you.`
+    const message = `${details}\n\nHello, I'm interested in renting this equipment from D'RENTALS. Please provide information about availability and booking process.\n\n[Inquiry sent via D'RENTALS Website]`
 
     // Format the phone number (remove any non-digit characters)
     const phoneNumber = "917794872701" // Format: country code + number without +

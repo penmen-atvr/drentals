@@ -21,7 +21,7 @@ export default function WhatsAppFloat() {
   }, [visible])
 
   const handleClick = () => {
-    const msg = encodeURIComponent("Hi D'RENTALS! I'm interested in renting cinema equipment. Can you help me?")
+    const msg = encodeURIComponent("Hi D'RENTALS! I'm interested in renting cinema equipment. Can you help me?\n\n[Inquiry sent via D'RENTALS Website]")
     window.open(`https://wa.me/917794872701?text=${msg}`, "_blank")
   }
 
