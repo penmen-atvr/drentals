@@ -92,8 +92,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ].map((area) => ({
     url: getCanonicalUrl(`/areas/${area}`),
     lastModified: new Date(), // Assuming area pages don't have individual last modified dates
-    changeFrequency: "daily" as const, // Area pages are high-value for local SEO
-    priority: 0.9,
+    changeFrequency: "weekly" as const, // Area pages are high-value for local SEO but shouldn't spam crawlers
+    priority: 0.7,
   }))
 
   // Generate URLs for individual blog post detail pages

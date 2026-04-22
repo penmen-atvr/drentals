@@ -4,7 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { cn, formatCurrency } from "@/lib/utils"
+import { cn, formatCurrency, slugify } from "@/lib/utils"
 import type { Equipment } from "@/lib/types"
 import { Camera, ChevronRight } from "lucide-react"
 import { useState } from "react"
@@ -16,7 +16,7 @@ export default function EquipmentCard({ equipment, priority = false }: { equipme
   const imageUrl = getSafeImageUrl(equipment.mainImageUrl, 400, 300)
 
   return (
-    <Link href={`/equipment/${equipment.id}`} className="block transition-all duration-500 group h-full">
+    <Link href={`/equipment/${equipment.id}-${slugify(equipment.name)}`} className="block transition-all duration-500 group h-full">
       <Card className={cn(
         "h-full bg-zinc-900 border-zinc-800 rounded-none transition-all duration-500 flex flex-col",
         "hover:border-red-500 group-hover:-translate-y-1 hover:shadow-2xl hover:shadow-red-900",

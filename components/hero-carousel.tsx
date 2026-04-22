@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import type { Equipment } from "@/lib/types"
 import { getSafeImageUrl } from "@/lib/image-utils"
+import { slugify } from "@/lib/utils"
 
 interface HeroCarouselProps {
   equipment: Equipment[]
@@ -83,7 +84,7 @@ export default function HeroCarousel({ equipment }: HeroCarouselProps) {
               asChild
               className="bg-red-500 hover:bg-red-600 text-white rounded-none px-8 py-6 text-sm font-heading"
             >
-              <Link href={`/equipment/${currentEquipment.id}`}>VIEW DETAILS</Link>
+              <Link href={`/equipment/${currentEquipment.id}-${slugify(currentEquipment.name)}`}>VIEW DETAILS</Link>
             </Button>
             <Button
               asChild

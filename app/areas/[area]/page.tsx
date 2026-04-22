@@ -220,389 +220,248 @@ const areaContent: Record<
 > = {
   hyderabad: {
     headline: "CAMERA RENTAL IN HYDERABAD",
-    subheadline: "Professional Cinema Equipment Delivered Across Hyderabad",
+    subheadline: "Professional Cinema Equipment Delivered City-Wide",
     description: [
-      "D'RENTALS provides professional camera equipment rental services with delivery across Hyderabad. Whether you're a filmmaker, photographer, or content creator, we offer a wide range of high-quality cameras, lenses, and accessories to meet your production needs.",
-      "Our equipment delivery service covers all areas of Hyderabad, including Kukatpally, Dilsukhnagar, Banjara Hills, and more. We ensure timely delivery and pickup, allowing you to focus on your creative work without worrying about logistics.",
-      "With competitive rates and flexible rental periods, D'RENTALS is the preferred choice for cinema equipment rental in Hyderabad. Our team of experts is always available to provide technical support and guidance to help you choose the right equipment for your project.",
-      "We specialize in providing top-tier camera gear for film productions, commercial shoots, and independent projects. From high-resolution cinema cameras like RED and ARRI to versatile DSLRs and mirrorless systems, our inventory is meticulously maintained and ready for your next shoot. Explore our extensive catalog and experience seamless rental services tailored for Hyderabad's creative community.",
+      "D'RENTALS is Hyderabad's premier destination for professional camera equipment. From Tollywood film sets to independent commercial shoots, we provide the reliable gear that the city's creators trust.",
+      "Our central hub is fully equipped with industry-standard cameras from RED, ARRI, Sony, and Canon. We understand the fast-paced nature of production in Hyderabad, which is why our equipment is meticulously maintained and ready for action.",
+      "Skip the traffic—we offer rapid, same-day delivery across the entire Hyderabad metropolitan area. Whether you're shooting at Ramoji Film City or a local studio, our team ensures your gear arrives safely and on time."
     ],
-    popularCategories: ["DSLR Cameras", "Cinema Cameras", "Camera Lenses", "Lighting Equipment", "Audio Equipment"],
+    popularCategories: ["Cinema Cameras", "Professional Lenses", "Lighting Equipment", "Audio Equipment", "Gimbals"],
     faqs: [
       {
-        question: "How does equipment delivery work in Hyderabad?",
-        answer:
-          "We coordinate delivery times based on your schedule. Our team will deliver the equipment to your specified location in Hyderabad and provide a brief overview of the gear. We aim for prompt and reliable service to ensure your production stays on track.",
+        question: "How quickly can you deliver equipment in Hyderabad?",
+        answer: "We offer same-day delivery for most areas in Hyderabad if booked before 2 PM. For urgent shoots, express delivery options are available depending on traffic conditions."
       },
       {
-        question: "What types of cameras are available for rent in Hyderabad?",
-        answer:
-          "We offer a wide range of equipment including DSLRs, mirrorless cameras, cinema cameras (e.g., RED, ARRI, Sony FX series), and more. Our inventory also includes a variety of lenses, gimbals, lighting kits, and audio recording gear. Browse our equipment catalog to see our full inventory.",
+        question: "Do you supply gear for large film sets in Hyderabad?",
+        answer: "Yes! We regularly supply A-cam and B-cam packages, along with full lighting grids, to major production houses operating in Hyderabad and Ramoji Film City."
       },
       {
-        question: "How far in advance should I book equipment for delivery to Hyderabad?",
-        answer:
-          "We recommend booking at least 48-72 hours in advance to ensure availability, especially for popular equipment and during peak seasons. For urgent requests, contact us directly to check immediate availability and express delivery options.",
-      },
-      {
-        question: "Is there a delivery fee for Hyderabad?",
-        answer:
-          "Delivery fees vary based on location within Hyderabad and the volume/type of equipment. Contact us for a precise quote specific to your delivery needs. We strive to keep our delivery charges competitive and transparent.",
-      },
-      {
-        question: "Do you offer technical support for rented equipment?",
-        answer:
-          "Yes, our experienced team provides technical guidance and support for all rented equipment. We can assist with basic setup, troubleshooting, and recommendations to ensure you get the most out of your gear. Feel free to reach out if you have any questions during your rental period.",
-      },
-    ],
+        question: "Can I inspect the equipment before renting?",
+        answer: "Absolutely. You can schedule an appointment to visit our central facility in Yousufguda to test the cameras, lenses, and rigs prior to your shoot."
+      }
+    ]
   },
   kukatpally: {
-    headline: "CAMERA RENTAL IN KUKATPALLY",
-    subheadline: "Professional Equipment Delivered to Your Doorstep",
+    headline: "KUKATPALLY CAMERA RENTALS",
+    subheadline: "Fast Gear Delivery via the Metro Corridor",
     description: [
-      "D'RENTALS offers convenient camera equipment rental services with delivery to Kukatpally and surrounding areas. Our extensive inventory includes professional DSLRs, cinema cameras, lenses, and accessories for all your production needs.",
-      "Located in Hyderabad, we provide reliable delivery services to Kukatpally, ensuring you have access to top-quality equipment without the hassle of transportation. Our flexible rental periods accommodate projects of any duration.",
-      "Whether you're shooting a wedding, corporate event, or independent film in Kukatpally, our professional-grade equipment will help you achieve the results you desire. Contact us today to discuss your equipment requirements.",
-      "We understand the fast-paced nature of production in Kukatpally. Our streamlined rental process ensures quick booking and efficient delivery, so you can focus on capturing stunning visuals. From Canon and Sony DSLRs to advanced cinema lenses, find everything you need for your next project right here.",
+      "Shooting in or around Kukatpally? D'RENTALS provides rapid equipment delivery straight to your set or office, leveraging the fast connectivity of the KPHB metro corridor.",
+      "We serve numerous wedding photographers, event teams, and local content creators based in Kukatpally. Our customized rental packages are designed to suit the diverse range of events hosted in this bustling residential and commercial hub.",
+      "Don't waste hours traveling across the city to pick up gear. Book your DSLRs, drones, or lighting kits online, and let our logistics team handle the heavy lifting direct to your Kukatpally address."
     ],
-    popularCategories: ["DSLR Cameras", "Camera Lenses", "Gimbals", "Lighting Kits", "Audio Recording"],
+    popularCategories: ["Event DSLRs", "Mirrorless Cameras", "Drone Rentals", "Flash & Strobe Kits", "Audio Recording"],
     faqs: [
       {
-        question: "How quickly can I get equipment delivered to Kukatpally?",
-        answer:
-          "For most standard rentals, we can arrange delivery to Kukatpally within 24-48 hours. For urgent requirements, please call us directly, and we'll do our best to accommodate your request.",
+        question: "Is there a delivery fee for Kukatpally?",
+        answer: "Delivery to Kukatpally is calculated based on distance from our Yousufguda hub. We offer discounted delivery rates for multi-day rentals."
       },
       {
-        question: "What kind of identification is required for rental in Kukatpally?",
-        answer:
-          "Typically, we require a valid government-issued ID (like an Aadhar card or passport) and a security deposit. Specific requirements may vary based on the equipment value. Our team will guide you through the process.",
-      },
-      {
-        question: "Can I pick up equipment directly from your location if I'm in Kukatpally?",
-        answer:
-          "Yes, you are welcome to pick up equipment from our main location in Yousufguda. Please schedule an appointment in advance to ensure your gear is ready for collection.",
-      },
-      {
-        question: "Do you offer long-term rental discounts for projects in Kukatpally?",
-        answer:
-          "We offer competitive weekly and monthly rates, which provide significant discounts compared to daily rentals. Contact us with your project duration for a customized quote.",
-      },
-    ],
+        question: "What gear is best for indoor events in Kukatpally?",
+        answer: "For indoor events in local banquet halls, we highly recommend our Sony A7S III or Canon R5 kits paired with fast f/2.8 zoom lenses for excellent low-light performance."
+      }
+    ]
   },
   dilsukhnagar: {
-    headline: "CAMERA RENTAL IN DILSUKHNAGAR",
-    subheadline: "Quality Equipment Delivered to Your Location",
+    headline: "DILSUKHNAGAR CAMERA HIRE",
+    subheadline: "Premium Photo & Video Gear for East Hyderabad",
     description: [
-      "D'RENTALS provides professional camera equipment rental with convenient delivery to Dilsukhnagar. Our comprehensive selection includes DSLRs, cinema cameras, lenses, and accessories to support your creative projects.",
-      "Based in Hyderabad, we offer reliable delivery services to Dilsukhnagar, ensuring you have access to high-quality equipment without the need for transportation. Our flexible rental options cater to projects of various durations and budgets.",
-      "Whether you're a professional filmmaker or an amateur photographer in Dilsukhnagar, our equipment will help you achieve professional results. Contact our team to discuss your specific equipment needs.",
-      "We are committed to supporting the creative community in Dilsukhnagar. Our inventory includes popular models like the Canon 5D Mark IV, Sony Alpha series, and a range of prime and zoom lenses. Get ready to capture stunning visuals with D'RENTALS.",
+      "D'RENTALS bridges the gap for creators in East Hyderabad by offering direct camera equipment delivery to Dilsukhnagar. We bring professional-grade gear right to your neighborhood.",
+      "Whether you're covering a large traditional wedding, shooting a short film, or capturing street photography, we have the right tools. Our inventory includes the latest mirrorless systems and robust lighting setups.",
+      "Our team is experienced in navigating Dilsukhnagar's busy streets to ensure your rental gear arrives exactly when you need it, complete with a quick setup overview if requested."
     ],
-    popularCategories: ["DSLR Cameras", "Video Cameras", "Camera Lenses", "Lighting Equipment", "Stabilizers"],
+    popularCategories: ["Wedding Photography Kits", "Video Cameras", "Prime Lenses", "Continuous Lighting", "Stabilizers"],
     faqs: [
-      {
-        question: "What is the rental process for Dilsukhnagar residents?",
-        answer:
-          "The process is simple: browse our catalog, contact us to confirm availability and get a quote, complete the necessary paperwork and security deposit, and we'll arrange delivery to your address in Dilsukhnagar.",
-      },
-      {
-        question: "Do you provide camera operators or technicians with the rental?",
-        answer:
-          "Our primary service is equipment rental. However, if you require a camera operator or technician, we can connect you with trusted professionals in our network. Please inquire about this service when booking.",
-      },
-      {
-        question: "What if the equipment gets damaged during the rental period?",
-        answer:
-          "We recommend reviewing our rental agreement for details on liability and insurance. Minor wear and tear are expected, but significant damage may incur repair or replacement costs. We encourage careful handling of all equipment.",
-      },
       {
         question: "Can I rent equipment for a single day in Dilsukhnagar?",
-        answer:
-          "Yes, we offer flexible daily rental rates. You can rent equipment for as short as one day, or opt for our discounted weekly and monthly rates for longer projects.",
+        answer: "Yes, we offer flexible 24-hour rentals. You can receive the equipment in the evening for a shoot the following day."
       },
-    ],
+      {
+        question: "Do you rent out heavy-duty tripods and jibs?",
+        answer: "Yes, we stock professional fluid-head tripods, jibs, and heavy-duty light stands perfect for stable video production."
+      }
+    ]
   },
   yousufguda: {
-    headline: "CAMERA RENTAL IN YOUSUFGUDA",
-    subheadline: "Professional Cinema Equipment Delivered to You",
+    headline: "YOUSUFGUDA CAMERA HQ",
+    subheadline: "Our Central Hub for Instant Pickups & Rentals",
     description: [
-      "D'RENTALS offers premium camera equipment rental with convenient delivery to Yousufguda. Our main location in Hyderabad allows us to provide quick and reliable delivery services to meet your production needs.",
-      "Our extensive inventory includes professional-grade cameras, lenses, lighting equipment, and accessories from leading brands. Whether you're shooting a film, commercial, or event in Yousufguda, we have the equipment you need.",
-      "With competitive rates and flexible rental periods, D'RENTALS is the preferred choice for cinema equipment rental in Yousufguda. Contact us today to discuss your equipment requirements and delivery options.",
-      "As our primary hub, Yousufguda benefits from the fastest delivery times and direct access to our full inventory. We are dedicated to providing seamless service for all your photography and videography projects, ensuring you have the best tools at your disposal.",
+      "Yousufguda is the home of D'RENTALS. Being in our neighborhood means you get the absolute fastest access to our entire inventory of cinema cameras, lenses, and production gear.",
+      "Local creators, film students, and production teams frequently utilize our Yousufguda hub for rapid equipment checkouts. Enjoy the convenience of dropping by to test lenses or build your custom camera rig.",
+      "Because you're local, we can often accommodate last-minute rental requests and rapid gear swaps. Experience the ultimate convenience of having a premium rental house right in your backyard."
     ],
-    popularCategories: [
-      "Cinema Cameras",
-      "Professional Lenses",
-      "Lighting Kits",
-      "Audio Equipment",
-      "Camera Accessories",
-    ],
+    popularCategories: ["Cinema Cameras", "Lens Testing Kits", "Heavy Duty Grip", "Audio Mixers", "Director's Monitors"],
     faqs: [
       {
-        question: "What are your business hours for pickup/delivery in Yousufguda?",
-        answer:
-          "Our standard business hours for pickups and deliveries in Yousufguda are Monday to Friday, 9:00 AM to 6:00 PM, and Saturday, 10:00 AM to 4:00 PM. We are closed on Sundays. Please schedule your times in advance.",
+        question: "Can I just walk in to rent gear in Yousufguda?",
+        answer: "While we recommend booking online to guarantee availability, walk-ins at our Yousufguda location are always welcome for last-minute needs."
       },
       {
-        question: "Do you offer training or tutorials for using the equipment?",
-        answer:
-          "While we don't offer formal training, our team provides a brief orientation upon delivery or pickup to ensure you're comfortable with the basic operation of the equipment. For in-depth learning, we recommend online resources or professional workshops.",
-      },
-      {
-        question: "Can I extend my rental period if needed?",
-        answer:
-          "Rental extensions are subject to equipment availability. Please contact us as soon as possible if you wish to extend your rental, and we will do our best to accommodate your request.",
-      },
-      {
-        question: "What payment methods do you accept for rentals in Yousufguda?",
-        answer:
-          "We accept various payment methods including bank transfers, UPI, and major credit/debit cards. A security deposit is also required, which will be refunded upon the safe return of the equipment.",
-      },
-    ],
+        question: "Do you offer parking while I load the equipment?",
+        answer: "Yes, we have a dedicated loading zone at our Yousufguda office so you can safely transfer heavy equipment cases into your vehicle."
+      }
+    ]
   },
   "hitech-city": {
-    headline: "CAMERA RENTAL IN HITECH CITY",
-    subheadline: "Professional Equipment for Corporate and Creative Productions",
+    headline: "HITECH CITY CORPORATE RENTALS",
+    subheadline: "High-End Gear for Tech Parks and Corporate Shoots",
     description: [
-      "D'RENTALS provides high-quality camera equipment rental with delivery to Hitech City. Our service caters to corporate video productions, tech events, and creative projects in this bustling IT hub of Hyderabad.",
-      "Our inventory includes professional DSLRs, 4K cameras, cinema cameras, and a wide range of lenses and accessories. We deliver directly to your office or shooting location in Hitech City, saving you time and hassle.",
-      "With our expertise in corporate video production equipment, we can recommend the perfect setup for your specific needs. Contact us to discuss your project requirements and delivery schedule.",
-      "Hitech City's dynamic environment demands reliable and cutting-edge equipment. We offer everything from high-resolution cameras for product launches to versatile lighting for corporate interviews. Trust D'RENTALS to power your next big project in the tech capital.",
+      "D'RENTALS is the trusted equipment partner for corporate video productions across Hitech City. We understand the strict schedules and professional standards required when shooting in IT parks and corporate headquarters.",
+      "We deliver high-resolution 4K cameras, teleprompters, and professional interview lighting kits directly to your office. Perfect for CEO interviews, product launches, or internal training videos.",
+      "Our team handles the logistics so your corporate communications team can focus on the message. We provide discreet, professional delivery to all major tech parks in the Hitech City area."
     ],
-    popularCategories: [
-      "4K Cameras",
-      "Professional DSLRs",
-      "Corporate Video Equipment",
-      "Lighting Setups",
-      "Audio Systems",
-    ],
+    popularCategories: ["Teleprompters", "Interview Lighting", "4K Video Cameras", "Wireless Lavaliere Mics", "Corporate Streaming Kits"],
     faqs: [
       {
-        question: "Do you offer equipment for live streaming events in Hitech City?",
-        answer:
-          "Yes, we have a selection of cameras, switchers, and audio equipment suitable for live streaming. Please specify your requirements when contacting us, and we can recommend a suitable package.",
+        question: "Can you provide equipment for live streaming a corporate town hall?",
+        answer: "Absolutely. We rent out multi-camera streaming kits, video switchers, and clean audio feeds perfect for corporate live streams in Hitech City."
       },
       {
-        question: "Can I rent equipment for a corporate event in Hitech City?",
-        answer:
-          "Absolutely. We frequently provide equipment for corporate events, conferences, and product launches in Hitech City. Our team can help you select the right cameras, lenses, and audio gear for your event.",
-      },
-      {
-        question: "What is the typical delivery time to Hitech City?",
-        answer:
-          "We strive for prompt deliveries to Hitech City, often within a few hours for urgent requests, or scheduled for the next business day for standard bookings. We'll confirm the exact delivery window upon booking.",
-      },
-    ],
+        question: "Do you offer GST invoices for corporate accounting?",
+        answer: "Yes, we provide fully compliant B2B GST invoices for all corporate rentals to facilitate your company's accounting processes."
+      }
+    ]
   },
   gachibowli: {
-    headline: "CAMERA RENTAL IN GACHIBOWLI",
-    subheadline: "Premium Equipment Delivered to Your Location",
+    headline: "GACHIBOWLI PRODUCTION GEAR",
+    subheadline: "Equipping Tech Events and Creative Agencies",
     description: [
-      "D'RENTALS offers professional camera equipment rental with convenient delivery to Gachibowli. Our service is perfect for corporate videos, tech events, and creative productions in this prominent area of Hyderabad.",
-      "Our extensive inventory includes high-end DSLRs, cinema cameras, professional lenses, and accessories from leading brands. We deliver directly to your location in Gachibowli, ensuring you have the equipment you need when you need it.",
-      "With competitive rates and flexible rental periods, D'RENTALS is the preferred choice for camera equipment rental in Gachibowli. Contact our team to discuss your specific equipment needs and delivery options.",
-      "Gachibowli is a hub for innovation, and your productions deserve the best. We provide cutting-edge camera technology, from drone cameras for aerial shots to specialized lenses for cinematic depth. Partner with D'RENTALS for your next creative endeavor.",
+      "Serving the vibrant tech and university sectors in Gachibowli, D'RENTALS delivers top-tier camera and audio equipment directly to your event space, campus, or studio.",
+      "Whether you're covering a massive convention at a local hotel, shooting a commercial for a creative agency, or working on a university film project, we have specialized packages to match your scale.",
+      "We offer flexible pickup and delivery windows to accommodate the often unpredictable schedules of major events and conferences hosted in Gachibowli."
     ],
-    popularCategories: [
-      "Professional DSLRs",
-      "Cinema Cameras",
-      "Corporate Video Equipment",
-      "Lighting Kits",
-      "Audio Systems",
-    ],
+    popularCategories: ["Event Video Kits", "Drone Rentals", "Podcast Audio Gear", "Mirrorless Systems", "LED Panel Lights"],
     faqs: [
       {
-        question: "Do you provide lighting equipment suitable for outdoor shoots in Gachibowli?",
-        answer:
-          "Yes, we have a range of portable lighting solutions, including LED panels and battery-powered lights, perfect for outdoor shoots in Gachibowli. We can also provide light stands and modifiers.",
+        question: "Do you rent out podcasting or panel discussion audio gear?",
+        answer: "Yes, we have multi-channel recorders and broadcast-quality microphones perfect for panel discussions and podcasts often hosted in Gachibowli workspaces."
       },
       {
-        question: "Can I get a custom rental package for my project in Gachibowli?",
-        answer:
-          "We encourage custom packages. Share your project details and budget with us, and our experts will curate a tailored equipment list to meet your specific requirements.",
-      },
-      {
-        question: "What is the process for returning equipment in Gachibowli?",
-        answer:
-          "At the end of your rental period, we will arrange a convenient pickup time and location in Gachibowli. Please ensure all equipment is packed securely in its original cases for a smooth return process.",
-      },
-    ],
+        question: "How do you handle delivery to large corporate campuses?",
+        answer: "We coordinate with your on-site contact to ensure smooth security clearance and deliver directly to your specific building or loading dock."
+      }
+    ]
   },
   "banjara-hills": {
-    headline: "CAMERA RENTAL IN BANJARA HILLS",
-    subheadline: "Premium Cinema Equipment for High-End Productions",
+    headline: "BANJARA HILLS CINEMA RENTALS",
+    subheadline: "Premium Gear for High-End Productions",
     description: [
-      "D'RENTALS provides premium camera equipment rental with delivery to Banjara Hills. Our service caters to high-end productions, fashion shoots, and commercial projects in this upscale area of Hyderabad.",
-      "Our inventory includes top-of-the-line cinema cameras, professional DSLRs, premium lenses, and accessories from renowned brands. We deliver directly to your shooting location in Banjara Hills, ensuring a seamless experience.",
-      "With our expertise in high-end production equipment, we can recommend the perfect setup for your specific needs. Contact us to discuss your project requirements and delivery schedule.",
-      "Banjara Hills is synonymous with luxury and quality, and our equipment reflects that. Access the latest RED and ARRI cameras, specialized prime lenses, and advanced audio solutions for your most demanding projects. Elevate your production value with D'RENTALS.",
+      "D'RENTALS caters to the high-end production houses, advertising agencies, and luxury event planners based in Banjara Hills. We provide the industry's most sought-after cinema equipment.",
+      "Our premium inventory includes the latest from RED Digital Cinema and ARRI, paired with world-class prime cinema lenses. We ensure every piece of gear meets the exacting standards of commercial filmmaking.",
+      "Enjoy white-glove delivery service directly to your studio or shooting location in Banjara Hills. Our equipment arrives fully prepped, clean, and ready to roll the moment it hits the set."
     ],
-    popularCategories: ["RED Cameras", "ARRI Equipment", "Premium Lenses", "High-End Lighting", "Professional Audio"],
+    popularCategories: ["RED & ARRI Cameras", "Cinema Primes", "High-End Lighting", "Wireless Video Transmitters", "Follow Focus Systems"],
     faqs: [
       {
-        question: "Do you offer insurance for high-value equipment rented in Banjara Hills?",
-        answer:
-          "While we do not provide insurance directly, we highly recommend that clients arrange their own production insurance to cover rented equipment. We can provide necessary documentation for your insurance provider.",
+        question: "Do you require insurance for renting cinema cameras in Banjara Hills?",
+        answer: "For our highest-tier cinema cameras (RED/ARRI), we strongly recommend production insurance. We can guide you through the coverage requirements during booking."
       },
       {
-        question: "Can I get a technician to assist with setup for a shoot in Banjara Hills?",
-        answer:
-          "We can connect you with experienced camera assistants or DITs who can help with equipment setup and management on your set in Banjara Hills. This service is arranged separately.",
-      },
-      {
-        question: "What is the minimum rental period for premium equipment in Banjara Hills?",
-        answer:
-          "Most premium equipment can be rented for a minimum of one day. However, for certain specialized items, a longer minimum rental period might apply. Please check individual product details or contact us.",
-      },
-    ],
+        question: "Can I rent a DIT station along with the cameras?",
+        answer: "Yes, we offer media management tools, high-speed card readers, and color-accurate director's monitors for your on-set DIT needs."
+      }
+    ]
   },
   "jubilee-hills": {
-    headline: "CAMERA RENTAL IN JUBILEE HILLS",
-    subheadline: "Premium Equipment for Professional Productions",
+    headline: "JUBILEE HILLS FILM EQUIPMENT",
+    subheadline: "The Filmmaker's Choice for Premium Rentals",
     description: [
-      "D'RENTALS offers premium camera equipment rental with delivery to Jubilee Hills. Our service is ideal for film productions, commercial shoots, and high-end projects in this prestigious area of Hyderabad.",
-      "Our extensive inventory includes professional cinema cameras, high-end DSLRs, premium lenses, and accessories from leading brands. We deliver directly to your shooting location in Jubilee Hills, ensuring you have the equipment you need.",
-      "With competitive rates and flexible rental periods, D'RENTALS is the preferred choice for premium camera equipment rental in Jubilee Hills. Contact our team to discuss your specific equipment needs and delivery options.",
-      "Jubilee Hills is a hub for creative excellence. We provide the tools to match your ambition, from advanced drone systems for aerial cinematography to comprehensive sound recording packages. Make your next project in Jubilee Hills a masterpiece with D'RENTALS.",
+      "Located near the heart of the Telugu film industry, D'RENTALS provides Jubilee Hills with unparalleled access to top-tier filmmaking equipment. We are the preferred rental house for directors and DPs.",
+      "From independent short films to major commercial features, our gear is trusted on sets throughout Jubilee Hills. We offer comprehensive packages that include cameras, specialized grip gear, and advanced lighting solutions.",
+      "We understand the demands of the industry. That's why we offer 24/7 support and rapid replacement services to ensure your production in Jubilee Hills never faces unnecessary downtime."
     ],
-    popularCategories: ["Cinema Cameras", "Premium DSLRs", "Professional Lenses", "High-End Lighting", "Audio Systems"],
+    popularCategories: ["Cinema Cameras", "Anamorphic Lenses", "Heavy Duty Grip", "Large Source Lighting", "Production Monitors"],
     faqs: [
       {
-        question: "Do you offer discounts for student film projects in Jubilee Hills?",
-        answer:
-          "We are supportive of emerging talent! While we don't have a standing student discount, please contact us with your project details, and we'll see how we can best assist you.",
+        question: "Do you offer multi-week rental discounts for feature films?",
+        answer: "Yes, we offer highly competitive long-term rental rates for feature films and web series shooting in Jubilee Hills. Contact us for a custom quote."
       },
       {
-        question: "Can I test the equipment before renting in Jubilee Hills?",
-        answer:
-          "Yes, we encourage clients to test equipment before rental. Please schedule an appointment at our main location in Yousufguda to inspect and test the gear you intend to rent.",
-      },
-      {
-        question: "What is your cancellation policy for rentals in Jubilee Hills?",
-        answer:
-          "Our cancellation policy varies based on the notice period. Generally, cancellations made well in advance may incur a minimal fee, while last-minute cancellations might be subject to a higher charge. Please refer to our full terms and conditions.",
-      },
-    ],
+        question: "Can your team assist with building complex camera rigs?",
+        answer: "Our technicians are experts at configuring complex cinema rigs and can prep the camera exactly to your DP's specifications before delivery."
+      }
+    ]
   },
   ameerpet: {
-    headline: "CAMERA RENTAL IN AMEERPET",
-    subheadline: "Professional Equipment for Educational and Commercial Projects",
+    headline: "AMEERPET CAMERA RENTALS",
+    subheadline: "Affordable Gear for Students and Creators",
     description: [
-      "D'RENTALS provides professional camera equipment rental with delivery to Ameerpet. Our service caters to educational institutions, training centers, and commercial productions in this central area of Hyderabad.",
-      "Our inventory includes DSLRs, video cameras, lenses, and accessories suitable for learning and professional use. We deliver directly to your location in Ameerpet, ensuring convenient access to quality equipment.",
-      "With competitive rates and flexible rental periods, D'RENTALS is the preferred choice for camera equipment rental in Ameerpet. Contact our team to discuss your specific equipment needs and delivery options.",
-      "Ameerpet's diverse needs, from educational content to small business commercials, are met with our versatile range of cameras and accessories. We offer user-friendly yet powerful equipment to help you achieve your production goals efficiently.",
+      "Ameerpet is a hub for education and training, and D'RENTALS is here to support the next generation of creators. We offer budget-friendly, high-quality camera rentals perfect for students and beginners.",
+      "Whether you are enrolled in a local multimedia institute or shooting your first indie project, we provide accessible gear like Canon and Sony mirrorless cameras, basic lighting kits, and clear audio recorders.",
+      "We believe professional gear shouldn't be out of reach. We offer flexible daily rates and are always happy to provide quick tips and guidance to help you get the most out of your rental."
     ],
-    popularCategories: ["DSLR Cameras", "Video Cameras", "Camera Lenses", "Basic Lighting", "Audio Equipment"],
+    popularCategories: ["Beginner DSLRs", "Vlogging Kits", "Basic Lighting", "Shotgun Mics", "Affordable Lenses"],
     faqs: [
       {
-        question: "Do you offer long-term rental options for educational institutions in Ameerpet?",
-        answer:
-          "Yes, we provide special long-term rental packages for educational institutions and training centers in Ameerpet. Please contact us to discuss your specific requirements and get a customized quote.",
+        question: "Are your cameras beginner-friendly?",
+        answer: "Absolutely! We have a range of intuitive mirrorless cameras and DSLRs that are perfect for learning the ropes of photography and videography."
       },
       {
-        question: "Can I rent a camera for photography workshops in Ameerpet?",
-        answer:
-          "Our DSLRs and mirrorless cameras are perfect for photography workshops. We can provide multiple units if needed for group sessions. Inquire about bulk rental options.",
-      },
-      {
-        question: "What is the minimum rental duration for equipment in Ameerpet?",
-        answer:
-          "The minimum rental duration is typically one day. However, we offer discounted rates for weekly and monthly rentals, which are ideal for longer projects or ongoing educational programs.",
-      },
-    ],
+        question: "Do you offer student discounts in Ameerpet?",
+        answer: "We occasionally run promotions for students of recognized multimedia and film institutes. Reach out to our team with your student ID to see current offers."
+      }
+    ]
   },
   secunderabad: {
-    headline: "CAMERA RENTAL IN SECUNDERABAD",
-    subheadline: "Professional Equipment Delivered to Your Location",
+    headline: "SECUNDERABAD CAMERA RENTALS",
+    subheadline: "Reliable Gear Delivery Across the Twin City",
     description: [
-      "D'RENTALS offers professional camera equipment rental with convenient delivery to Secunderabad. Our service provides access to high-quality equipment for filmmakers, photographers, and content creators in this historic part of the twin cities.",
-      "Our extensive inventory includes DSLRs, cinema cameras, lenses, and accessories from leading brands. We deliver directly to your location in Secunderabad, ensuring you have the equipment you need when you need it.",
-      "With competitive rates and flexible rental periods, D'RENTALS is the preferred choice for camera equipment rental in Secunderabad. Contact our team to discuss your specific equipment needs and delivery options.",
-      "Secunderabad's rich heritage and modern developments provide diverse backdrops for your projects. Our reliable delivery service ensures you have access to the best camera gear, from vintage lenses for period pieces to modern drones for sweeping cityscapes.",
+      "D'RENTALS seamlessly bridges the twin cities by offering dedicated equipment delivery services to Secunderabad. We bring the best of Hyderabad's rental inventory directly to you.",
+      "From capturing heritage walks to covering large-scale events at local venues, our gear is versatile and reliable. We stock everything from versatile zoom lenses for event photography to robust gimbals for smooth video.",
+      "Avoid the cross-city traffic. Schedule your rental online, and our logistics team will ensure your equipment arrives safely at your Secunderabad location, ready for your shoot."
     ],
-    popularCategories: ["DSLR Cameras", "Cinema Cameras", "Camera Lenses", "Lighting Equipment", "Audio Systems"],
+    popularCategories: ["Event Photography Kits", "Versatile Zoom Lenses", "Gimbals", "Speedlights", "Audio Recorders"],
     faqs: [
       {
-        question: "Do you offer equipment for event photography/videography in Secunderabad?",
-        answer:
-          "Yes, we have a wide range of cameras, lenses, and lighting suitable for events like weddings, corporate gatherings, and concerts in Secunderabad. We can help you choose the ideal setup.",
+        question: "How far in advance should I book for a Secunderabad delivery?",
+        answer: "To ensure timely delivery across the city, we recommend booking at least 24-48 hours in advance for Secunderabad locations."
       },
       {
-        question: "Can I get a demonstration of the equipment before renting in Secunderabad?",
-        answer:
-          "While we don't offer on-site demonstrations in Secunderabad, you can schedule a visit to our main location in Yousufguda for a hands-on demonstration of the equipment you're interested in.",
-      },
-      {
-        question: "What is the typical turnaround time for equipment delivery to Secunderabad?",
-        answer:
-          "We aim for efficient deliveries to Secunderabad, typically within 24-48 hours for standard bookings. For urgent needs, please contact us directly to check for faster options.",
-      },
-    ],
+        question: "Can I rent specialized lenses for sports or wildlife photography?",
+        answer: "Yes, we stock super-telephoto lenses perfect for capturing sports events or wildlife, which are popular rentals for weekend trips starting from Secunderabad."
+      }
+    ]
   },
   madhapur: {
-    headline: "CAMERA RENTAL IN MADHAPUR",
-    subheadline: "Professional Equipment for Corporate and Creative Productions",
+    headline: "MADHAPUR MEDIA EQUIPMENT",
+    subheadline: "Powering Ad Agencies and Corporate Media",
     description: [
-      "D'RENTALS provides high-quality camera equipment rental with delivery to Madhapur. Our service caters to corporate video productions, tech events, and creative projects in this commercial hub of Hyderabad.",
-      "Our inventory includes professional DSLRs, 4K cameras, cinema cameras, and a wide range of lenses and accessories. We deliver directly to your office or shooting location in Madhapur, saving you time and hassle.",
-      "With our expertise in corporate and creative production equipment, we can recommend the perfect setup for your specific needs. Contact us to discuss your project requirements and delivery schedule.",
-      "Madhapur's vibrant corporate landscape requires reliable and high-performance equipment. We offer everything from compact mirrorless cameras for vlogging to professional cinema cameras for high-budget commercials. Get your gear delivered directly to your studio or office.",
+      "Madhapur is home to some of the city's most dynamic ad agencies and media companies. D'RENTALS provides the cutting-edge camera and lighting equipment required to produce standout commercial content.",
+      "We specialize in rapid deployment of commercial production gear. Whether you need a high-speed camera for a product shoot or comprehensive studio lighting for a fashion editorial, we have it in stock.",
+      "Our seamless rental process and direct delivery to Madhapur offices and studios mean you spend less time coordinating logistics and more time focusing on creative execution."
     ],
-    popularCategories: [
-      "4K Cameras",
-      "Professional DSLRs",
-      "Corporate Video Equipment",
-      "Lighting Setups",
-      "Audio Systems",
-    ],
+    popularCategories: ["Commercial Cinema Cameras", "Studio Lighting", "Macro Lenses", "Product Turntables", "Wireless Video"],
     faqs: [
       {
-        question: "Do you offer equipment for product photography/videography in Madhapur?",
-        answer:
-          "Yes, we have a selection of macro lenses, studio lighting, and high-resolution cameras ideal for product photography and videography. We can help you choose the best gear for showcasing your products.",
+        question: "Do you have lighting gear suitable for high-end product commercials?",
+        answer: "Yes, we stock a variety of precision lighting tools, including Aputure COB lights, softboxes, and modifiers ideal for achieving the perfect commercial look."
       },
       {
-        question: "Can I rent equipment for a short-term project in Madhapur?",
-        answer:
-          "Yes, we offer flexible daily rental options, perfect for short-term projects, workshops, or quick shoots in Madhapur. Our rates are competitive, and the process is straightforward.",
-      },
-      {
-        question: "What kind of support do you offer for corporate clients in Madhapur?",
-        answer:
-          "We offer dedicated support for our corporate clients, including tailored equipment recommendations, flexible delivery/pickup schedules, and technical assistance to ensure your corporate productions run smoothly.",
-      },
-    ],
+        question: "Can we set up a corporate account for frequent rentals in Madhapur?",
+        answer: "We welcome corporate accounts! Ad agencies and production houses in Madhapur can benefit from streamlined billing and priority booking."
+      }
+    ]
   },
   begumpet: {
-    headline: "CAMERA RENTAL IN BEGUMPET",
-    subheadline: "Quality Equipment Delivered to Your Location",
+    headline: "BEGUMPET CAMERA DELIVERY",
+    subheadline: "Centralized Delivery for Urban Shoots",
     description: [
-      "D'RENTALS offers professional camera equipment rental with convenient delivery to Begumpet. Our service provides access to high-quality equipment for filmmakers, photographers, and content creators in this central area of Hyderabad.",
-      "Our extensive inventory includes DSLRs, cinema cameras, lenses, and accessories from leading brands. We deliver directly to your location in Begumpet, ensuring you have the equipment you need when you need it.",
-      "With competitive rates and flexible rental periods, D'RENTALS is the preferred choice for camera equipment rental in Begumpet. Contact our team to discuss your specific equipment needs and delivery options.",
-      "Begumpet's blend of commercial and residential areas makes it a versatile location for various shoots. We provide reliable camera and lighting solutions for everything from fashion editorials to documentary filmmaking, delivered right to your set.",
+      "Centrally located Begumpet is a popular spot for urban photography, interviews, and corporate events. D'RENTALS provides the perfect equipment to capture the essence of this vibrant area.",
+      "We offer compact, high-performance camera systems that are easy to maneuver in busy urban environments, along with portable audio and lighting solutions perfect for on-the-go interviews.",
+      "Our delivery network ensures that whether you're shooting near the old airport or at a premier hotel in Begumpet, your gear arrives promptly and reliably."
     ],
-    popularCategories: ["DSLR Cameras", "Video Cameras", "Camera Lenses", "Lighting Equipment", "Audio Systems"],
+    popularCategories: ["Compact Mirrorless", "Portable Lighting", "Lavalier Mics", "Travel Tripods", "Run-and-Gun Kits"],
     faqs: [
       {
-        question: "Do you have equipment suitable for indoor studio shoots in Begumpet?",
-        answer:
-          "Yes, we offer a range of studio lighting, backdrops, and cameras ideal for indoor studio shoots. Our team can help you select the right gear to create professional-quality studio content.",
+        question: "What gear do you recommend for run-and-gun street interviews?",
+        answer: "We highly recommend a compact mirrorless camera on a lightweight gimbal, paired with a wireless lavalier microphone system for crisp audio in noisy environments."
       },
       {
-        question: "Can I get a rental agreement and invoice for my company in Begumpet?",
-        answer:
-          "Yes, we provide proper rental agreements and GST-compliant invoices for all corporate and individual rentals. Please provide your company details during the booking process.",
-      },
-      {
-        question: "What if I need equipment on short notice in Begumpet?",
-        answer:
-          "While advance booking is recommended, we understand urgent needs arise. Please call us directly for short-notice requests in Begumpet, and we will do our best to accommodate based on availability.",
-      },
-    ],
-  },
+        question: "Can you deliver directly to a hotel or event venue in Begumpet?",
+        answer: "Yes, we frequently deliver to major hotels and event spaces in Begumpet. Just provide the venue details and an on-site contact person."
+      }
+    ]
+  }
 }
 
 // Generate metadata for each area page
