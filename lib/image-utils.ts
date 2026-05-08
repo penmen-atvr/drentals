@@ -1,15 +1,16 @@
-/**
- * Validates if a URL is likely to be a valid image URL
- */
 export function isValidImageUrl(url: string | null | undefined): boolean {
   if (!url) return false
 
   // Check if it's a relative URL starting with /
   if (url.startsWith("/")) return true
+  
+  // Check if it's a data URI
+  if (url.startsWith("data:")) return true
 
   try {
     const parsedUrl = new URL(url)
-    return !!parsedUrl.protocol && !!parsedUrl.host
+    // Accept standard web protocols
+    return ["http:", "https:", "blob:"].includes(parsedUrl.protocol)
   } catch (e) {
     return false
   }
@@ -37,8 +38,25 @@ const SITE_BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://rentals.penmenstu
  */
 export function resolveImageUrl(url: string | null | undefined): string | null {
   if (!url) return null
-  if (url.startsWith('http://') || url.startsWith('https://')) return url
-  return `${SITE_BASE}${url.startsWith('/') ? '' : '/'}${url}`
+  try {
+    // Handle data URIs (base64 images)
+    if (url.startsWith('data:')) {
+      return url
+    }
+    // Handle protocol-relative URLs
+    if (url.startsWith('//')) {
+      return encodeURI(decodeURI(`https:${url}`))
+    }
+    // If it's an absolute URL, return it properly encoded
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return encodeURI(decodeURI(url))
+    }
+    // If it's a relative URL, attach SITE_BASE and encode it
+    const fullUrl = `${SITE_BASE}${url.startsWith('/') ? '' : '/'}${url}`
+    return encodeURI(decodeURI(fullUrl))
+  } catch (e) {
+    return url
+  }
 }
 
 /**

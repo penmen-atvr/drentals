@@ -98,7 +98,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
           <div className="flex min-h-screen flex-col bg-zinc-950 pb-20 md:pb-0">
             <Header />
-            <main className="flex-1 pt-16">
+            <main className="flex-1 pt-[76px]">
               <PageTransition>{children}</PageTransition>
             </main>
             <BackToTop />

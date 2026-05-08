@@ -50,18 +50,18 @@ export const theme = {
 
   // ─── Page Header (inner pages) ─────────────────────────────
   pageHeader: {
-    wrapper: "py-20 bg-zinc-950 border-b border-zinc-800",
-    label: "inline-block mb-4 px-3 py-1 border border-red-600 bg-zinc-950",
-    labelText: "text-red-500 font-mono text-sm tracking-widest",
-    title: "font-heading text-4xl md:text-5xl lg:text-6xl text-white mb-6 tracking-wide leading-tight",
-    description: "text-xl text-zinc-300 max-w-2xl font-body",
+    wrapper: "py-16 md:py-20 bg-zinc-950 border-b border-zinc-800",
+    label: "inline-block mb-3 md:mb-4 px-3 py-1 border border-red-600 bg-zinc-950",
+    labelText: "text-red-500 font-mono text-xs md:text-sm tracking-widest",
+    title: "font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-4 md:mb-6 tracking-wide leading-tight",
+    description: "text-base sm:text-lg md:text-xl text-zinc-300 max-w-2xl font-body",
   },
 
   // ─── Section Header ────────────────────────────────────────
   sectionHeader: {
-    wrapper: "flex items-center justify-between mb-10",
-    title: "font-heading text-3xl text-red-500 tracking-wide",
-    line: "h-px bg-red-600 flex-grow ml-6",
+    wrapper: "flex items-center justify-between mb-8 md:mb-10",
+    title: "font-heading text-2xl sm:text-3xl text-red-500 tracking-wide",
+    line: "h-px bg-red-600 flex-grow ml-4 md:ml-6",
   },
 
   // ─── Cards ─────────────────────────────────────────────────

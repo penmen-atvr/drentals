@@ -51,10 +51,10 @@ export default function HeroCarousel({ equipment }: HeroCarouselProps) {
           alt={`${currentEquipment.brand} ${currentEquipment.name}`}
           fill
           priority={true}
-          className="object-cover object-center transition-transform ease-out scale-110 group-hover/carousel:scale-100 animate-in-fade"
+          className="object-contain object-center transition-transform ease-out scale-100 group-hover/carousel:scale-[1.02] animate-in-fade"
           style={{ transitionDuration: '10000ms' }}
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 75vw, 1440px"
-          quality={85}
+          quality={90}
         />
         {/* Removed translucent overlays, images should be fully visible, and text shadowed with text-shadow instead of background fade */}
       </div>
@@ -69,27 +69,27 @@ export default function HeroCarousel({ equipment }: HeroCarouselProps) {
       </div>
 
       {/* Adjusted top padding (pt-*) and vertical alignment (justify-center md:justify-end) */}
-      <div className="relative z-10 flex flex-col items-start justify-center h-full px-4 pb-4 pt-20 sm:px-6 sm:pb-6 sm:pt-24 md:px-10 md:pb-10 md:pt-28 lg:px-16 lg:pb-16 lg:pt-36 md:justify-end">
-        <div className="max-w-3xl text-white animate-in-slide-up">
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-7xl mb-4 sm:mb-6 leading-tight text-shadow">
-            <span className="bg-red-600 text-white px-3 py-1 text-sm sm:text-base md:text-lg font-bold mb-2 inline-block tracking-tighter">
+      <div className="relative z-10 flex flex-col items-center text-center justify-center h-full px-4 pb-4 pt-20 sm:px-6 sm:pb-6 sm:pt-24 md:px-10 md:pb-10 md:pt-28 lg:px-16 lg:pb-16 lg:pt-36 md:justify-end">
+        <div className="max-w-3xl text-white animate-in-slide-up flex flex-col items-center">
+          <h2 className="font-heading text-2xl sm:text-4xl md:text-5xl lg:text-7xl mb-4 sm:mb-6 leading-tight text-shadow">
+            <span className="bg-red-600 text-white px-2 sm:px-3 py-1 text-xs sm:text-base md:text-lg font-bold mb-2 inline-block tracking-tighter">
               {currentEquipment.brand}
             </span>
             <br />
             <span className="text-white inline-block drop-shadow-2xl">{currentEquipment.name}</span>
           </h2>
           
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mt-2">
             <Button
               asChild
-              className="bg-red-500 hover:bg-red-600 text-white rounded-none px-8 py-6 text-sm font-heading"
+              className="bg-red-500 hover:bg-red-600 text-white rounded-none px-6 py-4 md:px-8 md:py-6 text-sm font-heading"
             >
               <Link href={`/equipment/${currentEquipment.id}-${slugify(currentEquipment.name)}`}>VIEW DETAILS</Link>
             </Button>
             <Button
               asChild
               variant="outline"
-              className="border-zinc-500 text-white hover:bg-zinc-700 hover:text-white rounded-none px-8 py-6 text-sm font-heading bg-zinc-900 transition-all"
+              className="border-zinc-500 text-white hover:bg-zinc-700 hover:text-white rounded-none px-6 py-4 md:px-8 md:py-6 text-sm font-heading bg-zinc-900 transition-all"
             >
               <Link href="/equipment">BROWSE ALL</Link>
             </Button>

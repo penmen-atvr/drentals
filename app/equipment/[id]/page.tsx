@@ -204,7 +204,7 @@ export default async function EquipmentDetailPage({
                         Specifications
                       </h2>
                       {specs.length > 0 ? (
-                        <div className="border border-zinc-800/60 bg-zinc-900/30 rounded-sm">
+                        <div className="border border-zinc-800 rounded-sm overflow-hidden">
                           {specs.map(([key, value], index) => {
                             // Title case the key (e.g., "sensor_size" -> "Sensor Size")
                             const label = key
@@ -222,14 +222,18 @@ export default async function EquipmentDetailPage({
                             return (
                               <div
                                 key={key}
-                                className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 sm:py-4 border-b border-zinc-800/50 last:border-0 gap-1 sm:gap-4 hover:bg-zinc-800/20 transition-colors"
+                                className="flex flex-row border-b border-zinc-800 last:border-0 hover:bg-zinc-900/30 transition-colors"
                               >
-                                <span className="text-sm text-zinc-400 font-body shrink-0">
-                                  {label}
-                                </span>
-                                <span className="text-sm text-white font-medium font-body sm:text-right break-words">
-                                  {display}
-                                </span>
+                                <div className="w-1/3 md:w-1/4 p-3 sm:p-4 border-r border-zinc-800 flex items-center">
+                                  <span className="text-xs sm:text-sm text-zinc-400 font-body">
+                                    {label}
+                                  </span>
+                                </div>
+                                <div className="w-2/3 md:w-3/4 p-3 sm:p-4 flex items-center">
+                                  <span className="text-sm text-white font-body break-words">
+                                    {display}
+                                  </span>
+                                </div>
                               </div>
                             )
                           })}

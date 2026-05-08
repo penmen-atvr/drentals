@@ -4,6 +4,7 @@ import CategoryList from "@/components/category-list"
 import HeroCarousel from "@/components/hero-carousel"
 import { getDynamicHomeSections, type HomeSection } from "@/lib/dynamic-homepage"
 import { unstable_noStore } from "next/cache"
+import Link from "next/link"
 import { generateMetadata } from "@/lib/seo-config"
 import type { Metadata } from "next"
 import { Award, Users, Clock, Truck } from "lucide-react"
@@ -47,9 +48,29 @@ export default async function Home() {
             return <CategoryList key={section.id} categories={section.items as any[]} />
           }
           
-          if (section.type === "equipment_carousel" || section.type === "kit_grid") {
+          if (section.type === "equipment_carousel") {
             return (
-              <section key={section.id} className="py-16 bg-zinc-950 border-b border-zinc-800">
+              <section key={section.id} className="py-24 bg-zinc-950 border-b border-zinc-800">
+                <div className="container mx-auto px-4">
+                  <SectionHeader title={section.title} subtitle={section.subtitle || undefined} />
+                  <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-8 -mx-4 px-4 sm:mx-0 sm:px-0 gap-4 sm:gap-6">
+                    {section.items.map((item: any, index: number) => (
+                      <div key={item.id} className="min-w-[280px] w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] snap-start shrink-0">
+                        <EquipmentCard
+                          equipment={item as Equipment}
+                          priority={index < 4}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )
+          }
+
+          if (section.type === "kit_grid") {
+            return (
+              <section key={section.id} className="py-24 bg-zinc-950 border-b border-zinc-800">
                 <div className="container mx-auto px-4">
                   <SectionHeader title={section.title} subtitle={section.subtitle || undefined} />
                   <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
@@ -71,24 +92,48 @@ export default async function Home() {
             const marqueeItems = [...section.items, ...section.items, ...section.items, ...section.items]
             
             return (
-              <section key={section.id} className="py-20 bg-zinc-950 border-b border-zinc-900 overflow-hidden">
-                <div className="container mx-auto px-4 mb-10">
-                  <SectionHeader title={section.title} subtitle={section.subtitle || undefined} />
+              <section key={section.id} className="py-12 md:py-16 bg-zinc-950 border-y border-zinc-900 overflow-hidden relative">
+                {/* Subtle Grid Background */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
+                
+                <div className="container mx-auto px-4 mb-8 md:mb-10 relative z-10 flex flex-col items-center text-center">
+                  <div className="inline-block mb-3 px-3 py-1 border border-zinc-800 bg-zinc-950/80 backdrop-blur-sm">
+                    <span className="text-zinc-400 font-mono text-xs tracking-widest">INDUSTRY STANDARD</span>
+                  </div>
+                  <h2 className="font-heading text-3xl sm:text-4xl text-white tracking-wide uppercase">
+                    {section.title}
+                  </h2>
                 </div>
-                <div className="relative w-full flex overflow-hidden group py-4">
+
+                <div className="relative w-full flex flex-col gap-4 md:gap-8 overflow-hidden group py-4">
                   {/* Left & Right gradient masks for smooth fade effect */}
-                  <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-zinc-950 to-transparent z-10 pointer-events-none" />
-                  <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-zinc-950 to-transparent z-10 pointer-events-none" />
+                  <div className="absolute left-0 top-0 bottom-0 w-24 md:w-64 bg-gradient-to-r from-zinc-950 to-transparent z-10 pointer-events-none" />
+                  <div className="absolute right-0 top-0 bottom-0 w-24 md:w-64 bg-gradient-to-l from-zinc-950 to-transparent z-10 pointer-events-none" />
                   
+                  {/* Row 1: Moving Left */}
                   <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused]">
                     {marqueeItems.map((brandObj: any, index: number) => (
-                      <div 
-                        key={index} 
-                        className="mx-4 md:mx-6 px-8 py-5 border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 transition-colors flex items-center justify-center min-w-[220px]"
-                      >
-                        <span className="text-xl md:text-3xl font-heading text-zinc-500 hover:text-white transition-colors uppercase tracking-widest">
-                          {brandObj.brand}
-                        </span>
+                      <div key={`row1-${index}`} className="flex items-center px-8 md:px-16">
+                        <Link href={`/brands/${brandObj.brand.toLowerCase()}`} className="group/brand block">
+                          <span className="text-5xl md:text-7xl lg:text-8xl font-heading text-zinc-800 group-hover/brand:text-white transition-all duration-300 uppercase tracking-tighter drop-shadow-sm group-hover/brand:drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+                            {brandObj.brand}
+                          </span>
+                        </Link>
+                        <span className="mx-8 md:mx-16 text-zinc-900 text-4xl md:text-6xl font-heading italic opacity-50">/</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Row 2: Moving Right (reverse) */}
+                  <div className="flex w-max animate-marquee-reverse group-hover:[animation-play-state:paused] ml-[-50%]">
+                    {[...marqueeItems].reverse().map((brandObj: any, index: number) => (
+                      <div key={`row2-${index}`} className="flex items-center px-8 md:px-16">
+                        <Link href={`/brands/${brandObj.brand.toLowerCase()}`} className="group/brand block">
+                          <span className="text-5xl md:text-7xl lg:text-8xl font-heading text-zinc-800 group-hover/brand:text-red-600 transition-all duration-300 uppercase tracking-tighter drop-shadow-sm group-hover/brand:drop-shadow-[0_0_20px_rgba(220,38,38,0.5)]">
+                            {brandObj.brand}
+                          </span>
+                        </Link>
+                        <span className="mx-8 md:mx-16 text-zinc-900 text-4xl md:text-6xl font-heading italic opacity-50">/</span>
                       </div>
                     ))}
                   </div>

@@ -10,6 +10,14 @@
 
 
 @layer base {
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
   :root {
     /* D'RENTALS forced-dark theme — always dark, never light */
     --background: 0 0% 3.5%;         /* zinc-950 */
