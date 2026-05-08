@@ -7,6 +7,7 @@ import { generateMetadata } from "@/lib/seo-config"
 import type { Metadata } from "next"
 import SafeImage from "@/components/safe-image"
 import PageHeader from "@/components/page-header"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 
 export const metadata: Metadata = generateMetadata({
@@ -29,9 +30,25 @@ export const metadata: Metadata = generateMetadata({
 export const dynamic = "force-dynamic"
 export const revalidate = 0
 
-export default async function BlogPage() {
+interface BlogPageProps {
+  searchParams: {
+    page?: string
+  }
+}
+
+export default async function BlogPage({ searchParams }: BlogPageProps) {
   unstable_noStore()
-  const posts = await getBlogPosts()
+  const allPosts = await getBlogPosts()
+  
+  const page = searchParams.page ? parseInt(searchParams.page, 10) : 1
+  const limit = 9
+  const totalPosts = allPosts.length
+  const totalPages = Math.ceil(totalPosts / limit) || 1
+  
+  const safePage = Math.max(1, Math.min(page, totalPages))
+  const offset = (safePage - 1) * limit
+  
+  const posts = allPosts.slice(offset, offset + limit)
 
   return (
     <>
@@ -77,6 +94,41 @@ export default async function BlogPage() {
                     </Card>
                   </Link>
                 ))}
+              </div>
+            )}
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-16 border-t border-zinc-800/50 pt-8">
+                {safePage > 1 ? (
+                  <Link
+                    href={`/blog?page=${safePage - 1}`}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-mono text-zinc-400 hover:text-white border border-zinc-800 hover:border-red-500 rounded-none transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" /> PREV
+                  </Link>
+                ) : (
+                  <span className="flex items-center gap-2 px-4 py-2 text-sm font-mono text-zinc-700 border border-zinc-800/50 rounded-none cursor-not-allowed">
+                    <ChevronLeft className="w-4 h-4" /> PREV
+                  </span>
+                )}
+                
+                <span className="font-mono text-sm text-zinc-300">
+                  PAGE {safePage} OF {totalPages}
+                </span>
+
+                {safePage < totalPages ? (
+                  <Link
+                    href={`/blog?page=${safePage + 1}`}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-mono text-zinc-400 hover:text-white border border-zinc-800 hover:border-red-500 rounded-none transition-colors"
+                  >
+                    NEXT <ChevronRight className="w-4 h-4" />
+                  </Link>
+                ) : (
+                  <span className="flex items-center gap-2 px-4 py-2 text-sm font-mono text-zinc-700 border border-zinc-800/50 rounded-none cursor-not-allowed">
+                    NEXT <ChevronRight className="w-4 h-4" />
+                  </span>
+                )}
               </div>
             )}
           </div>
