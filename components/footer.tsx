@@ -61,7 +61,17 @@ export default function Footer() {
 
       <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-600">
         <p>© {year} D&apos;RENTALS. All rights reserved.</p>
-        <p>Managed by Penmen Studios</p>
+        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-center sm:text-right">
+          <p>Managed by Penmen Studios</p>
+          <a 
+            href="https://atvr.vercel.app" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-zinc-500 hover:text-red-500 transition-colors flex items-center gap-1"
+          >
+            Developed by ATVR
+          </a>
+        </div>
       </div>
     </footer>
   )

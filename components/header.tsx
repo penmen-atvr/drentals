@@ -88,8 +88,9 @@ export default function Header() {
   ]
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-950 border-b border-zinc-900">
-      <div className="container mx-auto px-4 py-4">
+    <>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-zinc-900 border-b border-zinc-800">
+        <div className="container mx-auto px-4 py-2 md:py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group" onClick={() => pathname === "/" && scrollToTop()}>
             <Image 
@@ -97,12 +98,12 @@ export default function Header() {
               alt="D'RENTALS Logo" 
               width={36} 
               height={36} 
-              className="rounded-lg object-contain"
+              className="rounded-lg object-contain w-8 h-8 md:w-9 md:h-9"
               priority
             />
-            <div className="flex flex-col">
-              <span className="font-heading text-xl tracking-wider uppercase text-white group-hover:text-red-500 transition-colors">D&apos;RENTALS</span>
-              <span className="text-xs text-zinc-400 font-mono tracking-tight group-hover:text-zinc-300 transition-colors">by Penmen Studios</span>
+            <div className="flex flex-col justify-center">
+              <span className="font-heading text-lg md:text-xl tracking-wider uppercase text-white group-hover:text-red-500 transition-colors leading-none">D&apos;RENTALS</span>
+              <span className="text-[10px] md:text-xs text-zinc-400 font-mono tracking-tight group-hover:text-zinc-300 transition-colors leading-none mt-0.5 md:mt-1">by Penmen Studios</span>
             </div>
           </Link>
 
@@ -194,16 +195,17 @@ export default function Header() {
             </p>
           </div>
         </div>
-      </div>
+        </div>
+      </header>
 
       {/* Overlay to capture clicks outside the menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-black/50 z-[55] md:hidden" onClick={closeMobileMenu} aria-hidden="true" />
+        <div className="fixed inset-0 bg-black/50 z-[45] md:hidden" onClick={closeMobileMenu} aria-hidden="true" />
       )}
 
       {/* Mobile Bottom Navigation */}
       <div 
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-950 border-t border-zinc-900"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-900 border-t border-zinc-800 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.5)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="flex justify-around items-center h-16 px-2">
@@ -242,6 +244,6 @@ export default function Header() {
           </button>
         </div>
       </div>
-    </header>
+    </>
   )
 }
