@@ -46,7 +46,7 @@ export default function EquipmentGrid({ equipment, total, currentPage, limit }: 
 
   return (
     <div className="flex flex-col space-y-12">
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
         {equipment.map((item) => (
           <EquipmentCard key={item.id} equipment={item} />
         ))}
@@ -106,6 +106,9 @@ export default function EquipmentGrid({ equipment, total, currentPage, limit }: 
           </button>
         </div>
       )}
+
+      {/* Extra breathing room so fast-scrolling users can reach pagination comfortably */}
+      <div className="pb-16 md:pb-24" />
     </div>
   )
 }

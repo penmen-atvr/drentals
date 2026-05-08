@@ -2,7 +2,7 @@ import { blogPosts } from './blog-posts-data'
 import { db, equipment, equipmentCategories, equipmentImages } from "./db"
 import { cache } from "react"
 import type { Category, Equipment, EquipmentImage, BlogPost } from "./types"
-import { eq, and, or, desc, gte, lte, sql as drizzleSql } from "drizzle-orm"
+import { eq, and, or, desc, asc, gte, lte, sql as drizzleSql } from "drizzle-orm"
 import { resolveImageUrl, buildEquipmentImageUrls } from "./image-utils"
 
 export const getCategories = cache(async (): Promise<Category[]> => {
@@ -69,6 +69,19 @@ export const getAllEquipment = cache(async (categoryId?: number, isKit?: boolean
   })) as unknown as Equipment[]
 })
 
+// Get all unique brands that have equipment in the database
+export const getAllBrands = cache(async (): Promise<string[]> => {
+  const result = await db
+    .selectDistinct({ brand: equipment.brand })
+    .from(equipment)
+    .where(drizzleSql`${equipment.brand} IS NOT NULL AND ${equipment.brand} != ''`)
+    .orderBy(asc(equipment.brand))
+
+  return result
+    .map(r => r.brand)
+    .filter((b): b is string => !!b)
+})
+
 export interface GetEquipmentOptions {
   categoryId?: number;
   isKit?: boolean;
@@ -109,10 +122,10 @@ export const getEquipmentPaginated = cache(async (options: GetEquipmentOptions):
 
   const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined
 
-  let orderByClause = [equipment.name] as any[]; // default 'name_asc'
-  if (sort === 'price_asc') orderByClause = [equipment.dailyRate];
+  let orderByClause = [asc(equipment.name)] as any[]; // default 'name_asc'
+  if (sort === 'price_asc') orderByClause = [asc(equipment.dailyRate)];
   if (sort === 'price_desc') orderByClause = [desc(equipment.dailyRate)];
-  if (sort === 'name_asc') orderByClause = [equipment.name];
+  if (sort === 'name_asc') orderByClause = [asc(equipment.name)];
 
   const result = await db.query.equipment.findMany({
     where: whereClause,
@@ -208,15 +221,6 @@ export const getEquipmentByBrand = cache(async (brand: string): Promise<Equipmen
     categoryName: item.category?.name,
     imageUrls: buildEquipmentImageUrls(item)
   })) as unknown as Equipment[]
-})
-
-export const getAllBrands = cache(async (): Promise<string[]> => {
-  const result = await db.selectDistinct({ brand: equipment.brand })
-    .from(equipment)
-    .where(drizzleSql`${equipment.brand} IS NOT NULL AND ${equipment.brand} != ''`)
-    .orderBy(equipment.brand)
-
-  return result.map(r => r.brand!)
 })
 
 export const getPopularEquipmentForArea = cache(async (limit = 4): Promise<Equipment[]> => {

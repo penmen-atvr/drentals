@@ -135,16 +135,6 @@ export default function Header() {
             <Phone className="h-6 w-6" />
           </a>
 
-          {/* Desktop Menu Button - Hidden on mobile as we now have bottom nav */}
-          <button
-            ref={menuButtonRef}
-            className="hidden md:block p-2 text-zinc-400 hover:text-white transition-colors"
-            onClick={toggleMobileMenu}
-            aria-label="Toggle menu"
-            aria-expanded={mobileMenuOpen}
-          >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
         </div>
       </div>
 
