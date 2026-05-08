@@ -3,12 +3,12 @@
 import { useRouter, usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import type { Category } from "@/lib/types"
+import { SlidersHorizontal, X } from "lucide-react"
 
-export default function EquipmentFilters({
+export default function MobileFilters({
   categories,
   brands,
   selectedCategory,
@@ -29,6 +29,7 @@ export default function EquipmentFilters({
 }) {
   const router = useRouter()
   const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false)
 
   const [localMinPrice, setLocalMinPrice] = useState(minPrice?.toString() || "")
   const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice?.toString() || "")
@@ -37,6 +38,21 @@ export default function EquipmentFilters({
     setLocalMinPrice(minPrice?.toString() || "")
     setLocalMaxPrice(maxPrice?.toString() || "")
   }, [minPrice, maxPrice])
+
+  // Prevent background scrolling when sidebar is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden"
+      document.documentElement.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+      document.documentElement.style.overflow = ""
+    }
+    return () => {
+      document.body.style.overflow = ""
+      document.documentElement.style.overflow = ""
+    }
+  }, [isOpen])
 
   const handleFilterChange = (params: { 
     categoryId?: number | null; 
@@ -102,22 +118,58 @@ export default function EquipmentFilters({
   const hasActiveFilters = selectedCategory || isKitOnly || selectedBrand || minPrice || maxPrice || sort
 
   return (
-    <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-1 pb-4 custom-scrollbar">
-      <Card className="bg-zinc-900 border-zinc-800 rounded-none">
-        <CardHeader className="border-b border-zinc-800 pb-4 flex flex-row items-center justify-between space-y-0">
-          <CardTitle className="text-white uppercase tracking-wide text-lg font-heading">Filters</CardTitle>
-          {hasActiveFilters && (
-            <button 
-              onClick={clearAllFilters}
-              className="text-xs text-red-500 hover:text-red-400 font-mono tracking-wider transition-colors"
-            >
-              CLEAR ALL
-            </button>
-          )}
-        </CardHeader>
-        <CardContent className="pt-6">
-          <div className="space-y-8">
-            
+    <div className="lg:hidden mb-6">
+      {/* Trigger Button */}
+      <Button
+        onClick={() => setIsOpen(true)}
+        className="w-full bg-zinc-900 border border-zinc-800 text-white font-heading py-6 rounded-none flex items-center justify-between"
+      >
+        <span className="flex items-center gap-2">
+          <SlidersHorizontal className="h-5 w-5" />
+          FILTERS & SORT
+        </span>
+        
+        {/* Badge to show active filters count */}
+        {hasActiveFilters && (
+          <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">Active</span>
+        )}
+      </Button>
+
+      {/* Overlay Backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/80 z-[100] transition-opacity" 
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Sidebar Panel */}
+      <div 
+        className={`fixed top-0 right-0 h-full w-[300px] max-w-[85vw] bg-zinc-950 border-l border-zinc-900 z-[110] transform transition-transform duration-300 ease-in-out flex flex-col ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between p-4 border-b border-zinc-800">
+          <div className="flex items-center gap-3">
+            <h2 className="font-heading text-lg text-white uppercase tracking-wide">Filters</h2>
+            {hasActiveFilters && (
+              <button 
+                onClick={clearAllFilters}
+                className="text-xs text-red-500 hover:text-red-400 font-mono tracking-wider transition-colors"
+              >
+                CLEAR ALL
+              </button>
+            )}
+          </div>
+          <button 
+            onClick={() => setIsOpen(false)}
+            className="p-2 text-zinc-400 hover:text-white transition-colors bg-zinc-900 rounded-full"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-8 pb-32 custom-scrollbar">
             {/* Sort By */}
             <div>
               <div className="flex items-center justify-between mb-3">
@@ -127,14 +179,14 @@ export default function EquipmentFilters({
                 )}
               </div>
               <Select value={sort || "none"} onValueChange={(val) => handleFilterChange({ sort: val === "none" ? null : val })}>
-                <SelectTrigger className="w-full bg-zinc-950 border-zinc-800 text-zinc-300 rounded-none font-mono text-sm h-10">
+                <SelectTrigger className="w-full bg-zinc-900 border-zinc-800 text-zinc-300 rounded-none font-mono text-sm h-10">
                   <SelectValue placeholder="Sort order" />
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-950 border-zinc-800 rounded-none">
-                  <SelectItem value="none" className="font-mono text-sm focus:bg-zinc-800 focus:text-white cursor-pointer">Default</SelectItem>
-                  <SelectItem value="name_asc" className="font-mono text-sm focus:bg-zinc-800 focus:text-white cursor-pointer">Name: A to Z</SelectItem>
-                  <SelectItem value="price_asc" className="font-mono text-sm focus:bg-zinc-800 focus:text-white cursor-pointer">Price: Low to High</SelectItem>
-                  <SelectItem value="price_desc" className="font-mono text-sm focus:bg-zinc-800 focus:text-white cursor-pointer">Price: High to Low</SelectItem>
+                <SelectContent className="bg-zinc-950 border-zinc-800 rounded-none z-[120]">
+                  <SelectItem value="none" className="font-mono text-sm focus:bg-zinc-800">Default</SelectItem>
+                  <SelectItem value="name_asc" className="font-mono text-sm focus:bg-zinc-800">Name: A to Z</SelectItem>
+                  <SelectItem value="price_asc" className="font-mono text-sm focus:bg-zinc-800">Price: Low to High</SelectItem>
+                  <SelectItem value="price_desc" className="font-mono text-sm focus:bg-zinc-800">Price: High to Low</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -151,7 +203,7 @@ export default function EquipmentFilters({
                 <Button
                   variant={!isKitOnly ? "default" : "outline"}
                   className={`w-full justify-start rounded-none font-mono ${
-                    !isKitOnly ? "bg-red-500 hover:bg-red-600" : "text-zinc-400 hover:text-white border-zinc-700 hover:border-red-500 hover:bg-zinc-800"
+                    !isKitOnly ? "bg-red-500 hover:bg-red-600" : "text-zinc-400 hover:text-white border-zinc-700 hover:border-red-500 hover:bg-zinc-900"
                   }`}
                   onClick={() => handleFilterChange({ kit: null })}
                 >
@@ -160,7 +212,7 @@ export default function EquipmentFilters({
                 <Button
                   variant={isKitOnly ? "default" : "outline"}
                   className={`w-full justify-start rounded-none font-mono ${
-                    isKitOnly ? "bg-purple-600 hover:bg-purple-700 shadow-md" : "text-zinc-400 hover:text-white border-zinc-700 hover:border-purple-500 hover:bg-zinc-800"
+                    isKitOnly ? "bg-purple-600 hover:bg-purple-700 shadow-md" : "text-zinc-400 hover:text-white border-zinc-700 hover:border-purple-500 hover:bg-zinc-900"
                   }`}
                   onClick={() => handleFilterChange({ kit: true })}
                 >
@@ -179,13 +231,13 @@ export default function EquipmentFilters({
                   )}
                 </div>
                 <Select value={selectedBrand || "all"} onValueChange={(val) => handleFilterChange({ brand: val === "all" ? null : val })}>
-                  <SelectTrigger className="w-full bg-zinc-950 border-zinc-800 text-zinc-300 rounded-none font-mono text-sm h-10">
+                  <SelectTrigger className="w-full bg-zinc-900 border-zinc-800 text-zinc-300 rounded-none font-mono text-sm h-10">
                     <SelectValue placeholder="Select Brand" />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-950 border-zinc-800 rounded-none max-h-60">
-                    <SelectItem value="all" className="font-mono text-sm focus:bg-zinc-800 focus:text-white cursor-pointer">All Brands</SelectItem>
+                  <SelectContent className="bg-zinc-950 border-zinc-800 rounded-none z-[120] max-h-60">
+                    <SelectItem value="all" className="font-mono text-sm focus:bg-zinc-800">All Brands</SelectItem>
                     {brands.map((b) => (
-                      <SelectItem key={b} value={b} className="font-mono text-sm focus:bg-zinc-800 focus:text-white cursor-pointer">
+                      <SelectItem key={b} value={b} className="font-mono text-sm focus:bg-zinc-800">
                         {b.toUpperCase()}
                       </SelectItem>
                     ))}
@@ -208,7 +260,7 @@ export default function EquipmentFilters({
                   placeholder="Min" 
                   value={localMinPrice}
                   onChange={(e) => setLocalMinPrice(e.target.value)}
-                  className="bg-zinc-950 border-zinc-800 rounded-none text-zinc-300 font-mono text-sm h-10"
+                  className="bg-zinc-900 border-zinc-800 rounded-none text-zinc-300 font-mono text-sm h-10"
                 />
                 <span className="text-zinc-500">-</span>
                 <Input 
@@ -216,7 +268,7 @@ export default function EquipmentFilters({
                   placeholder="Max" 
                   value={localMaxPrice}
                   onChange={(e) => setLocalMaxPrice(e.target.value)}
-                  className="bg-zinc-950 border-zinc-800 rounded-none text-zinc-300 font-mono text-sm h-10"
+                  className="bg-zinc-900 border-zinc-800 rounded-none text-zinc-300 font-mono text-sm h-10"
                 />
               </div>
               <Button 
@@ -261,10 +313,15 @@ export default function EquipmentFilters({
                 ))}
               </div>
             </div>
-            
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Apply/Close Bar at Bottom */}
+        <div className="p-4 border-t border-zinc-800 bg-zinc-950">
+          <Button onClick={() => setIsOpen(false)} className="w-full bg-red-500 hover:bg-red-600 text-white font-mono rounded-none h-12">
+            VIEW RESULTS
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

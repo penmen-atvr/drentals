@@ -229,6 +229,29 @@
   border-radius: 0;
 }
 
+/* Custom scrollbar for filter sidebars */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #dc2626 #18181b;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #18181b; /* zinc-900 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #52525b; /* zinc-600 */
+  border-radius: 4px;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: #dc2626; /* red-600 */
+}
+
 /* Fix for mobile dropdowns */
 .mobile-category-dropdown {
   position: relative;

@@ -25,6 +25,8 @@ export default function Footer() {
             <li><Link href="/" className="hover:text-red-500 transition-colors uppercase tracking-wider">Home</Link></li>
             <li><Link href="/equipment" className="hover:text-red-500 transition-colors uppercase tracking-wider">Equipment</Link></li>
             <li><Link href="/brands" className="hover:text-red-500 transition-colors uppercase tracking-wider">Brands</Link></li>
+            <li><Link href="/areas" className="hover:text-red-500 transition-colors uppercase tracking-wider">Areas</Link></li>
+            <li><Link href="/blog" className="hover:text-red-500 transition-colors uppercase tracking-wider">Blog</Link></li>
             <li><Link href="/contact" className="hover:text-red-500 transition-colors uppercase tracking-wider">Contact</Link></li>
           </ul>
         </div>
@@ -49,7 +51,7 @@ export default function Footer() {
             </li>
             <li className="flex flex-col gap-1">
               <span className="text-[10px] text-zinc-600 uppercase">Phone</span>
-              <span className="text-zinc-300">077948 72701</span>
+              <a href="tel:+917794872701" className="text-zinc-300 hover:text-white transition-colors">077948 72701</a>
             </li>
           </ul>
         </div>

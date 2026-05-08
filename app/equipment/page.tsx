@@ -1,7 +1,7 @@
-import { getCategories, getEquipmentPaginated } from "@/lib/data"
+import { getCategories, getEquipmentPaginated, getAllBrands } from "@/lib/data"
 import EquipmentGrid from "@/components/equipment-grid"
 import EquipmentFilters from "@/components/equipment-filters"
-import MobileCategoryDropdown from "@/components/mobile-category-dropdown"
+import MobileFilters from "@/components/mobile-filters"
 import EquipmentSearch from "@/components/equipment-search"
 import { Suspense } from "react"
 import { EquipmentSkeleton } from "@/components/skeletons"
@@ -38,14 +38,21 @@ export const metadata: Metadata = generateMetadata({
 export default async function EquipmentPage({
   searchParams,
 }: {
-  searchParams: { category?: string; kit?: string; q?: string }
+  searchParams: { category?: string; kit?: string; q?: string; brand?: string; minPrice?: string; maxPrice?: string; sort?: string; page?: string }
 }) {
   unstable_noStore()
 
   const categories = await getCategories()
+  const allBrands = await getAllBrands()
+  
   const categoryId = searchParams.category ? Number.parseInt(searchParams.category) : undefined
   const isKit = searchParams.kit === 'true'
   const searchQuery = searchParams.q || undefined
+  const brand = searchParams.brand || undefined
+  const minPrice = searchParams.minPrice ? Number.parseInt(searchParams.minPrice) : undefined
+  const maxPrice = searchParams.maxPrice ? Number.parseInt(searchParams.maxPrice) : undefined
+  const sort = searchParams.sort || undefined
+  const currentPage = searchParams.page ? Number.parseInt(searchParams.page) : 1
 
   // Find the selected category name if a category is selected
   const selectedCategory = categoryId ? categories.find((cat) => cat.id === categoryId) : undefined
@@ -74,18 +81,45 @@ export default async function EquipmentPage({
               </div>
             </div>
 
-            {/* Mobile Category Dropdown - Only visible on mobile */}
-            <MobileCategoryDropdown categories={categories} selectedCategory={categoryId} />
+            {/* Mobile Filters - Only visible on mobile */}
+            <MobileFilters 
+              categories={categories} 
+              brands={allBrands}
+              selectedCategory={categoryId} 
+              isKitOnly={isKit} 
+              selectedBrand={brand}
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              sort={sort}
+            />
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
               {/* Desktop Sidebar Filters - Hidden on mobile */}
               <div className="hidden lg:block lg:col-span-1">
-                <EquipmentFilters categories={categories} selectedCategory={categoryId} isKitOnly={isKit} />
+                <EquipmentFilters 
+                  categories={categories} 
+                  brands={allBrands}
+                  selectedCategory={categoryId} 
+                  isKitOnly={isKit} 
+                  selectedBrand={brand}
+                  minPrice={minPrice}
+                  maxPrice={maxPrice}
+                  sort={sort}
+                />
               </div>
 
               <div className="lg:col-span-3">
-                <Suspense fallback={<EquipmentSkeleton />} key={`${categoryId}-${isKit}-${searchQuery}`}>
-                  <EquipmentList categoryId={categoryId} isKit={isKit} searchQuery={searchQuery} />
+                <Suspense fallback={<EquipmentSkeleton />} key={`${categoryId}-${isKit}-${searchQuery}-${brand}-${minPrice}-${maxPrice}-${sort}-${currentPage}`}>
+                  <EquipmentList 
+                    categoryId={categoryId} 
+                    isKit={isKit} 
+                    searchQuery={searchQuery}
+                    brand={brand}
+                    minPrice={minPrice}
+                    maxPrice={maxPrice}
+                    sort={sort}
+                    page={currentPage}
+                  />
                 </Suspense>
               </div>
             </div>
@@ -96,18 +130,35 @@ export default async function EquipmentPage({
   )
 }
 
-async function EquipmentList({ categoryId, isKit, searchQuery }: { categoryId?: number, isKit?: boolean, searchQuery?: string }) {
+async function EquipmentList({ 
+  categoryId, 
+  isKit, 
+  searchQuery, 
+  brand, 
+  minPrice, 
+  maxPrice, 
+  sort, 
+  page = 1 
+}: { 
+  categoryId?: number, 
+  isKit?: boolean, 
+  searchQuery?: string,
+  brand?: string,
+  minPrice?: number,
+  maxPrice?: number,
+  sort?: string,
+  page?: number
+}) {
   unstable_noStore()
-
-  const result = await getEquipmentPaginated({ categoryId, isKit, searchQuery, page: 1, limit: 12 })
-  const hasNextPage = result.total > 12
-
+  
+  const limit = 12;
+  const result = await getEquipmentPaginated({ categoryId, isKit, searchQuery, brand, minPrice, maxPrice, sort, page, limit })
+  
   return <EquipmentGrid 
     equipment={result.data} 
-    hasNextPage={hasNextPage} 
-    categoryId={categoryId} 
-    isKit={isKit} 
-    searchQuery={searchQuery} 
+    total={result.total}
+    currentPage={page}
+    limit={limit}
   />
 }
 

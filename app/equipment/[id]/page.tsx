@@ -14,6 +14,7 @@ import type { Metadata } from "next"
 import EquipmentGrid from "@/components/equipment-grid"
 import { Suspense } from "react"
 import { EquipmentSkeleton } from "@/components/skeletons"
+import ExpandableDescription from "@/components/expandable-description"
 
 // Generate dynamic metadata for each equipment page
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
@@ -90,8 +91,8 @@ export default async function EquipmentDetailPage({
         <div className="container mx-auto px-4 py-4">
           <Breadcrumb items={[{ label: "Equipment", href: "/equipment" }, { label: equipment.name }]} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 py-8">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 py-8 items-start">
+            <div className="md:sticky md:top-28 h-fit">
               <EquipmentImageGallery mainImage={safeMainImage} additionalImages={safeImages} />
             </div>
 
@@ -188,24 +189,59 @@ export default async function EquipmentDetailPage({
                 {/* Description */}
                 <div>
                   <h2 className="text-xl font-heading mb-3 text-white uppercase tracking-wide">Description</h2>
-                  <p className="text-zinc-400 font-body">{equipment.description}</p>
+                  <ExpandableDescription description={equipment.description || ""} />
                 </div>
 
                 {/* Specifications */}
-                <div>
-                  <h2 className="text-xl font-heading mb-3 text-white uppercase tracking-wide">Specifications</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {equipment.specifications &&
-                      Object.entries(equipment.specifications).map(([key, value]) => (
-                        <div key={key} className="flex flex-col border-b border-zinc-800 pb-3">
-                          <span className="text-sm text-zinc-500 uppercase tracking-wider font-mono">
-                            {key.replace("_", " ")}
-                          </span>
-                          <span className="text-white font-mono">{String(value)}</span>
+                {(() => {
+                  const specs = equipment.specifications
+                    ? Object.entries(equipment.specifications).sort(([a], [b]) => a.localeCompare(b))
+                    : []
+
+                  return (
+                    <div>
+                      <h2 className="text-xl font-heading mb-4 text-white uppercase tracking-wide border-l-2 border-red-500 pl-3">
+                        Specifications
+                      </h2>
+                      {specs.length > 0 ? (
+                        <div className="border border-zinc-800/60 bg-zinc-900/30 rounded-sm">
+                          {specs.map(([key, value], index) => {
+                            // Title case the key (e.g., "sensor_size" -> "Sensor Size")
+                            const label = key
+                              .split("_")
+                              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                              .join(" ")
+
+                            const display =
+                              value === null || value === undefined
+                                ? "—"
+                                : typeof value === "boolean"
+                                ? value ? "Yes" : "No"
+                                : String(value)
+
+                            return (
+                              <div
+                                key={key}
+                                className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 sm:py-4 border-b border-zinc-800/50 last:border-0 gap-1 sm:gap-4 hover:bg-zinc-800/20 transition-colors"
+                              >
+                                <span className="text-sm text-zinc-400 font-body shrink-0">
+                                  {label}
+                                </span>
+                                <span className="text-sm text-white font-medium font-body sm:text-right break-words">
+                                  {display}
+                                </span>
+                              </div>
+                            )
+                          })}
                         </div>
-                      ))}
-                  </div>
-                </div>
+                      ) : (
+                        <p className="text-zinc-600 font-mono text-sm italic">
+                          No specifications listed for this item.
+                        </p>
+                      )}
+                    </div>
+                  )
+                })()}
               </div>
             </div>
           </div>

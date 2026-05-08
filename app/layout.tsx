@@ -85,7 +85,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth overflow-x-hidden" suppressHydrationWarning>
+    <html lang="en" className="dark scroll-smooth overflow-x-clip" suppressHydrationWarning>
       <head>
         {/* Preload critical assets */}
         {criticalAssets.map((asset, index) => (
@@ -96,9 +96,9 @@ export default function RootLayout({
         <LocalBusinessSchema />
         <WebSiteSchema />
       </head>
-      <body className={`${blackOpsOne.variable} ${quantico.variable} ${robotoMono.variable} font-body overflow-x-hidden`}>
+      <body className={`${blackOpsOne.variable} ${quantico.variable} ${robotoMono.variable} font-body overflow-x-clip`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
-          <div className="flex min-h-screen flex-col bg-zinc-950">
+          <div className="flex min-h-screen flex-col bg-zinc-950 pb-20 md:pb-0">
             <Header />
             <main className="flex-1 pt-16">
               <PageTransition>{children}</PageTransition>

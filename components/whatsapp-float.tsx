@@ -27,7 +27,7 @@ export default function WhatsAppFloat() {
 
   return (
     <div
-      className={`fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 transition-all duration-500 ${
+      className={`fixed bottom-6 right-6 z-50 hidden md:flex flex-col items-end gap-3 transition-all duration-500 ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8 pointer-events-none"
       }`}
     >
@@ -37,7 +37,7 @@ export default function WhatsAppFloat() {
           showTooltip ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
         }`}
       >
-        <div className="bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 shadow-xl max-w-[200px]">
+        <div className="relative bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 shadow-xl max-w-[200px]">
           <p className="text-white text-sm font-semibold leading-tight">Chat with us!</p>
           <p className="text-zinc-400 text-xs mt-0.5">We respond instantly 📸</p>
           {/* Arrow pointing down-right */}

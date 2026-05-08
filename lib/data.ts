@@ -2,7 +2,7 @@ import { blogPosts } from './blog-posts-data'
 import { db, equipment, equipmentCategories, equipmentImages } from "./db"
 import { cache } from "react"
 import type { Category, Equipment, EquipmentImage, BlogPost } from "./types"
-import { eq, and, or, desc, sql as drizzleSql } from "drizzle-orm"
+import { eq, and, or, desc, gte, lte, sql as drizzleSql } from "drizzle-orm"
 import { resolveImageUrl, buildEquipmentImageUrls } from "./image-utils"
 
 export const getCategories = cache(async (): Promise<Category[]> => {
@@ -74,19 +74,23 @@ export interface GetEquipmentOptions {
   isKit?: boolean;
   searchQuery?: string;
   brand?: string;
+  minPrice?: number;
+  maxPrice?: number;
   sort?: string;
   page?: number;
   limit?: number;
 }
 
 export const getEquipmentPaginated = cache(async (options: GetEquipmentOptions): Promise<{ data: Equipment[], total: number }> => {
-  const { categoryId, isKit, searchQuery, brand, sort, page = 1, limit = 12 } = options;
+  const { categoryId, isKit, searchQuery, brand, minPrice, maxPrice, sort, page = 1, limit = 12 } = options;
   const offset = (page - 1) * limit;
 
   const whereConditions = []
   if (categoryId) whereConditions.push(eq(equipment.categoryId, categoryId))
   if (isKit !== undefined) whereConditions.push(eq(equipment.isKit, isKit))
   if (brand) whereConditions.push(eq(equipment.brand, brand))
+  if (minPrice !== undefined) whereConditions.push(gte(equipment.dailyRate, minPrice.toString()))
+  if (maxPrice !== undefined) whereConditions.push(lte(equipment.dailyRate, maxPrice.toString()))
   
   if (searchQuery) {
     const searchTokens = searchQuery.trim().split(/\s+/).filter(Boolean)

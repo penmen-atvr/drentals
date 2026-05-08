@@ -13,6 +13,8 @@ export async function GET(request: NextRequest) {
   const brand = searchParams.get('brand');
   const popular = searchParams.get('popular');
   const isKit = searchParams.get('isKit');
+  const minPrice = searchParams.get('minPrice');
+  const maxPrice = searchParams.get('maxPrice');
 
   const page = searchParams.get('page');
   const limit = searchParams.get('limit');
@@ -41,6 +43,8 @@ export async function GET(request: NextRequest) {
       categoryId: categoryId ? parseInt(categoryId) : undefined,
       isKit: isKit ? isKit === 'true' : undefined,
       brand: brand || undefined,
+      minPrice: minPrice ? parseInt(minPrice) : undefined,
+      maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
       searchQuery: q || undefined,
       sort: sort || undefined,
       page: pageNum,

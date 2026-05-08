@@ -1,62 +1,25 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useRouter, usePathname } from "next/navigation"
 import EquipmentCard from "./equipment-card"
 import type { Equipment } from "@/lib/types"
-import { Component } from "lucide-react"
+import { PackageSearch, ChevronLeft, ChevronRight } from "lucide-react"
 
 interface EquipmentGridProps {
   equipment: Equipment[]
-  hasNextPage?: boolean
-  categoryId?: number
-  isKit?: boolean
-  searchQuery?: string
-  brand?: string
+  total?: number
+  currentPage?: number
+  limit?: number
 }
 
-export default function EquipmentGrid({ equipment, hasNextPage = false, categoryId, isKit, searchQuery, brand }: EquipmentGridProps) {
-  const [items, setItems] = useState<Equipment[]>(equipment)
-  const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(hasNextPage)
-  const [isLoading, setIsLoading] = useState(false)
+export default function EquipmentGrid({ equipment, total, currentPage, limit }: EquipmentGridProps) {
+  const router = useRouter()
+  const pathname = usePathname()
 
-  // Reset state if props change (user searched or changed categories)
-  useEffect(() => {
-    setItems(equipment)
-    setPage(1)
-    setHasMore(hasNextPage)
-  }, [equipment, hasNextPage])
-
-  const loadMore = async () => {
-    if (isLoading || !hasMore) return
-
-    setIsLoading(true)
-    try {
-      const nextPage = page + 1
-      let url = `/api/equipment?page=${nextPage}&limit=12`
-      if (categoryId) url += `&categoryId=${categoryId}`
-      if (isKit) url += `&isKit=true`
-      if (searchQuery) url += `&q=${encodeURIComponent(searchQuery)}`
-      if (brand) url += `&brand=${encodeURIComponent(brand)}`
-
-      const res = await fetch(url)
-      if (!res.ok) throw new Error("Failed to fetch")
-      const result = await res.json()
-
-      setItems(prev => [...prev, ...result.data])
-      setHasMore(result.hasNextPage)
-      setPage(nextPage)
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  if (items.length === 0) {
+  if (equipment.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 px-4 text-center border border-zinc-800/50 rounded-lg bg-zinc-900/20 backdrop-blur-sm">
-        <Component className="w-16 h-16 text-zinc-700 mb-6" />
+        <PackageSearch className="w-16 h-16 text-zinc-700 mb-6" />
         <h3 className="text-2xl font-heading text-red-500 uppercase tracking-wide mb-3">No matching gear found</h3>
         <p className="text-zinc-500 max-w-md mx-auto">
           We couldn&apos;t track down any cameras or accessories matching your exact filters. Try tweaking your search query or exploring other categories.
@@ -65,25 +28,81 @@ export default function EquipmentGrid({ equipment, hasNextPage = false, category
     )
   }
 
+  const hasPagination = total !== undefined && limit !== undefined && currentPage !== undefined
+  const totalPages = hasPagination ? Math.ceil(total! / limit!) : 0
+
+  const handlePageChange = (newPage: number) => {
+    if (!hasPagination || newPage < 1 || newPage > totalPages || newPage === currentPage) return
+
+    const currentParams = new URLSearchParams(window.location.search)
+    currentParams.set('page', newPage.toString())
+    const newQuery = currentParams.toString()
+    const url = newQuery ? `${pathname}?${newQuery}` : pathname
+    
+    // Push the new URL and scroll to the top of the grid
+    router.push(url, { scroll: true })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
-    <div className="flex flex-col space-y-10">
+    <div className="flex flex-col space-y-12">
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-        {items.map((item) => (
-          <EquipmentCard key={`${item.id}-${Math.random()}`} equipment={item} />
+        {equipment.map((item) => (
+          <EquipmentCard key={item.id} equipment={item} />
         ))}
       </div>
 
-      {hasMore && (
-        <div className="flex justify-center pt-4">
+      {hasPagination && totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 pt-8 border-t border-zinc-800/50">
           <button
-            onClick={loadMore}
-            disabled={isLoading}
-            className="group relative overflow-hidden bg-zinc-900 border border-zinc-800 px-8 py-3 rounded-full flex items-center justify-center transition-all hover:border-red-500/50 hover:shadow-[0_0_20px_rgba(239,68,68,0.15)] disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={() => handlePageChange(currentPage! - 1)}
+            disabled={currentPage === 1}
+            className="p-2 border border-zinc-800 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            aria-label="Previous page"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-red-500/10 to-red-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
-            <span className="relative z-10 font-heading tracking-wider uppercase text-zinc-300 group-hover:text-red-500 transition-colors text-sm">
-              {isLoading ? "Loading..." : "Load More Gear"}
-            </span>
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          
+          <div className="flex items-center gap-1 mx-2">
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const pageNumber = i + 1;
+              // Simple logic to show limited pages if there are many
+              if (
+                totalPages > 7 && 
+                pageNumber !== 1 && 
+                pageNumber !== totalPages && 
+                Math.abs(pageNumber - currentPage!) > 1
+              ) {
+                // Show ellipsis if there's a gap
+                if (pageNumber === 2 || pageNumber === totalPages - 1) {
+                  return <span key={pageNumber} className="text-zinc-600 px-1">...</span>
+                }
+                return null;
+              }
+
+              return (
+                <button
+                  key={pageNumber}
+                  onClick={() => handlePageChange(pageNumber)}
+                  className={`w-10 h-10 flex items-center justify-center font-mono text-sm rounded-md transition-colors ${
+                    currentPage! === pageNumber 
+                      ? "bg-red-500 text-white border-red-500" 
+                      : "border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800"
+                  }`}
+                >
+                  {pageNumber}
+                </button>
+              )
+            })}
+          </div>
+
+          <button
+            onClick={() => handlePageChange(currentPage! + 1)}
+            disabled={currentPage === totalPages}
+            className="p-2 border border-zinc-800 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            aria-label="Next page"
+          >
+            <ChevronRight className="h-5 w-5" />
           </button>
         </div>
       )}

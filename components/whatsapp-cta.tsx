@@ -11,11 +11,19 @@ interface WhatsAppCTAProps {
 
 export default function WhatsAppCTA({ equipment }: WhatsAppCTAProps) {
   const generateWhatsAppMessage = () => {
-    // Create a well-formatted message with equipment details
+    // Build kit components section if applicable
+    let kitSection = ""
+    if (equipment.isKit && equipment.kitComponents && equipment.kitComponents.length > 0) {
+      const componentLines = equipment.kitComponents
+        .map((c: any) => `  • ${c.item?.name}${c.item?.model ? ` (${c.item.model})` : ""} x${c.quantity}`)
+        .join("\n")
+      kitSection = `\n*Bundle Includes:*\n${componentLines}`
+    }
+
     const details = `*Inquiry for Equipment ID: ${equipment.id}*
-    
-*Item:* ${equipment.name}
-*Daily Rate:* ${formatCurrency(equipment.dailyRate)}`;
+
+*Item:* ${equipment.name}${equipment.brand ? `\n*Brand:* ${equipment.brand}` : ""}${equipment.model ? `\n*Model:* ${equipment.model}` : ""}${equipment.categoryName ? `\n*Category:* ${equipment.categoryName}` : ""}
+*Daily Rate:* ${formatCurrency(equipment.dailyRate)}${kitSection}`
 
     const message = `${details}\n\nHello, I'm interested in renting this equipment from D'RENTALS. Please provide information about availability and booking process.\n\n[Inquiry sent via D'RENTALS Website]`
 

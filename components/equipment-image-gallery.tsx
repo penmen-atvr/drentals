@@ -4,7 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import type { EquipmentImage } from "@/lib/types"
-import { Camera } from "lucide-react"
+import { Camera, ChevronLeft, ChevronRight } from "lucide-react"
 import { imageSizes } from "@/lib/performance"
 
 export default function EquipmentImageGallery({
@@ -25,9 +25,25 @@ export default function EquipmentImageGallery({
     ...additionalImages,
   ].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
 
+  const currentIndex = allImages.findIndex((img) => img.imageUrl === activeImage)
+
+  const handlePrevious = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const newIndex = currentIndex <= 0 ? allImages.length - 1 : currentIndex - 1
+    setActiveImage(allImages[newIndex].imageUrl)
+    setImageLoadError(false)
+  }
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const newIndex = currentIndex >= allImages.length - 1 ? 0 : currentIndex + 1
+    setActiveImage(allImages[newIndex].imageUrl)
+    setImageLoadError(false)
+  }
+
   return (
     <div className="space-y-4">
-      <div className="aspect-[4/3] relative rounded-none overflow-hidden border border-zinc-800 bg-zinc-800">
+      <div className="aspect-[4/3] relative rounded-none overflow-hidden border border-zinc-800 bg-zinc-800 group">
         {imageLoadError ? (
           <div className="w-full h-full flex items-center justify-center">
             <Camera className="h-24 w-24 text-zinc-600" aria-hidden="true" />
@@ -46,6 +62,26 @@ export default function EquipmentImageGallery({
             priority={true} // Main product image is important for LCP
             quality={85}
           />
+        )}
+
+        {/* Navigation Arrows */}
+        {allImages.length > 1 && (
+          <>
+            <button
+              onClick={handlePrevious}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-red-600 text-white p-2 rounded-none opacity-0 group-hover:opacity-100 transition-all duration-300 z-10"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+            <button
+              onClick={handleNext}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-red-600 text-white p-2 rounded-none opacity-0 group-hover:opacity-100 transition-all duration-300 z-10"
+              aria-label="Next image"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
+          </>
         )}
       </div>
 

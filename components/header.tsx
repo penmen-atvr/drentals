@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Menu, X } from "lucide-react"
+import { Menu, X, Home, Grid, Tag, Phone } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
 import { scrollToTop } from "@/lib/navigation-utils"
@@ -13,6 +13,7 @@ export default function Header() {
   const pathname = usePathname()
   const mobileMenuRef = useRef<HTMLDivElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const bottomMenuButtonRef = useRef<HTMLButtonElement>(null)
 
   // Close mobile menu when pathname changes (page navigation)
   useEffect(() => {
@@ -26,8 +27,8 @@ export default function Header() {
         mobileMenuOpen &&
         mobileMenuRef.current &&
         !mobileMenuRef.current.contains(event.target as Node) &&
-        menuButtonRef.current &&
-        !menuButtonRef.current.contains(event.target as Node)
+        (!menuButtonRef.current || !menuButtonRef.current.contains(event.target as Node)) &&
+        (!bottomMenuButtonRef.current || !bottomMenuButtonRef.current.contains(event.target as Node))
       ) {
         setMobileMenuOpen(false)
       }
@@ -48,12 +49,15 @@ export default function Header() {
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = "hidden"
+      document.documentElement.style.overflow = "hidden"
     } else {
       document.body.style.overflow = ""
+      document.documentElement.style.overflow = ""
     }
 
     return () => {
       document.body.style.overflow = ""
+      document.documentElement.style.overflow = ""
     }
   }, [mobileMenuOpen])
 
@@ -122,12 +126,21 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Call Button */}
+          <a
+            href="tel:917794872701"
+            className="md:hidden p-2 text-zinc-400 hover:text-white transition-colors"
+            aria-label="Call Us"
+          >
+            <Phone className="h-6 w-6" />
+          </a>
+
+          {/* Desktop Menu Button - Hidden on mobile as we now have bottom nav */}
           <button
             ref={menuButtonRef}
-            className="md:hidden text-white p-2 focus:outline-none"
+            className="hidden md:block p-2 text-zinc-400 hover:text-white transition-colors"
             onClick={toggleMobileMenu}
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-label="Toggle menu"
             aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -139,7 +152,7 @@ export default function Header() {
       <div
         ref={mobileMenuRef}
         className={cn(
-          "fixed inset-0 bg-black z-40 flex flex-col pt-20 px-4 md:hidden transition-transform duration-300 ease-in-out",
+          "fixed inset-0 bg-zinc-950 z-[60] flex flex-col pt-20 px-4 md:hidden transition-transform duration-300 ease-in-out",
           mobileMenuOpen ? "translate-x-0" : "translate-x-full",
         )}
         aria-hidden={!mobileMenuOpen}
@@ -195,8 +208,50 @@ export default function Header() {
 
       {/* Overlay to capture clicks outside the menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-black/50 z-30 md:hidden" onClick={closeMobileMenu} aria-hidden="true" />
+        <div className="fixed inset-0 bg-black/50 z-[55] md:hidden" onClick={closeMobileMenu} aria-hidden="true" />
       )}
+
+      {/* Mobile Bottom Navigation */}
+      <div 
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-950 border-t border-zinc-900"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
+        <div className="flex justify-around items-center h-16 px-2">
+          <Link href="/" className={cn("flex flex-col items-center justify-center w-full h-full text-zinc-500 hover:text-white transition-colors", isActive("/") && "text-white")} onClick={() => pathname === "/" && scrollToTop()}>
+            <Home className="h-5 w-5 mb-1" />
+            <span className="text-[10px] font-heading tracking-wider uppercase">Home</span>
+          </Link>
+          
+          <Link href="/equipment" className={cn("flex flex-col items-center justify-center w-full h-full text-zinc-500 hover:text-white transition-colors", isActive("/equipment") && "text-white")} onClick={() => pathname === "/equipment" && scrollToTop()}>
+            <Grid className="h-5 w-5 mb-1" />
+            <span className="text-[10px] font-heading tracking-wider uppercase">Gear</span>
+          </Link>
+          
+          <div className="relative -top-5 flex flex-col items-center justify-center w-full">
+            <a 
+              href="https://wa.me/917794872701?text=Hi%20D%27RENTALS!%20I%27m%20interested%20in%20renting%20cinema%20equipment." 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="flex items-center justify-center w-14 h-14 rounded-full bg-[#25D366] text-white shadow-lg shadow-green-900/20 border-4 border-zinc-950 active:scale-95 transition-transform"
+              aria-label="Chat on WhatsApp"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="h-7 w-7 text-white fill-white" viewBox="0 0 16 16">
+                <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+              </svg>
+            </a>
+          </div>
+          
+          <Link href="/brands" className={cn("flex flex-col items-center justify-center w-full h-full text-zinc-500 hover:text-white transition-colors", isActive("/brands") && "text-white")} onClick={() => pathname === "/brands" && scrollToTop()}>
+            <Tag className="h-5 w-5 mb-1" />
+            <span className="text-[10px] font-heading tracking-wider uppercase">Brands</span>
+          </Link>
+          
+          <button ref={bottomMenuButtonRef} onClick={toggleMobileMenu} className={cn("flex flex-col items-center justify-center w-full h-full text-zinc-500 hover:text-white transition-colors", mobileMenuOpen && "text-white")}>
+            {mobileMenuOpen ? <X className="h-5 w-5 mb-1" /> : <Menu className="h-5 w-5 mb-1" />}
+            <span className="text-[10px] font-heading tracking-wider uppercase">{mobileMenuOpen ? "Close" : "Menu"}</span>
+          </button>
+        </div>
+      </div>
     </header>
   )
 }

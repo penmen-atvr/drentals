@@ -68,7 +68,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-heading text-xl text-white mb-2">PHONE</h3>
-                      <p className="text-zinc-400 font-mono">+91 7794872701</p>
+                      <a href="tel:+917794872701" className="text-zinc-400 font-mono hover:text-white transition-colors">+91 7794872701</a>
                     </div>
                   </div>
 
@@ -78,7 +78,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-heading text-xl text-white mb-2">EMAIL</h3>
-                      <p className="text-zinc-400 font-mono">rentals@penmenstudios.com</p>
+                      <a href="mailto:admin@penmenstudios.com" className="text-zinc-400 font-mono hover:text-white transition-colors">admin@penmenstudios.com</a>
                     </div>
                   </div>
                 </div>
