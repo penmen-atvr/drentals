@@ -154,7 +154,7 @@ export function generateOrganizationSchema() {
     "@type": "Organization",
     name: siteConfig.business.name,
     url: siteConfig.url,
-    logo: `${siteConfig.url}/logo.png`,
+    logo: `${siteConfig.url}/icon.png`,
     contactPoint: {
       "@type": "ContactPoint",
       telephone: siteConfig.location.phone,
