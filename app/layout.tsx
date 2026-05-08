@@ -74,9 +74,7 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-status-bar-style": "black-translucent",
     "format-detection": "telephone=no",
   },
-  icons: {
-    icon: { url: "/icon.svg", type: "image/svg+xml" },
-  },
+
 }
 
 export default function RootLayout({
