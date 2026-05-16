@@ -16,6 +16,9 @@ import { Suspense } from "react"
 import { EquipmentSkeleton } from "@/components/skeletons"
 import ExpandableDescription from "@/components/expandable-description"
 
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 // Generate dynamic metadata for each equipment page
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const id = Number.parseInt(params.id)
