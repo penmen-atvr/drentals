@@ -193,6 +193,22 @@ export default function Header() {
               <br />
               by Penmen Studios
             </p>
+            <div className="mt-4">
+              <a
+                href="https://play.google.com/store/apps/details?id=com.drentals.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block transition-transform hover:scale-105 active:scale-95 duration-200"
+              >
+                <Image
+                  src="/google-play-badge.png"
+                  alt="Get it on Google Play"
+                  width={243}
+                  height={72}
+                  className="h-[72px] w-auto object-contain"
+                />
+              </a>
+            </div>
           </div>
         </div>
         </div>

@@ -2,6 +2,7 @@ import FeaturedEquipment from "@/components/featured-equipment"
 import Hero from "@/components/hero"
 import CategoryList from "@/components/category-list"
 import HeroCarousel from "@/components/hero-carousel"
+import MobileAppPromo from "@/components/mobile-app-promo"
 import { getDynamicHomeSections, type HomeSection } from "@/lib/dynamic-homepage"
 import { unstable_noStore } from "next/cache"
 import Link from "next/link"
@@ -146,6 +147,8 @@ export default async function Home() {
         })}
 
         <Hero />
+
+        <MobileAppPromo />
 
         {/* Why Choose D'RENTALS Section */}
         <section className="py-16 bg-zinc-900 border-b border-zinc-800">
