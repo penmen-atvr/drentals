@@ -14,10 +14,49 @@ export default function Header() {
   const mobileMenuRef = useRef<HTMLDivElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const bottomMenuButtonRef = useRef<HTMLButtonElement>(null)
+  const [whatsappHref, setWhatsappHref] = useState("https://wa.me/917794872701?text=Hi%20D%27RENTALS!%20I%27m%20interested%20in%20renting%20cinema%20equipment.")
 
   // Close mobile menu when pathname changes (page navigation)
   useEffect(() => {
     setMobileMenuOpen(false)
+  }, [pathname])
+
+  // Dynamically update WhatsApp message for equipment detail pages
+  useEffect(() => {
+    const match = pathname.match(/^\/equipment\/([^\/]+)/)
+    if (match) {
+      const slug = match[1]
+      fetch(`/api/equipment/${slug}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.name) {
+            const formattedRate = new Intl.NumberFormat("en-IN", {
+              style: "currency",
+              currency: "INR",
+              maximumFractionDigits: 0,
+            }).format(data.dailyRate)
+
+            let kitSection = ""
+            if (data.isKit && data.kitComponents && data.kitComponents.length > 0) {
+              const componentLines = data.kitComponents
+                .map((c: any) => `  • ${c.item?.name}${c.item?.model ? ` (${c.item.model})` : ""} x${c.quantity}`)
+                .join("\n")
+              kitSection = `\n*Bundle Includes:*\n${componentLines}`
+            }
+
+            const details = `*Inquiry for Equipment ID: ${data.id}*\n\n*Item:* ${data.name}${data.brand ? `\n*Brand:* ${data.brand}` : ""}${data.model ? `\n*Model:* ${data.model}` : ""}${data.categoryName ? `\n*Category:* ${data.categoryName}` : ""}\n*Daily Rate:* ${formattedRate}${kitSection}`
+
+            const message = `${details}\n\nHello, I'm interested in renting this equipment from D'RENTALS. Please provide information about availability and booking process.\n\n[Inquiry sent via D'RENTALS Website]`
+
+            setWhatsappHref(`https://wa.me/917794872701?text=${encodeURIComponent(message)}`)
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching equipment details in Header:", err)
+        })
+    } else {
+      setWhatsappHref("https://wa.me/917794872701?text=Hi%20D%27RENTALS!%20I%27m%20interested%20in%20renting%20cinema%20equipment.")
+    }
   }, [pathname])
 
   // Handle clicks outside the mobile menu
@@ -125,6 +164,14 @@ export default function Header() {
                 )}
               </Link>
             ))}
+            <a
+              href="https://play.google.com/store/apps/details?id=com.drentals.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-405 hover:text-white transition-colors text-xs uppercase tracking-wider font-body font-bold border border-zinc-800 px-3.5 py-1.5 rounded-lg bg-zinc-950 hover:bg-zinc-900 hover:border-red-500/50 transition-all duration-300 active:scale-95 shadow-md"
+            >
+              Get App
+            </a>
           </nav>
 
           {/* Mobile Call Button */}
@@ -143,75 +190,87 @@ export default function Header() {
       <div
         ref={mobileMenuRef}
         className={cn(
-          "fixed inset-0 bg-zinc-950 z-[60] flex flex-col pt-20 px-4 md:hidden transition-transform duration-300 ease-in-out",
+          "fixed inset-0 bg-zinc-950 z-[60] md:hidden transition-transform duration-300 ease-in-out",
           mobileMenuOpen ? "translate-x-0" : "translate-x-full",
         )}
         aria-hidden={!mobileMenuOpen}
       >
         {/* Close button for mobile menu */}
         <button
-          className="absolute top-4 right-4 text-white p-2 focus:outline-none"
+          className="absolute top-4 right-4 text-white p-2 focus:outline-none z-10"
           onClick={closeMobileMenu}
           aria-label="Close menu"
         >
           <X className="h-6 w-6" />
         </button>
 
-        <nav className="flex flex-col items-center gap-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "text-zinc-400 hover:text-white transition-colors text-lg uppercase tracking-wider font-body font-bold py-2",
-                isActive(link.href) && "text-white border-b-2 border-red-500",
-              )}
-              onClick={() => {
-                closeMobileMenu()
-                if (pathname === link.href) scrollToTop()
-              }}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="mt-auto mb-8 border-t border-zinc-800 pt-6">
-          <div className="flex flex-col items-center gap-4 text-center">
-            <div className="flex items-center gap-3">
-              <Image 
-                src="/icon.png" 
-                alt="D'RENTALS Logo" 
-                width={32} 
-                height={32} 
-                className="rounded-lg object-contain"
-              />
-              <span className="font-heading text-xl text-white">D&apos;RENTALS</span>
-            </div>
-            <p className="text-zinc-400 text-sm font-mono">
-              Professional cinema equipment rental
-              <br />
-              by Penmen Studios
-            </p>
-            <div className="mt-4">
-              <a
-                href="https://play.google.com/store/apps/details?id=com.drentals.app"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block transition-transform hover:scale-105 active:scale-95 duration-200"
+        {/* Scrollable Content Container */}
+        <div className="w-full h-full overflow-y-auto flex flex-col pt-20 px-4 pb-8">
+          <nav className="flex flex-col items-center gap-6">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "text-zinc-400 hover:text-white transition-colors text-lg uppercase tracking-wider font-body font-bold py-2",
+                  isActive(link.href) && "text-white border-b-2 border-red-500",
+                )}
+                onClick={() => {
+                  closeMobileMenu()
+                  if (pathname === link.href) scrollToTop()
+                }}
               >
-                <Image
-                  src="/google-play-badge.png"
-                  alt="Get it on Google Play"
-                  width={243}
-                  height={72}
-                  className="h-[72px] w-auto object-contain"
+                {link.label}
+              </Link>
+            ))}
+            <a
+              href="https://play.google.com/store/apps/details?id=com.drentals.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-400 hover:text-white transition-colors text-lg uppercase tracking-wider font-body font-bold py-2 border-b-2 border-transparent hover:border-red-500"
+              onClick={closeMobileMenu}
+            >
+              Get App
+            </a>
+          </nav>
+
+          <div className="mt-auto mb-8 border-t border-zinc-800 pt-6">
+            <div className="flex flex-col items-center gap-4 text-center">
+              <div className="flex items-center gap-3">
+                <Image 
+                  src="/icon.png" 
+                  alt="D'RENTALS Logo" 
+                  width={32} 
+                  height={32} 
+                  className="rounded-lg object-contain"
                 />
-              </a>
+                <span className="font-heading text-xl text-white">D&apos;RENTALS</span>
+              </div>
+              <p className="text-zinc-400 text-sm font-mono">
+                Professional cinema equipment rental
+                <br />
+                by Penmen Studios
+              </p>
+              <div className="mt-4">
+                <a
+                  href="https://play.google.com/store/apps/details?id=com.drentals.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block transition-transform hover:scale-105 active:scale-95 duration-200"
+                >
+                  <Image
+                    src="/google-play-badge.png"
+                    alt="Get it on Google Play"
+                    width={243}
+                    height={72}
+                    className="h-[72px] w-auto object-contain"
+                  />
+                </a>
+              </div>
             </div>
           </div>
         </div>
-        </div>
+      </div>
       </header>
 
       {/* Overlay to capture clicks outside the menu */}
@@ -237,7 +296,7 @@ export default function Header() {
           
           <div className="relative -top-5 flex flex-col items-center justify-center w-full">
             <a 
-              href="https://wa.me/917794872701?text=Hi%20D%27RENTALS!%20I%27m%20interested%20in%20renting%20cinema%20equipment." 
+              href={whatsappHref} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="flex items-center justify-center w-14 h-14 rounded-full bg-[#25D366] text-white shadow-lg shadow-green-900/20 border-4 border-zinc-950 active:scale-95 transition-transform"
